@@ -1,0 +1,327 @@
+*{
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", serif;;
+}
+body {
+  background-color: #141718;
+  color: #fff;
+}
+
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+
+.footer {
+  background-color: #121212;
+  color: #fff;
+  padding: 20px 0;
+}
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .footer-logo img {
+  width: 70px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+.footer .social-icons a {
+  color: #fff;
+  margin: 0 8px;
+  font-size: 1.2rem;
+}
+.footer hr {
+  border-color: #444;
+  margin: 10px 0;
+}
+.footerSpan{
+  font-size: .8em;
+  font-weight: 200;
+}
+
+
+
+
+.product-details {
+  color: #cfcfcf;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.tab {
+  cursor: pointer;
+
+}
+
+.tab.active {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+
+}
+
+.content {
+  display: none;
+}
+.content.active {
+  display: block;
+}
+
+/* Divider line */
+.divider {
+  border: 0.5px solid #555;
+}
+
+/* Section Headers */
+h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #e5e5e5;
+}
+
+/* Description */
+.product-details p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Feature list */
+.feature-list,
+.shipping-info {
+  list-style-type: none;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.feature-list li,
+.shipping-info li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.feature-list i,
+.shipping-info i {
+  color: #47a0ff;
+}
+
+/* Shipping Information */
+.shipping-info li strong {
+  color: #aaa;
+}
+
+
+#product-image {
+  border-radius: 8px;
+  width: 400px;
+
+  padding: 20px;
+}
+.addTocartProductDetails{
+max-width: 240px;
+width: 100%;
+}
+.bayProductDetails{
+  max-width: 300px;
+}
+.favorite-icon {
+  color: white;
+  font-size: 1.5rem;
+}
+
+
+
+.rating-summary {
+  font-size: 4rem;
+  font-weight: bold;
+}
+.stars {
+  color: #ffa41b;
+}
+.progress-bar {
+  background-color: #ffa41b;
+}
+.feedback-card {
+  border: none;
+  background-color: #21212100;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.feedbackMsg{
+  width: 100%;
+  max-width: 1000px;
+}
+.feedback-card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.divider {
+  border-bottom: 1px solid #555;
+}
+.reviewText{
+  font-size: 14px;
+}
+.dateTimeReview{
+  color: #919191;
+}
+.featureClassDiscription{
+  margin-left: 40px;
+}
+@media (min-width:400px) {
+  .featureClassDiscription{
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  
+}
+.whishProductDetails{
+  width: 100%;
+  max-width: 70px;
+}
+.shippingClassDiscription{
+  margin-top: 20px;
+}
+.main-image{
+  width: 100%;
+  max-height: 500px;
+  height: 100%;
+  background-color: white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  position: relative;
+}
+
+
+
+#zoomed-image {
+  position: absolute;
+  width: 200px; /* Width of zoomed field */
+  height: 200px; /* Height of zoomed field */
+  border: 2px solid #fff;
+  background-repeat: no-repeat;
+  display: none; /* Initially hidden */
+  pointer-events: none; /* Make it non-interactive */
+  z-index: 1000;
+
+}
+
+
+
+
+
+
+.productDetails{
+
+padding-left: 60px;
+
+}
+.img-thumbnail{
+  width: 100px;
+ cursor: pointer;
+}
+
+.color-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 5px;
+
+}
+.invalid-color {
+  color: red;
+  font-weight: bold;
+}
+.colorText{
+  padding-top: 5px;
+}
+.storage-options{
+  padding-left: 30px;
+}
+
+.filled-star {
+  color: gold;
+  font-size: 20px;
+}
+.reviewCount{
+  color: white;
+  font-size: 14px;
+}
+
+.empty-star {
+  color: gold; 
+  font-size: 20px;
+}
+
+
+/* Align the price and offer box */
+.d-flex.justify-content-between {
+  display: flex;
+justify-content: flex-start;
+  align-items: center;
+}
+
+/* Offer box styling */
+.offer-box {
+  background-color: #505050; /* Green background */
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.offer-percentage {
+  font-size: .8em;
+  font-weight: bold;
+}
+
+/* Optional: Add some styling for the price */
+h3 {
+  font-size: 1.6em;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Strikethrough for original price */
+.text-decoration-line-through {
+  text-decoration: line-through;
+  color: #777;
+}
+#loginMessage {
+  display: none;
+  position: absolute;
+  top: 36px;
+  right: 190px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#loginMessage button {
+  margin-top: 5px;
+}

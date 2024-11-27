@@ -1,0 +1,220 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+body {
+  background-color: #141718;
+  color: #fff;
+}
+
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+.promo-banner{
+  background-image: url('/image/homeimg/Artboard_1.png');
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat; 
+  border-radius: 20px;
+  height: 400px;
+}
+
+
+.footer {
+  background-color: #121212;
+  color: #fff;
+  padding: 20px 0;
+}
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .footer-logo img {
+  width: 70px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+.footer .social-icons a {
+  color: #fff;
+  margin: 0 8px;
+  font-size: 1.2rem;
+}
+.footer hr {
+  border-color: #444;
+  margin: 10px 0;
+}
+.footerSpan{
+  font-size: .8em;
+  font-weight: 200;
+}
+.sidebar {
+  background-color: #00000019;
+  padding: 20px;
+  min-height: 100vh;
+  border-radius: 20px 0 0 0;
+}
+
+.filter-title {
+  font-weight: lighter;
+  cursor: pointer;
+}
+
+.heart-icon {
+  color: #fff;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.dropbtn{
+  background-color: none;
+  color: white;
+  outline: none;
+  border: none;
+  transition: .2s ease-in-out;
+}
+.dropbtn:hover{
+  color: rgba(255, 255, 255, 0.699);
+}
+.custom-dropdown {
+  background-color: rgba(0, 0, 0, 0.75); 
+  backdrop-filter: blur(10px); 
+  border: none; 
+}
+.custom-dropdown .dropdown-item {
+  color: #fff; 
+}
+.custom-dropdown .dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1); 
+}
+.searchBarShope{
+  background-color: #1E1E1E;
+  outline: none;
+  border: none;
+  border-radius: 20px;
+}
+.searchBarShope:focus{
+  background-color: #1E1E1E;
+  color: white;
+
+}
+.searchBarShope::placeholder{
+  color: white;
+}
+.priceFontFilter{
+  font-weight:100;
+}
+.productListShop{
+  background-color: #00000019;
+  border-radius: 0 20px 0 0;
+}
+.card-body p{
+font-size: .7rem;
+margin-bottom: .3rem;
+}
+.arrival-card{
+  position: relative;
+  border-radius: 20px;
+}
+
+.heart-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: black;
+  font-size: 1.5rem; 
+  cursor: pointer; 
+}
+.heart-icon.filled {
+  color: red; 
+}
+
+.productCardRow{
+  max-width: 200px;
+  border-radius: 10px 10px 0 0;
+}
+.arrival-card{
+  border-radius: 10px 10px 0 0;
+}
+.arrival-card{
+  border-radius: 20px 20px ;
+  max-width: 200px;
+  min-width: 200px;
+}
+
+.card-title{
+  font-weight: 600;
+}
+
+.card-body{
+  background-color: rgb(216, 216, 215);
+  text-align: center;
+border-radius: 0 0 20px 20px;
+height: 120px;
+}
+.image-container img{
+  width: 150px; 
+  height: 150px;
+  object-fit: contain; 
+  background-color: white; 
+  border:none; 
+}
+
+.filled-star {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+}
+
+
+.empty-star {
+  color: #000000; 
+  font-size: 16px;
+}
+
+.cardPrice{
+  font-weight: 600;
+}
+
+.arrival-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.arrival-card:hover {
+  transform: scale(1.05); /* Slightly enlarge the card */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
+  cursor: pointer; /* Change the cursor to a pointer */
+}
+.heart-icon{
+  margin-top: -25px;
+  margin-right: -25px;
+}
+#loginMessage {
+  display: none;
+  position: absolute;
+  top: 36px;
+  right: 190px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#loginMessage button {
+  margin-top: 5px;
+}

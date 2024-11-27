@@ -1,0 +1,265 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+body {
+  background-color: #141718;
+  color: #fff;
+}
+
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+.main-banner{
+  background-image: url('/image/ImageLogin/homeBanner.png');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat; 
+    height: 100%;
+    border-radius: 20px;
+    padding-top: 40vh;
+    padding-right: 5vw;
+}
+.bannerDiv{
+  height: 70vh;
+}
+.btnShop{
+  font-size: .8em;
+}
+.video-fluid {
+  width: 250px;
+  height: 350px;
+  border-radius: 20px; 
+  object-fit: cover; 
+}
+.guaranteeImg1{
+  width: 250px;
+  height: 360px;
+  border-radius: 20px;
+  background-image: url('/image/homeimg/iphonebackSide.png');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat; 
+}
+.guaranteeImg2{
+  width: 250px;
+  height: 350px;
+  border-radius: 20px;
+  background-image: url('/image/homeimg/charger.png');
+    background-size: cover; 
+    background-position: center;
+    background-repeat: no-repeat; 
+}
+.card-body {
+  background-color: rgb(216, 216, 215);
+  text-align: center;
+border-radius: 0 0 20px 20px;
+height: 120px;
+}
+.arrival-card {
+  text-align: center;
+  border-radius: 20px;
+  cursor: pointer;
+  max-width: 200px;
+  min-width: 200px;
+  min-height: 370px;
+  max-height: 375px;
+}
+.abovarrival-card{
+  border-radius: 20px;
+  max-width: 250px;
+}
+.new-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgb(231, 231, 231);
+  color: rgb(0, 0, 0);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  z-index: 1;
+}
+.promo-banner{
+  background-image: url('/image/homeimg/Artboard_1.png');
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat; 
+  border-radius: 20px;
+  height: 400px;
+}
+.servicesDiv{
+  height: 100px;
+  width: 220px;
+  background-color: white;
+}
+.feature-box {
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+}
+.cardPrice{
+  font-size: 13px;
+}
+
+
+.footer {
+  background-color: #121212;
+  color: #fff;
+  padding: 20px 0;
+}
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .footer-logo img {
+  width: 70px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+.footer .social-icons a {
+  color: #fff;
+  margin: 0 8px;
+  font-size: 1.2rem;
+}
+.footer hr {
+  border-color: #444;
+  margin: 10px 0;
+}
+.footerSpan{
+  font-size: .8em;
+  font-weight: 200;
+}
+
+
+.card:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+.image-container img {
+  height: 200px;
+  object-fit: contain;
+}
+
+#scroll-container {
+  overflow-x: scroll;
+
+  scrollbar-width: none; 
+  gap: 16px; 
+}
+
+#scroll-container::-webkit-scrollbar {
+  display: none; 
+}
+
+
+.scroll-btn {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  background-color: #00000046;
+  border: none;
+  border-radius: 50%;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  line-height: 45px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+
+.scroll-btn:hover {
+  background-color: #00000080;
+  transform: scale(1.1);
+}
+
+
+#scroll-container {
+  display: flex;
+  overflow-x: hidden; 
+  scroll-behavior: smooth; 
+  max-width: 100%; 
+  height: 100%;
+  max-height: 500px;
+}
+
+.category-card img {
+  width: 150px; 
+  height: 150px;
+  border-radius: 50%;
+  object-fit: contain; 
+  background-color: white; 
+  border:none; 
+}
+
+
+
+
+.category-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-10px); /* Lift the card slightly */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Add a shadow for emphasis */
+}
+
+.category-image {
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.category-card:hover .category-image {
+  transform: scale(1.1); /* Slight zoom on the image */
+  border: 2px solid #007bff; /* Add a border around the image */
+}
+
+.category-text {
+  transition: color 0.3s ease;
+}
+
+.category-card:hover .category-text {
+  color: #007bff; /* Change text color on hover */
+}
+
+#scroll-container-category {
+  overflow-x: auto; 
+  overflow-y: visible; 
+}
+
+#loginMessage {
+  display: none;
+  position: absolute;
+  top: 36px;
+  right: 190px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#loginMessage button {
+  margin-top: 5px;
+}
