@@ -32,7 +32,6 @@ const adminValidation=async(req,res)=>{
         const usernameofLogin = adminExist.name;
         req.session.isValidAdmin=true
         req.session.username = usernameofLogin;
-        console.log(req.session.username);
        return res.status(200).redirect('/admin/dashboard?message=Login SuccessFul');
       }else{
         res.redirect('/admin/login?message=Invalid Password');
@@ -40,9 +39,7 @@ const adminValidation=async(req,res)=>{
   }else{
     res.redirect('admin/login');
   }
-  
   } catch (error) {
-    console.log(error)
     res.status(401).send("Internal Server error");
   }
   
@@ -118,7 +115,6 @@ const loadCategory=async(req,res)=>{
     const username=req.session.username;
 const category=await Category.find();
 const message=req.query.message;
-console.log(message)
     res.status(200).render('admin/category',{category,message,username})
   } catch (error) {
     res.status(500).send('Internal server error');
@@ -147,7 +143,6 @@ const loadEditCategory=async(req,res)=>{
     }
   res.status(200).render('admin/editCategory',{category,username});
   } catch (err) {
-    console.log(err)
     res.status(500).send('Server error');
   }
 }
@@ -194,9 +189,6 @@ const loadAddCustomer=async(req,res)=>{
 const addProducts = async (req, res) => {
   try {
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
-
-    console.log("Uploaded Files:", req.files);
-
     const productExists = await Product.findOne({ name : name});
     if (productExists) {
       return res.status(400).send('Product already exists');
@@ -215,14 +207,11 @@ const addProducts = async (req, res) => {
           fs.mkdirSync(targetDir, { recursive: true });
         }
         await sharp(originalImagePath)
-          .resize(800,{
-            fit:"contain"
-          })
+          .resize({width:800})
           .toFile(resizedImagePath);
         images.push(`/uploads/product-images/${req.files[i].filename}`);
       }
     } 
-    console.log("Images Array:", images);
     const discountedPrice = price - (price * discount) / 100;
     const categoryDoc = await Category.findOne({ name: category });
     const categoryId = categoryDoc._id;
@@ -472,7 +461,6 @@ const addAdmin=async(req,res)=>{
 await newUser.save();
 res.status(200).redirect('/admin/login')
  } catch (error) {
-  console.log(error)
   res.status(500).send("Internal Server eroor");
  }
 }
@@ -504,7 +492,6 @@ const deleteUser = async (req, res) => {
 const checkEmail=async(req,res)=>{
   try {
     const email= req.query.email;
-    console.log(email)
     if(!email){
       return res.status(400).json({error:'Email is required'})
     }
@@ -567,7 +554,6 @@ const newUser=new User({
 await newUser.save();
 res.redirect('/admin/customers?message=User added successfuly')
 } catch (error) {
-  console.log(error)
   res.status(500).send("Internal server error");
 }
 }
@@ -708,9 +694,9 @@ const changePassword = async (req, res) => {
   const token = req.params.id
   const {password}  = req.body;
   try {
-   console.log(token)
+
     const tokenRecord = await OTP.findOne({ otp: token, type: 'resetPassword' });
-   console.log(tokenRecord)
+
     if (!tokenRecord || tokenRecord.expiresAt < Date.now()) {
       return res.status(400).send('Invalid or expired token1');
     }

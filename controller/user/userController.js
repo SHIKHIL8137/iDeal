@@ -125,7 +125,6 @@ const loadHome = async (req, res) => {
     });
 
     const sessionCheck = req.session.isUser || false;
-    console.log(sessionCheck);
     res.status(200).render('user/home', { 
       productDetails: filteredProducts, 
       categoryImages, 
@@ -134,7 +133,6 @@ const loadHome = async (req, res) => {
       sessionCheck
     });
   } catch (error) {
-    console.log(error)
     res.status(500).send('Internal server Error');
   }
 };
@@ -156,7 +154,6 @@ const loadShop = async (req, res) => {
 
     res.status(200).render('user/shop', { productDetails: filteredProducts , categories: activeCategories,sessionCheck});
   } catch (error) {
-    console.log(error)
     res.status(500).send('Internal server Error');
   }
 };
@@ -174,10 +171,8 @@ const loadCategoryShop = async (req, res) => {
       })
       .populate('reviews');
     const filteredProducts = productDetails.filter(product => product.category);
-console.log(categoryId)
     res.status(200).render('user/CategoryShop', { productDetails: filteredProducts ,sessionCheck});
   } catch (error) {
-    console.log(error)
     res.status(500).send('Internal server Error');
   }
 };
@@ -205,12 +200,16 @@ const loadProductDetails = async (req, res) => {
           select: 'username image',
         },
       });
-
+      const relatedProducts = await Product.find({
+        _id: { $ne: productId },
+        category: product.category, 
+      })
+      .limit(10);
     if (!product || !product.category) { // Check if product or its category is unlisted
       return res.status(404).send('Product not found or category is unlisted');
     }
     const sessionCheck = req.session.isUser || false;
-    res.status(200).render('user/productDetails', { product, validColors,sessionCheck });
+    res.status(200).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts});
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
@@ -260,7 +259,7 @@ async function sendOTPEmail(email, username, password, req, res) {
     req.session.email = email;
     req.session.password = password;
     req.session.otpPending=true;
-      res.status(200).render('user/otp',{message:"OTP Send successfuly"});
+      res.status(200).render('user/otp',{message:"OTP Send successfuly",email});
     return otp;
   } catch (error) {
     res.status(500).send('Failed to send OTP. Please try again later.');
@@ -350,7 +349,6 @@ const resendPassword=async(req,res)=>{
   const password=req.session.password;
   const user=await OTP.findOne({email});
   if(!user) return res.status(401).redirect('/user/signUp?message=user not found try again');
-  console.log('otp resende')
   await sendOTPEmail(email, username, password, req, res);
 }
 
@@ -376,7 +374,6 @@ const loginVelidation=async(req,res)=>{
       })
     }   
   } catch (error) {
-    console.log(error)
     res.status(500).send('Inernal server error please try again later.')
   }
 }
@@ -406,7 +403,6 @@ const productReview=async(req,res)=>{
 
   res.status(200).send('saved success fully');
   } catch (error) {
-    console.log(error)
     res.status(500).send('Internal Server Error');
   }
 
@@ -499,9 +495,7 @@ const changePassword = async (req, res) => {
   const token = req.params.id
   const {password}  = req.body;
   try {
-   console.log(token)
     const tokenRecord = await OTP.findOne({ otp: token, type: 'resetPassword' });
-   console.log(tokenRecord)
     if (!tokenRecord || tokenRecord.expiresAt < Date.now()) {
       return res.status(400).send('Invalid or expired token1');
     }

@@ -10,8 +10,8 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#">Shop</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
           <li class="nav-item"><a class="nav-link text-white" href="#">Contact Us</a></li>
         </ul>
@@ -168,7 +168,11 @@
             <div class="col-md-6">
                 <h4>Description</h4>
                 <p>
-                    <%= product.description %>
+                  <ul>
+                    <% product.description.split('\n').forEach(function(point) { %>
+                      <li><%= point.trim() %></li>
+                    <% }); %>
+                  </ul>
                 </p>
             </div>
   
@@ -256,6 +260,45 @@
   </div>
 
 
+
+  
+  <div class="container my-5">
+    <hr class="divider">
+    <h3 class="text-center mb-5 mt-5">Recommended product</h3>
+    <div class="position-relative newProductContainer">
+      <!-- Backward Button -->
+      <button id="scroll-back" class="scroll-btn position-absolute start-0 top-50 translate-middle-y">
+        &lt;
+      </button>
+  
+      <!-- Scrollable Container -->
+      <div id="scroll-container" class="d-flex gap-3" style="scroll-behavior: smooth;">
+        <% relatedProducts.slice(0, 10).forEach(product => { %>
+          <div data-product-id="<%= product._id %>" class="card h-100 shadow arrival-card" >
+            <div class="image-container position-relative m-4">
+              <img src="<%= product.images[0] %>" class="card-img-top img-fluid" alt="<%= product.name %>">
+            </div>
+            <div class="card-body text-center">
+              <h6 class="card-title mb-2 mt-2">
+                <%= product.name %>
+              </h6>
+              <p class="text-muted mb-1 cardPrice">
+                Storage: <strong><%= product.storage %> GB</strong>
+              </p>
+              <p class="text-success fw-bold mb-0 cardPrice">Price: ₹<%= product.price %></p>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+  
+      <!-- Forward Button -->
+      <button id="scroll-forward" class="scroll-btn position-absolute end-0 top-50 translate-middle-y">
+        &gt;
+      </button>
+    </div>
+  </div>
+
+
     
 
 
@@ -272,8 +315,8 @@
         
         <!-- Navigation Links -->
         <div class="col-md-4 text-center">
-          <a href="#">Home</a>
-          <a href="#">Shop</a>
+          <a href="/user/home">Home</a>
+          <a href="/user/shop">Shop</a>
           <a href="#">About Us</a>
           <a href="#">Contact Us</a>
         </div>

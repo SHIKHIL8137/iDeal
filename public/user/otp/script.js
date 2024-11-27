@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded',()=>{
+let email = JSON.parse(document.getElementById('userData').textContent);
+const emailTextElement = document.getElementById('textArea');
+const emailParts = email.split("@");
+  const firstPart = emailParts[0];
+  const domain = emailParts[1];
+  const emailWithEllipsis = firstPart.substring(0, 3) + "...." + "@" + domain;
+  emailTextElement.textContent = `otp code sent to ${emailWithEllipsis}`;
+})
+
 const btnAction = document.getElementById('btnResend');
     const timer = document.getElementById('timerCountNumber');
     const alertBox=document.getElementById('alertBox1');

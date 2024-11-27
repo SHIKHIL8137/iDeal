@@ -32,6 +32,7 @@
             </div>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+            <a class="forgTxt" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">How to sign up?</a>
             <a class="forgTxt" href="http://localhost:3000/user/forgotpassword/">Forgot password?</a>
           </div>
           <button type="submit" class="btn btn-dark w-100">Sign In</button>
@@ -43,6 +44,33 @@
       </div>
     </div>
   </div>
+
+
+  <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="signupModalLabel">How to Sign Up</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Video Embed -->
+          <div class="ratio ratio-16x9">
+            <iframe 
+              src="/video/VN20241127_200342.mp4" 
+              title="Sign Up Tutorial" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="/user/login/script.js"></script>
   <%- include('partials/footer.ejs') -%>

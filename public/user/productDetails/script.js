@@ -1,144 +1,176 @@
+
+// DOMContentLoaded Main Wrapper
 document.addEventListener("DOMContentLoaded", function () {
-  const navbar = document.getElementById('checkSession');
-  const sessionCheck = navbar.dataset.sessionCheck === 'true'; 
-  console.log('Raw data-session-check:', navbar.dataset.sessionCheck);
-  if(!sessionCheck){
+  // ------------------------------
+  // 1. Arrival Cards Click Event
+  // ------------------------------
+  const productCards = document.querySelectorAll(".arrival-card");
+
+  productCards.forEach((card) => {
+    card.addEventListener("click", function (event) {
+      event.preventDefault();
+      console.log("Card clicked");
+      const productId = this.dataset.productId;
+      console.log("Product ID:", productId);
+
+      if (productId) {
+        window.location.href = `/user/productDetails/${productId}`;
+      } else {
+        console.error("Product ID is missing!");
+      }
+    });
+  });
+
+  // ------------------------------
+  // 2. Session Check and Message Display
+  // ------------------------------
+  const navbar = document.getElementById("checkSession");
+  const sessionCheck = navbar.dataset.sessionCheck === "true";
+  console.log("Raw data-session-check:", navbar.dataset.sessionCheck);
+
+  if (!sessionCheck) {
     setTimeout(() => {
       const loginMessage = document.getElementById("loginMessage");
       loginMessage.style.display = "block";
-    }, 1000); 
+    }, 1000);
   }
-});
 
-function redirectToLogin() {
-  window.location.href = "/user/login";
-}
+  // ------------------------------
+  // 3. Tab Toggle for Description & Reviews
+  // ------------------------------
+  const descriptionBtn = document.getElementById("description-btn");
+  const reviewBtn = document.getElementById("review-btn");
+  const descriptionContent = document.getElementById("description-content");
+  const reviewContent = document.getElementById("review-content");
 
-
-const descriptionBtn = document.getElementById("description-btn");
-    const reviewBtn = document.getElementById("review-btn");
-    const descriptionContent = document.getElementById("description-content");
-    const reviewContent = document.getElementById("review-content");
-
+  if (descriptionBtn && reviewBtn) {
     descriptionBtn.addEventListener("click", () => {
-      // Set buttons
       descriptionBtn.classList.add("active");
       reviewBtn.classList.remove("active");
-
-      // Toggle content
       descriptionContent.classList.add("active");
       reviewContent.classList.remove("active");
     });
 
     reviewBtn.addEventListener("click", () => {
-      // Set buttons
       reviewBtn.classList.add("active");
       descriptionBtn.classList.remove("active");
-
-      // Toggle content
       reviewContent.classList.add("active");
       descriptionContent.classList.remove("active");
     });
+  }
 
+  // ------------------------------
+  // 4. Product Image Zoom Feature
+  // ------------------------------
+  const productImage = document.getElementById("product-image");
+  const zoomedImage = document.getElementById("zoomed-image");
 
+  if (productImage && zoomedImage) {
+    productImage.addEventListener("mousemove", function (e) {
+      zoomedImage.style.display = "block";
 
-    document.addEventListener("DOMContentLoaded", function() {
-      const productImage = document.getElementById("product-image");
-      const zoomedImage = document.getElementById("zoomed-image");
-    
-      productImage.addEventListener("mousemove", function(e) {
-          zoomedImage.style.display = "block";
-    
-          // Calculate the position of the cursor relative to the image
-          const rect = productImage.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-    
-          // Set the position of the zoomed field based on the cursor
-          zoomedImage.style.left = `${x - zoomedImage.offsetWidth / 2}px`;
-          zoomedImage.style.top = `${y - zoomedImage.offsetHeight / 2}px`;
-    
-          // Calculate background position for zoom effect
-          const bgX = (x / rect.width) * 100;
-          const bgY = (y / rect.height) * 100;
-          zoomedImage.style.backgroundPosition = `${bgX}% ${bgY}%`;
-      });
-    
-      productImage.addEventListener("mouseleave", function() {
-          zoomedImage.style.display = "none"; // Hide the zoomed field when cursor leaves the image
-      });
-    
-      // Set up the zoomed image background
-      zoomedImage.style.backgroundImage = `url(${productImage.src})`;
-      zoomedImage.style.backgroundSize = `${productImage.width * 2}px ${productImage.height * 2}px`; // Double size for zoom effect
+      const rect = productImage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      zoomedImage.style.left = `${x - zoomedImage.offsetWidth / 2}px`;
+      zoomedImage.style.top = `${y - zoomedImage.offsetHeight / 2}px`;
+
+      const bgX = (x / rect.width) * 100;
+      const bgY = (y / rect.height) * 100;
+      zoomedImage.style.backgroundPosition = `${bgX}% ${bgY}%`;
     });
 
+    productImage.addEventListener("mouseleave", function () {
+      zoomedImage.style.display = "none";
+    });
 
-    function changeImage(imageSrc) {
-      // Change the main product image
-      document.getElementById('product-image').src = imageSrc;
-      
-      // Change the zoomed image (you can apply a zoom effect or show a large version)
-      document.getElementById('zoomed-image').style.backgroundImage = `url('${imageSrc}')`;
-    }
-  
-    // Set the default image on page load
-    window.onload = function() {
-      const defaultImage = document.querySelector('.thumbnail-images img').src;
-      document.getElementById('product-image').src = defaultImage;
-      
-      // Set the default zoomed image as well
-      document.getElementById('zoomed-image').style.backgroundImage = `url('${defaultImage}')`;
-    }
+    zoomedImage.style.backgroundImage = `url(${productImage.src})`;
+    zoomedImage.style.backgroundSize = `${productImage.width * 2}px ${productImage.height * 2}px`;
+  }
 
+  // ------------------------------
+  // 6. Quantity Update Buttons
+  // ------------------------------
+  let quantity = 1;
+  const maxQuantity = 10;
+  const quantityValueElement = document.getElementById("quantityValue");
+  const increaseBtn = document.getElementById("increaseBtn");
+  const decreaseBtn = document.getElementById("decreaseBtn");
 
+  function updateQuantityDisplay() {
+    quantityValueElement.textContent = quantity.toString().padStart(2, "0");
+    decreaseBtn.disabled = quantity <= 1;
+    increaseBtn.disabled = quantity >= maxQuantity;
+  }
 
-    let quantity = 1;  // Initial quantity value
-    const maxQuantity = 10;  // Maximum limit of 10
-    const quantityValueElement = document.getElementById("quantityValue");
-    const increaseBtn = document.getElementById("increaseBtn");
-    const decreaseBtn = document.getElementById("decreaseBtn");
-    function updateQuantityDisplay() {
-      quantityValueElement.textContent = quantity.toString().padStart(2, '0');  // Ensure two digits
-      decreaseBtn.disabled = (quantity <= 1);  // Disable '-' button if quantity is 1
-      increaseBtn.disabled = (quantity >= maxQuantity);  // Disable '+' button if quantity is 10
-    }
-
-    // Event listener for increasing quantity
+  if (quantityValueElement && increaseBtn && decreaseBtn) {
     increaseBtn.addEventListener("click", () => {
       if (quantity < maxQuantity) {
-        quantity++;  // Increase quantity
-        updateQuantityDisplay();  // Update the display
+        quantity++;
+        updateQuantityDisplay();
       }
     });
 
-    // Event listener for decreasing quantity
     decreaseBtn.addEventListener("click", () => {
       if (quantity > 1) {
-        quantity--;  // Decrease quantity
-        updateQuantityDisplay();  // Update the display
+        quantity--;
+        updateQuantityDisplay();
       }
     });
 
-    // Initialize the quantity display
     updateQuantityDisplay();
-  
+  }
 
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+  // ------------------------------
+  // 7. Tooltip Initialization
+  // ------------------------------
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 
+  // ------------------------------
+  // 9. Horizontal Scroll for Products and Categories
+  // ------------------------------
+  const productScrollContainer = document.getElementById("scroll-container");
+  const productScrollBack = document.getElementById("scroll-back");
+  const productScrollForward = document.getElementById("scroll-forward");
 
-document.getElementById('submitReviewButton').addEventListener('click', function() {
-  const reviewText = document.getElementById('reviewText').value;
-  const rating = document.getElementById('reviewRating').value;
+  const categoryScrollContainer = document.getElementById("scroll-container-category");
+  const categoryScrollBack = document.getElementById("scroll-backwardCategory");
+  const categoryScrollForward = document.getElementById("scroll-forwardCategory");
 
-  // Handle review submission, e.g., send data to server using AJAX
+  const scrollAmount = 300;
+
+  if (productScrollContainer && productScrollBack && productScrollForward) {
+    productScrollBack.addEventListener("click", () => {
+      productScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+    productScrollForward.addEventListener("click", () => {
+      productScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+  }
+
+  if (categoryScrollContainer && categoryScrollBack && categoryScrollForward) {
+    categoryScrollBack.addEventListener("click", () => {
+      categoryScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+    categoryScrollForward.addEventListener("click", () => {
+      categoryScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+  }
 });
 
-
-
-
-
-
+function changeImage(imageSrc) {
+  document.getElementById('product-image').src = imageSrc;
+  document.getElementById('zoomed-image').style.backgroundImage = `url('${imageSrc}')`;
+}
+window.onload = function() {
+  const defaultImage = document.querySelector('.thumbnail-images img').src;
+  document.getElementById('product-image').src = defaultImage;
+  document.getElementById('zoomed-image').style.backgroundImage = `url('${defaultImage}')`;
+}
+function redirectToLogin() {
+  window.location.href = "/user/login";
+}
