@@ -34,8 +34,15 @@
   <!-- Product Details -->
   <div class="container my-5">
     <div class="row">
+      <nav aria-label="breadcrumb" class="mb-5 breadcrumsNav">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="/user/home" class="breadcrumb-item-style-atag">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><a href="/user/shop" class="breadcrumb-item-style-atag">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Product Details</li>
+        </ol>
+      </nav>
         <!-- Product Images -->
-        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center gap-3">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center gap-3 ">
           <div class="main-image">
             <img src="<%= product.images[0] %>" id="product-image" class="img-fluid" alt="iPhone Image">
             <div id="zoomed-image"></div>

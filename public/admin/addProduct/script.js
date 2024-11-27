@@ -1,3 +1,118 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("form");
+  const errorMessages = document.querySelectorAll(".error-message");
+
+  form.addEventListener("submit", (event) => {
+    let isValid = true;
+
+    // Clear all previous error messages
+    errorMessages.forEach((error) => {
+      error.textContent = "";
+    });
+
+    // Product Name Validation
+    const productName = document.getElementById("productName");
+    if (!productName.value.trim()) {
+      setError(productName, "Product name is required.");
+      isValid = false;
+    }
+
+    // Product Description Validation
+    const productDescription = document.getElementById("productDescription");
+    if (!productDescription.value.trim()) {
+      setError(productDescription, "Product description is required.");
+      isValid = false;
+    }
+
+    // Image Validation (at least one image required)
+    const imageInputs = [
+      document.getElementById('input1'),
+      document.getElementById('input2'),
+      document.getElementById('input3'),
+      document.getElementById('input4'),
+    ];
+    imageInputs.forEach((input,ind)=>{
+      if(input.files.length === 0){
+        setError(imageInputs[ind],'This field is require')
+        isValid = false;
+      }
+    })
+    
+
+    // Base Price Validation
+    const basePrice = document.getElementById("basePrice");
+    if (!basePrice.value.trim() || isNaN(basePrice.value) || Number(basePrice.value) <= 0) {
+      setError(basePrice, "Base price must be a valid positive number.");
+      isValid = false;
+    }
+
+    // Discount Validation
+    const discount = document.getElementById("discountPercentage");
+    if (!discount.value.trim() || isNaN(discount.value) || Number(discount.value) < 0) {
+      setError(discount, "Discount must be a valid number (0 or higher).");
+      isValid = false;
+    }
+
+    // Storage Validation
+    const storage = document.getElementById("storageStatus");
+    if (!storage.value) {
+      setError(storage, "Please select a storage option.");
+      isValid = false;
+    }
+
+    // Color Validation
+    const color = document.getElementById("colorStatus");
+    if (!color.value) {
+      setError(color, "Please select a color.");
+      isValid = false;
+    }
+
+    // Quantity Validation
+    const quantity = document.getElementById("productQuantity");
+    if (!quantity.value.trim() || isNaN(quantity.value) || Number(quantity.value) <= 0) {
+      setError(quantity, "Quantity must be a valid positive number.");
+      isValid = false;
+    }
+
+    // Category Validation
+    const category = document.getElementById("productCategory");
+    if (!category.value) {
+      setError(category, "Please select a category.");
+      isValid = false;
+    }
+
+    // Condition Validation
+    const condition = document.getElementById("productStatus");
+    if (!condition.value) {
+      setError(condition, "Please select a condition.");
+      isValid = false;
+    }
+
+    // Connectivity Validation
+    const connectivity = document.querySelector("select[name='connectivity']");
+    if (!connectivity.value) {
+      setError(connectivity, "Please select a connectivity type.");
+      isValid = false;
+    }
+
+    // Prevent form submission if validation fails
+    if (!isValid) {
+      event.preventDefault();
+    }
+  });
+
+  // Helper function to set error messages
+  function setError(input, message) {
+    const errorContainer = input.nextElementSibling;
+    if (errorContainer && errorContainer.classList.contains("error-message")) {
+      errorContainer.style.color = 'red';
+      errorContainer.textContent = message;
+      setTimeout(()=>{
+        errorContainer.textContent='';
+      },5000);
+    }
+  }
+});
 
 
 

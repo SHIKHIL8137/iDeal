@@ -405,3 +405,17 @@ height: 120px;
 .cardPrice{
   font-size: 13px;
 }
+
+.breadcrumsNav{
+  background-color: transparent;
+}
+.breadcrumb-item a{
+  text-decoration: none;
+  color: white;
+}
+.breadcrumb-item.active{
+  color: rgba(255, 255, 255, 0.486);
+}
+.breadcrumb-item+.breadcrumb-item::before {
+  color: white;
+}

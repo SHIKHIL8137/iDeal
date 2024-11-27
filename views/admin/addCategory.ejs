@@ -112,22 +112,25 @@
               <div class="col-md-8">
                 <div class="mb-3">
                   <label for="categoryName" class="form-label">Category Name</label>
-                  <input name="name" type="text" value="iPhone "  class="form-control" id="categoryName" placeholder="Type category name here..." required>
+                  <input name="name" type="text" value="iPhone "  class="form-control" id="categoryName" placeholder="Type category name here..." >
+                  <div class="error-message"></div>
                 </div>
                 <div class="mb-3">
                   <label for="description" class="form-label">Description</label>
-                  <textarea name="description" class="form-control" id="description" rows="4" placeholder="Type category description here..." required></textarea>
+                  <textarea name="description" class="form-control" id="description" rows="4" placeholder="Type category description here..." ></textarea>
+                  <div class="error-message"></div>
                 </div>
               </div>
             </div>
             <!-- Status Dropdown -->
             <div class="mb-4">
               <label for="status" class="form-label">Product Status</label>
-              <select class="form-select w-25" id="status" name="status" required>
-                <option disabled selected>Select a status</option>
+              <select class="form-select w-25" id="status" name="status" >
+                <option disabled selected value=""></option>
                 <option value="true">List</option>
                 <option value="false">UnLisdt</option>
               </select>
+              <div class="error-message"></div>
             </div>
             <!-- Action Buttons -->
             <div class="action-buttons">
