@@ -94,16 +94,16 @@ const loadHome = async (req, res) => {
     const productDetails = await Product.find()
       .populate({
         path: 'category',
-        match: { status: true }, // Only include products with active categories
+        match: { status: true }, 
       });
 
-    // Filter out products with unlisted categories
+
     const filteredProducts = productDetails.filter(product => product.category);
 
     let recentAddProduct = await Product.find()
       .populate({
         path: 'category',
-        match: { status: true }, // Filter recent products with active categories
+        match: { status: true }, 
       })
       .sort({ createdAt: -1 })
       .limit(10);
@@ -144,11 +144,10 @@ const loadShop = async (req, res) => {
     const productDetails = await Product.find()
       .populate({
         path: 'category',
-        match: { status: true }, // Only include products with active categories
+        match: { status: true }, 
       })
       .populate('reviews');
 
-    // Filter out products with unlisted categories
     const filteredProducts = productDetails.filter(product => product.category);
 
     for (let i = filteredProducts.length - 1; i > 0; i--) {
@@ -227,7 +226,7 @@ const loadProductDetails = async (req, res) => {
         [relatedProducts[i], relatedProducts[j]] = [relatedProducts[j], relatedProducts[i]];
       }
       
-    if (!product || !product.category) { // Check if product or its category is unlisted
+    if (!product || !product.category) { 
       return res.status(404).send('Product not found or category is unlisted');
     }
     const sessionCheck = req.session.isUser || false;
@@ -541,7 +540,10 @@ const changePassword = async (req, res) => {
 
 const loadProfile = async(req,res)=>{
 try {
-  res.status(200).render('user/profileDetails')
+  const email = req.session.isLoggedEmail;
+  console.log(email)
+  const user =await User.findOne({email});
+  res.status(200).render('user/profileDetails',{user})
 } catch (error) {
   res.status(401).send('Internal Server Error');
 }

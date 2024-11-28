@@ -57,7 +57,7 @@ nav{
     }
     .form-control:focus {
       background-color: #1c1c1c;
-      color: white;
+      color: rgb(255, 255, 255);
     }
     .btn-primary {
       background-color: #007bff;
@@ -107,3 +107,6 @@ nav{
     .profilePicture{
       margin:40px 10px
     }
+   .form-control ::placeholder{
+    color: white;
+   }

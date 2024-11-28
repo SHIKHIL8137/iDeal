@@ -30,7 +30,7 @@ function renderTable() {
     const row = `
       <tr>
         <td>
-          <img src="${val.images[0]}" alt="Product Image" class="me-2" style="width: 50px; height: 50px;">
+          <img src="${val.images[0]}" alt="Product Image" class="me-2" style="width: 50px; height: 50px;" id="ProductImage">
           ${val.name}
         </td>
         <td>${val.category.name} Series</td>

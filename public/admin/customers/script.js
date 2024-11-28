@@ -22,7 +22,7 @@ function renderTable() {
       <tr>
         <td>${val.username}</td>
         <td>${val.email}</td>
-        <td>${val.phone}</td>
+        <td>${val.phone || ''}</td>
         <td>
           <span class="badge ${val.block ? 'bg-danger' : 'bg-success'}">
             ${val.block ? 'Blocked' : 'Active'}

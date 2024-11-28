@@ -149,3 +149,6 @@ ol li{
   #alertBox.hide {
     right: -100%;
   }
+  #ProductImage{
+    object-fit: contain;
+  }
