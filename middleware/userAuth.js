@@ -15,12 +15,17 @@ const checkSession=async(req,res,next)=>{
 }
 
 const isLoggedIn =async (req, res, next) => {
-  const email = req.session.isLoggedEmail;
-  const user = await User.findOne({email});
-  if (!req.session.isUser || user.block === true) {
-    req.session.destroy();
-    return res.redirect('/user/login');
-  }next(); 
+  try {
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({email});
+    if (!req.session.isUser || user.block === true) {
+      req.session.destroy();
+      return res.redirect('/user/login');
+    }next(); 
+  } catch (error) {
+    console.log(error)
+  }
+ 
 }
 
 const logOut=async (req,res,next)=>{
@@ -34,9 +39,19 @@ const logOut=async (req,res,next)=>{
 }
 
 
+const storeSessionEmail = (req, res, next) => {
+  if (req.user) {
+    req.session.isLoggedEmail = req.user.email; 
+  }
+  next();
+};
+
+
+
 module.exports ={
   checkSessionResetPassword,
   logOut,
   checkSession,
-  isLoggedIn
+  isLoggedIn,
+  storeSessionEmail
 }

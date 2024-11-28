@@ -189,10 +189,10 @@ const loadAddCustomer=async(req,res)=>{
 const addProducts = async (req, res) => {
   try {
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
-    const productExists = await Product.findOne({ name : name});
-    if (productExists) {
-      return res.status(400).send('Product already exists');
-    }
+    // const productExists = await Product.findOne({ name : name});
+    // if (productExists) {
+    //   return res.status(400).send('Product already exists');
+    // }
 
     const images = [];
 

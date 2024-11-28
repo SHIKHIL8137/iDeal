@@ -244,10 +244,10 @@
           <div class="feedback-card mb-4">
             <div class="d-flex">
               <!-- User's Profile Image -->
-              <img src="<%= review.userId.image || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' %>" alt="User" class="me-3 rounded-circle">
+              <img src="<%='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png' %>" alt="User" class="me-3 rounded-circle">
               <div>
                 <!-- Reviewer's Name and Date -->
-                <h6 class="mb-1"><%= review.userId.username %> <span class="dateTimeReview" style="font-size: 0.8rem; color: gray;"><%= review.reviewDate.toLocaleDateString() %></span></h6>
+                <h6 class="mb-1"><%= review.userId ? review.userId.username : 'Anonymous' %><span class="dateTimeReview" style="font-size: 0.8rem; color: gray;"><%= review.reviewDate ? review.reviewDate.toLocaleDateString() : 'N/A' %></span></h6>
                 <!-- Display Stars Based on Review Rating -->
                 <div class="stars">
                   <%= '⭐'.repeat(review.rating) %><%= '☆'.repeat(5 - review.rating) %>

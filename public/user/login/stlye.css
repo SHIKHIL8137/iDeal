@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", serif;
+  overflow-y: hidden;
  } 
 input::placeholder,textarea::placeholder{
   font-size: 12px;

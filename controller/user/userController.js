@@ -191,7 +191,7 @@ const loadProductDetails = async (req, res) => {
     const product = await Product.findById(productId)
       .populate({
         path: 'category',
-        match: { status: true }, // Only include products with active categories
+        match: { status: true }, 
       })
       .populate({
         path: 'reviews',

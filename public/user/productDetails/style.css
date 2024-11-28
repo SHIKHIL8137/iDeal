@@ -131,7 +131,7 @@ h4 {
 #product-image {
   border-radius: 8px;
   width: 400px;
-
+object-fit: contain;
   padding: 20px;
 }
 .addTocartProductDetails{
@@ -238,6 +238,8 @@ padding-left: 60px;
 }
 .img-thumbnail{
   width: 100px;
+  height: 100px;
+  object-fit: contain;
  cursor: pointer;
 }
 

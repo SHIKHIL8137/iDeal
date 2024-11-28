@@ -15,7 +15,7 @@ router.get('/shop',userController.loadShop);
 router.get('/categoryShop/:id',userController.loadCategoryShop);
 router.get('/productDetails/:id',userController.loadProductDetails);
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/user/signUp'}),userController.googleLogin)
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/user/signUp'}),userMiddleWare.storeSessionEmail,userController.googleLogin)
 router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
 router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
