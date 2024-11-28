@@ -361,7 +361,7 @@ height: 120px;
 
 #scroll-container {
   overflow-x: scroll;
-
+overflow-y: hidden;
   scrollbar-width: none; 
   gap: 16px; 
 }

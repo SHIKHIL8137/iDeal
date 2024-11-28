@@ -150,6 +150,12 @@ const loadShop = async (req, res) => {
 
     // Filter out products with unlisted categories
     const filteredProducts = productDetails.filter(product => product.category);
+
+    for (let i = filteredProducts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredProducts[i], filteredProducts[j]] = [filteredProducts[j], filteredProducts[i]];
+    }
+
     const activeCategories = [...new Set(filteredProducts.map(product => product.category.name))];
 
     res.status(200).render('user/shop', { productDetails: filteredProducts , categories: activeCategories,sessionCheck});
@@ -171,6 +177,13 @@ const loadCategoryShop = async (req, res) => {
       })
       .populate('reviews');
     const filteredProducts = productDetails.filter(product => product.category);
+
+    for (let i = filteredProducts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredProducts[i], filteredProducts[j]] = [filteredProducts[j], filteredProducts[i]];
+    }
+
+
     res.status(200).render('user/CategoryShop', { productDetails: filteredProducts ,sessionCheck});
   } catch (error) {
     res.status(500).send('Internal server Error');
@@ -202,9 +215,18 @@ const loadProductDetails = async (req, res) => {
       });
       const relatedProducts = await Product.find({
         _id: { $ne: productId },
-        category: product.category, 
+        price: { $lt: product.price }, 
+        $or: [
+          { category: product.category },  
+          { category: { $ne: product.category } }  
+        ]
       })
       .limit(10);
+      for (let i = relatedProducts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [relatedProducts[i], relatedProducts[j]] = [relatedProducts[j], relatedProducts[i]];
+      }
+      
     if (!product || !product.category) { // Check if product or its category is unlisted
       return res.status(404).send('Product not found or category is unlisted');
     }
@@ -381,7 +403,7 @@ const loginVelidation=async(req,res)=>{
 const productReview=async(req,res)=>{
   try {
     const productId = req.params.id;
-  const userId = req.session.userId || '673efe201953eb01748349df'
+  const userId = req.session.userId;
   const {rating,reviewText} =req.body;
 
   const existingReview = await Review.findOne({ productId, userId });

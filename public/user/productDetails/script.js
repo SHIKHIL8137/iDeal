@@ -1,8 +1,39 @@
 
+  const productScrollContainer = document.getElementById("scroll-container");
+  const productScrollBack = document.getElementById("scroll-back");
+  const productScrollForward = document.getElementById("scroll-forward");
+
+  const categoryScrollContainer = document.getElementById("scroll-container-category");
+  const categoryScrollBack = document.getElementById("scroll-backwardCategory");
+  const categoryScrollForward = document.getElementById("scroll-forwardCategory");
+
+  const scrollAmount = 300;
+
+  if (productScrollContainer && productScrollBack && productScrollForward) {
+    productScrollBack.addEventListener("click", () => {
+      console.log('cliked')
+      productScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+    productScrollForward.addEventListener("click", () => {
+      productScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+  }
+
+  if (categoryScrollContainer && categoryScrollBack && categoryScrollForward) {
+    categoryScrollBack.addEventListener("click", () => {
+      categoryScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+    categoryScrollForward.addEventListener("click", () => {
+      categoryScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+  }
+
+
+
 // DOMContentLoaded Main Wrapper
 document.addEventListener("DOMContentLoaded", function () {
   // ------------------------------
-  // 1. Arrival Cards Click Event
+  //  Arrival Cards Click Event
   // ------------------------------
   const productCards = document.querySelectorAll(".arrival-card");
 
@@ -22,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ------------------------------
-  // 2. Session Check and Message Display
+  //  Session Check and Message Display
   // ------------------------------
   const navbar = document.getElementById("checkSession");
   const sessionCheck = navbar.dataset.sessionCheck === "true";
@@ -36,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ------------------------------
-  // 3. Tab Toggle for Description & Reviews
+  //  Tab Toggle for Description & Reviews
   // ------------------------------
   const descriptionBtn = document.getElementById("description-btn");
   const reviewBtn = document.getElementById("review-btn");
@@ -60,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ------------------------------
-  // 4. Product Image Zoom Feature
+  //  Product Image Zoom Feature
   // ------------------------------
   const productImage = document.getElementById("product-image");
   const zoomedImage = document.getElementById("zoomed-image");
@@ -90,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ------------------------------
-  // 6. Quantity Update Buttons
+  //  Quantity Update Buttons
   // ------------------------------
   let quantity = 1;
   const maxQuantity = 10;
@@ -123,43 +154,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ------------------------------
-  // 7. Tooltip Initialization
+  //  Tooltip Initialization
   // ------------------------------
   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
   tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
   });
 
-  // ------------------------------
-  // 9. Horizontal Scroll for Products and Categories
-  // ------------------------------
-  const productScrollContainer = document.getElementById("scroll-container");
-  const productScrollBack = document.getElementById("scroll-back");
-  const productScrollForward = document.getElementById("scroll-forward");
-
-  const categoryScrollContainer = document.getElementById("scroll-container-category");
-  const categoryScrollBack = document.getElementById("scroll-backwardCategory");
-  const categoryScrollForward = document.getElementById("scroll-forwardCategory");
-
-  const scrollAmount = 300;
-
-  if (productScrollContainer && productScrollBack && productScrollForward) {
-    productScrollBack.addEventListener("click", () => {
-      productScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    });
-    productScrollForward.addEventListener("click", () => {
-      productScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    });
-  }
-
-  if (categoryScrollContainer && categoryScrollBack && categoryScrollForward) {
-    categoryScrollBack.addEventListener("click", () => {
-      categoryScrollContainer.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-    });
-    categoryScrollForward.addEventListener("click", () => {
-      categoryScrollContainer.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    });
-  }
 });
 
 function changeImage(imageSrc) {

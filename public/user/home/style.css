@@ -246,6 +246,8 @@ height: 120px;
 #scroll-container-category {
   overflow-x: auto; 
   overflow-y: visible; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #loginMessage {

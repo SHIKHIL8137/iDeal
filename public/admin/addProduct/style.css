@@ -215,3 +215,6 @@ ol li{
   .cropper-crop-box {
     border-radius: 15px; 
   }
+  #productDescription{
+    height: 300px;
+  }

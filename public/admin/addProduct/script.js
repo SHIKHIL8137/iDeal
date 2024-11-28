@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Quantity Validation
     const quantity = document.getElementById("productQuantity");
-    if (!quantity.value.trim() || isNaN(quantity.value) || Number(quantity.value) <= 0) {
+    if (!quantity.value.trim() || isNaN(quantity.value) || Number(quantity.value) < 0) {
       setError(quantity, "Quantity must be a valid positive number.");
       isValid = false;
     }
