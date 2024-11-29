@@ -109,20 +109,20 @@ renderTable();
 document.getElementById('nextPage').addEventListener('click', goToNextPage);
 document.getElementById('prevPage').addEventListener('click', goToPrevPage);
 
-
+//redirect to category
 document.getElementById('categorybtn').addEventListener('click',function(){
 
 window.location.href=`/admin/category`
 
 })
 
-
+// redirect to addproduct
 document.getElementById('addProductbtn').addEventListener('click',function(){
   window.location.href=`/admin/addProduct`
 })
 
 
-
+// alert box
   const alertBox = document.getElementById("alertBox");
   alertBox.classList.add("show");
   setTimeout(() => {
@@ -133,7 +133,7 @@ document.getElementById('addProductbtn').addEventListener('click',function(){
     }, 500); 
   }, 3000); 
 
-
+// remove the params from the url
 if (window.location.search) {
       const url = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, url);

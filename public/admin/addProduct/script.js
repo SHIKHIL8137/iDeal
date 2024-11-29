@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
+// crop the images after uploading
 
 function viewImage1(event){
   document.getElementById('imgView1').src=URL.createObjectURL(event.target.files[0])
@@ -178,7 +178,7 @@ function viewImage(event,index){
   reader.readAsDataURL(input.files[0]);
 }
 
-
+// alert box
 const alertBox = document.getElementById("alertBox");
   alertBox.classList.add("show");
   setTimeout(() => {
@@ -190,6 +190,7 @@ const alertBox = document.getElementById("alertBox");
   }, 3000); 
 
 
+  // remove the params from the url
   if (window.location.search) {
     const url = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, url);

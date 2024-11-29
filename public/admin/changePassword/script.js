@@ -1,3 +1,5 @@
+
+// hide and unhide password
 document.getElementById('togglePassword').addEventListener('click',function(){
   const passwordField=document.getElementById('password');
   const type= passwordField.getAttribute('type')==="password"?"text":"password";
@@ -48,7 +50,7 @@ document.getElementById('formId').addEventListener('submit', function (e) {
 });
 
 
-
+// remove the params form the url
 if (window.location.search) {
   const url = window.location.origin + window.location.pathname;
   window.history.replaceState({}, document.title, url);

@@ -9,6 +9,8 @@ const crypto = require('crypto');
 const nodeMailer=require('nodemailer');
 
 
+// admin login validation
+
 const adminValidation=async(req,res)=>{
 
   try {
@@ -46,6 +48,9 @@ const adminValidation=async(req,res)=>{
   }
 
 
+
+// rendering the login page
+
 const loadLogin=async(req,res)=>{
   try {
 
@@ -59,6 +64,9 @@ const loadLogin=async(req,res)=>{
 }
 
 
+
+// rendering the forgotPassword page
+
 const loadforgotPassword=async(req,res)=>{
   try {
     const message = req.query.message;
@@ -70,6 +78,7 @@ const loadforgotPassword=async(req,res)=>{
 
 
 
+// redering the product page
 
 const loadProduct=async(req,res)=>{
   try {
@@ -82,6 +91,7 @@ const loadProduct=async(req,res)=>{
   }
 }
 
+// render the add product page
 
 const loadAddProduct=async(req,res)=>{
   try {
@@ -98,6 +108,8 @@ const loadAddProduct=async(req,res)=>{
   }
 }
 
+// render the Edit Product page
+
 const loadEditProduct=async(req,res)=>{
   try {
     const username=req.session.username;
@@ -110,6 +122,9 @@ const loadEditProduct=async(req,res)=>{
   }
 }
 
+
+// render the category page
+
 const loadCategory=async(req,res)=>{
   try {
     const username=req.session.username;
@@ -120,6 +135,8 @@ const message=req.query.message;
     res.status(500).send('Internal server error');
   }
 }
+
+// render the add category page
 
 const loadAddCategory=async(req,res)=>{
   try {
@@ -132,6 +149,8 @@ const loadAddCategory=async(req,res)=>{
     res.status(500).send('Internal server error');
   }
 }
+
+// render the edit category page
 
 const loadEditCategory=async(req,res)=>{
   try{  
@@ -147,6 +166,8 @@ const loadEditCategory=async(req,res)=>{
   }
 }
 
+// renter the customers listing page
+
 const loadCustomers=async(req,res)=>{
   try {
     const message = req.query.message;
@@ -158,6 +179,7 @@ const loadCustomers=async(req,res)=>{
   }
 }
 
+// renter the customers edit page
 
 const loadEditCustomer=async(req,res)=>{
   try {
@@ -173,6 +195,7 @@ const loadEditCustomer=async(req,res)=>{
   }
 }
 
+// render the add customer Page
 
 const loadAddCustomer=async(req,res)=>{
   try {
@@ -185,6 +208,7 @@ const loadAddCustomer=async(req,res)=>{
 }
 
 
+// addNew product post route
 
 const addProducts = async (req, res) => {
   try {
@@ -242,7 +266,7 @@ const addProducts = async (req, res) => {
 };
 
 
-
+// add new category route
 
 const addCategory=async(req,res)=>{
  try {
@@ -267,6 +291,7 @@ const addCategory=async(req,res)=>{
 }
 
 
+// Delete product route
 
 const deleteProduct = async (req, res) => {
   try {
@@ -279,6 +304,8 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
+//update category route
 
 const updateCategory = async (req, res) => {
   try {
@@ -306,6 +333,8 @@ const updateCategory = async (req, res) => {
 };
 
 
+// Delete category route
+
 const deleteCategory=async(req,res)=>{
   try {
     const categoryId = req.params.id;
@@ -320,23 +349,7 @@ const deleteCategory=async(req,res)=>{
 }
 
 
-const deleteImageFromProduct=async(req,res)=>{
-  try {
-    const { id } = req.params;
-    const { index } = req.body;
-
-    const product = await Product.findById(id);
-    product.images.splice(index, 1); 
-    const imgCount=product.images.length;
-    await product.save();
-    res.status(200).json({ count: imgCount });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Failed to delete image');
-  }
-}
-
-
+// Edit proudct route
 
 const editProduct = async (req, res) => {
   try {
@@ -429,18 +442,7 @@ const editProduct = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+// add new admin route
 
 const addAdmin=async(req,res)=>{
 
@@ -466,6 +468,9 @@ res.status(200).redirect('/admin/login')
 }
 
 
+
+// Rendering Dashboard page
+
 const loadDashboard=async(req,res)=>{
 try {
   const username=req.session.username;
@@ -477,6 +482,7 @@ try {
 }
 
 
+// Delete users route
 
 const deleteUser = async (req, res) => {
   try {
@@ -488,6 +494,9 @@ const deleteUser = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
+
+
+// check the email exist or not in the db after that edit the email
 
 const checkEmail=async(req,res)=>{
   try {
@@ -506,7 +515,7 @@ const checkEmail=async(req,res)=>{
 
 
 
-
+// update or edit the customer details route
 
 const updateCustomer = async (req, res) => {
   try {
@@ -536,6 +545,7 @@ const updateCustomer = async (req, res) => {
 
 
 
+// add new customer route
 
 const addCustomer=async(req,res)=>{
 try {
@@ -559,6 +569,8 @@ res.redirect('/admin/customers?message=User added successfuly')
 }
 
 
+// admin logOut route
+
 const logOut=async(req,res)=>{
   try {
     res.status(200).redirect('/admin/login');
@@ -569,6 +581,7 @@ const logOut=async(req,res)=>{
 
 
 
+// Delete Product image from the edit page of product
 
 const deleteProductImage = async (req, res) => {
   try {
@@ -581,7 +594,7 @@ const deleteProductImage = async (req, res) => {
     }
 
     const imageToRemove = product.images[index];
-    product.images.splice(index, 1); // Remove the image from the array
+    product.images.splice(index, 1); 
     await product.save();
 
     // Optionally delete the file from the server
@@ -589,7 +602,7 @@ const deleteProductImage = async (req, res) => {
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
-
+    console.log('deleteProductImage')
     res.json({ success: true, message: 'Image deleted successfully' });
   } catch (error) {
     console.error('Error deleting image:', error);
@@ -604,6 +617,10 @@ const transporter = nodeMailer.createTransport({
     pass: process.env.NODEMAILER_PASSWORD,
   },
 });
+
+
+
+// check the email is exist or not for resting password route
 
 const forgotPassword = async (req, res) => {
   try {
@@ -622,7 +639,7 @@ const forgotPassword = async (req, res) => {
 };
 
 
-
+// the function for rest password link to the user email
 
 async function sendResetPasswordLink(email, req, res) {
   const resetToken = crypto.randomBytes(32).toString('hex');
@@ -668,7 +685,7 @@ async function sendResetPasswordLink(email, req, res) {
 }
 
 
-
+// rentering change password page if the rest token valid
 
 const resetPasswordPage = async (req, res) => {
   const  token  = req.params.id;
@@ -689,6 +706,7 @@ const resetPasswordPage = async (req, res) => {
 };
 
 
+// changepassword password route 
 
 const changePassword = async (req, res) => {
   const token = req.params.id
@@ -759,7 +777,6 @@ module.exports={
   deleteProduct,
  updateCategory,
  deleteCategory,
- deleteImageFromProduct,
  addAdmin,
  loadDashboard,
  adminValidation,

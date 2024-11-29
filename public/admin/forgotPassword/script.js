@@ -23,7 +23,7 @@ document.getElementById('emailForm').addEventListener('submit', function (e) {
 
 
 
-
+// alert box
 const alertBox = document.getElementById("alertBox");
   alertBox.classList.add("show");
   setTimeout(() => {
@@ -37,7 +37,7 @@ const alertBox = document.getElementById("alertBox");
 
 
 
-
+// remove the params from url
 if (window.location.search) {
   const url = window.location.origin + window.location.pathname;
   window.history.replaceState({}, document.title, url);

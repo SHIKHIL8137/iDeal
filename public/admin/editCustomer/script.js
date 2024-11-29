@@ -1,3 +1,4 @@
+// validating the new mail id 
 let debounceTimeout;
 const submitButton = document.getElementById('submitButton');
 const feedback = document.getElementById('emailFeedback');

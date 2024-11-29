@@ -30,12 +30,11 @@ router.get('/logOut',adminAuth.logOut,adminController.logOut)
 router.post('/addProduct',uploads.array("images",4),adminController.addProducts);
 router.post('/editProduct/:id', uploads.array("images", 4), adminController.editProduct);
 router.delete('/deleteProductImage/:id/:index', adminController.deleteProductImage);
-router.get('/')
+
 
 
 router.post('/updateCategory/:id',adminController.updateCategory)
 router.post('/addCategory',adminController.addCategory);
-router.post('/media/:id/delete-image',adminController.deleteImageFromProduct);
 router.post('/addAdmin',adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
 router.post('/editCustomer/:id',adminController.updateCustomer);

@@ -1,4 +1,5 @@
 
+// check the seesion to hide and unhide the login popup
 document.addEventListener("DOMContentLoaded", function () {
   const navbar = document.getElementById('checkSession');
   const sessionCheck = navbar.dataset.sessionCheck === 'true'; 
@@ -11,17 +12,20 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 });
+
+// redirect to login page
 function redirectToLogin() {
   window.location.href = "/user/login";
 }
 
 
-
+// updated price
 function updatePriceLabel() {
   const priceValue = document.getElementById('priceRange').value;
   document.getElementById('priceValue').innerText = `₹${priceValue}`;
 }
 
+//filter actions
 function applyFilters() {
   const selectedPrice = document.getElementById('priceRange').value;
   const selectedColors = Array.from(document.querySelectorAll('.color-checkbox:checked')).map(cb => cb.value);
@@ -48,7 +52,7 @@ function applyFilters() {
   });
 }
 
-
+// whish list heart action
 function toggleHeart(element) {
   if (element.classList.contains("bi-heart")) {
     element.classList.remove("bi-heart");
@@ -68,7 +72,7 @@ function toggleHeart(element) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 
-// productDetails.js
+
 document.addEventListener('DOMContentLoaded', function() {
   // Select all product cards using a class (or by id if you're using unique ids)
   const productCards = document.querySelectorAll('.product-card');
@@ -82,13 +86,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
-function toggleHeart(element) {
-  if (element.classList.contains("bi-heart")) {
-    element.classList.remove("bi-heart");
-    element.classList.add("bi-heart-fill", "filled");
-  } else {
-    element.classList.remove("bi-heart-fill", "filled");
-    element.classList.add("bi-heart");
-  }
-}

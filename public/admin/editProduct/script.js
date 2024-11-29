@@ -7,7 +7,7 @@ document.querySelectorAll('.delete-icon').forEach(icon => {
 
 
 
-
+//delete the image action
 
 function deleteImage(productId, index) {
   fetch(`/admin/deleteProductImage/${productId}/${index}`, { method: 'DELETE' })
@@ -23,7 +23,7 @@ function deleteImage(productId, index) {
 }
 
 
-
+// showing the remaing upload image slot
 
 document.addEventListener('DOMContentLoaded', function () {
   const maxImages = 4; 
@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
+
+//show ing the images in the data base
 function viewImage(event, index) {
   const input = event.target;
   const reader = new FileReader();

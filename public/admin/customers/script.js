@@ -1,3 +1,4 @@
+// pagination and customer listing
 
 const rowsPerPage = 10; // Number of rows per page
 let currentPage = 1;
@@ -60,12 +61,16 @@ document.getElementById('prevPage').addEventListener('click', goToPrevPage);
 
 renderTable();
 
+
+// shw delete modal
 function showDeleteModal(userId) {
   userToDelete = userId;
   const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
   modal.show();
 }
 
+
+// conform button action for delete
 document.getElementById('confirmDeleteButton').addEventListener('click', function () {
   if (userToDelete) {
     const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
@@ -74,16 +79,19 @@ document.getElementById('confirmDeleteButton').addEventListener('click', functio
   }
 });
 
+//redirect the edit page
 function showEdit(userid) {
   if (userid) {
     window.location.href = `/admin/editCustomer/${userid}`;
   }
 }
 
+//redirect the addCustomer page
 document.getElementById('addCustomerBtn').addEventListener('click', function () {
   window.location.href = `/admin/addCustomer`;
 });
 
+//alart box
 function showAlert(message, type = 'success') {
   alertBox.textContent = message;
   alertBox.className = `alert alert-${type} show`;
@@ -98,7 +106,7 @@ function showAlert(message, type = 'success') {
 
 
 
-
+// remov the params from the url
 if (window.location.search) {
   const url = window.location.origin + window.location.pathname;
   window.history.replaceState({}, document.title, url);

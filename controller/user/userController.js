@@ -31,7 +31,7 @@ const validColors = {
 
 
 
-
+// rendering the login page
 
 const loadlogin=async(req,res)=>{
 try {
@@ -48,6 +48,9 @@ try {
 }
 }
 
+
+// rendering the sign up page
+
 const loadsignUp=async(req,res)=>{
   try {
       const message=req.session.message;
@@ -58,14 +61,7 @@ const loadsignUp=async(req,res)=>{
   }
 }
 
-
-
-
-
-
-
-
-
+// rendering the forgetPassword page
 
 const loadForgotPassword= async(req,res)=>{
   try {
@@ -78,7 +74,7 @@ const loadForgotPassword= async(req,res)=>{
 
 
 
-
+// rendering the changePassword page
 
 const loadChangePassword=async(req,res)=>{
   try {
@@ -87,6 +83,9 @@ const loadChangePassword=async(req,res)=>{
     res.status(500).send('Internal server Error');
   }
 }
+
+
+// rendering the home page
 
 const loadHome = async (req, res) => {
   try {
@@ -138,6 +137,9 @@ const loadHome = async (req, res) => {
 };
 
 
+
+//rendering the shop page
+
 const loadShop = async (req, res) => {
   try {
     const sessionCheck = req.session.isUser || false;
@@ -165,6 +167,8 @@ const loadShop = async (req, res) => {
 
 
 
+// rendering the category shop page 
+
 const loadCategoryShop = async (req, res) => {
   try {
     const sessionCheck = req.session.isUser || false;
@@ -191,11 +195,7 @@ const loadCategoryShop = async (req, res) => {
 
 
 
-
-
-
-
-
+// rendering the product details page+
 
 const loadProductDetails = async (req, res) => {
   try {
@@ -237,7 +237,7 @@ const loadProductDetails = async (req, res) => {
 };
 
 
-
+// function for generating the otp fo signup
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -251,6 +251,8 @@ const transporter = nodeMailer.createTransport({
   },
 });
 
+
+// function for senting the otp to the varified mail
 
 async function sendOTPEmail(email, username, password, req, res) {
   const otp = generateOtp();
@@ -288,6 +290,9 @@ async function sendOTPEmail(email, username, password, req, res) {
 }
 
 
+
+// register the new user route
+
 const registerUserNormal = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -305,6 +310,10 @@ const registerUserNormal = async (req, res) => {
     res.status(500).send('Internal Server Error. Please try again later.');
   }
 };
+
+
+
+// verify the entered otp route and save the user information to the database
 
 const otpVerification = async (req, res) => {
   try {
@@ -364,6 +373,9 @@ const otpVerification = async (req, res) => {
 };
 
 
+
+// resend password route
+
 const resendPassword=async(req,res)=>{
   const email=req.session.email;
   const username=req.session.username;
@@ -372,6 +384,10 @@ const resendPassword=async(req,res)=>{
   if(!user) return res.status(401).redirect('/user/signUp?message=user not found try again');
   await sendOTPEmail(email, username, password, req, res);
 }
+
+
+
+// validate the enter details of user route
 
 const loginVelidation=async(req,res)=>{
   try {
@@ -398,6 +414,11 @@ const loginVelidation=async(req,res)=>{
     res.status(500).send('Inernal server error please try again later.')
   }
 }
+
+
+
+
+// product review saving route 
 
 const productReview=async(req,res)=>{
   try {
@@ -430,6 +451,10 @@ const productReview=async(req,res)=>{
 }
 
 
+
+
+// validating the email and sent a mail with rest password link
+
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -448,6 +473,8 @@ const forgotPassword = async (req, res) => {
 
 
 
+
+// function for sending the email to the registerd user email
 
 async function sendResetPasswordLink(email, req, res) {
   const resetToken = crypto.randomBytes(32).toString('hex');
@@ -512,6 +539,8 @@ const resetPasswordPage = async (req, res) => {
 
 
 
+// validate the token and after that redirect the change password page and update the password
+
 const changePassword = async (req, res) => {
   const token = req.params.id
   const {password}  = req.body;
@@ -538,6 +567,10 @@ const changePassword = async (req, res) => {
   }
 };
 
+
+
+// rendering the route for profile
+
 const loadProfile = async(req,res)=>{
 try {
   const email = req.session.isLoggedEmail;
@@ -550,6 +583,9 @@ try {
 }
 
 
+
+// route for log out user
+
 const logOut=async(req,res)=>{
   try {
     res.status(200).redirect('/user/home');
@@ -558,6 +594,9 @@ const logOut=async(req,res)=>{
   } 
 }
 
+
+
+//google login route
 
 const googleLogin = async(req,res)=>{
   try {

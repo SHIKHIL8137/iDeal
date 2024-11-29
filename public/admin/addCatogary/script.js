@@ -47,13 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-  
+  // cancel the action and redirect to category
   document.getElementById('cancelbtn').addEventListener('click',function(){
     window.location.href = `/admin/category`;
   })
 
   
-
+// for alert box
 const alertBox = document.getElementById("alertBox");
 alertBox.classList.add("show");
 setTimeout(() => {
@@ -64,6 +64,9 @@ setTimeout(() => {
   }, 500); 
 }, 3000); 
 
+
+
+// remove the  params  from url after reloading the page
   if (window.location.search) {
     const url = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, url);

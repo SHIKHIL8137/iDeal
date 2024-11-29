@@ -1,3 +1,4 @@
+//hide and un hide the password
 document.getElementById('togglePassword').addEventListener('click',function(){
   const passwordField=document.getElementById('password');
   const type= passwordField.getAttribute('type')==="password"?"text":"password";
@@ -29,6 +30,8 @@ document.getElementById('emailForm').addEventListener('submit', function (e) {
     return;
   }
 
+
+  // validation for password grater than 8
   if (password.length < 8) {
     e.preventDefault();
     errMsg.innerHTML = 'The password should be a minimum of 8 characters';

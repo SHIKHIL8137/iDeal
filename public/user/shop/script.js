@@ -1,3 +1,4 @@
+// check the session and hide and unhide the button
 document.addEventListener("DOMContentLoaded", function () {
   const navbar = document.getElementById('checkSession');
   const sessionCheck = navbar.dataset.sessionCheck === 'true'; 
@@ -10,15 +11,19 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// redirect to login
 function redirectToLogin() {
   window.location.href = "/user/login";
 }
 
+// updata pric tag
 function updatePriceLabel() {
   const priceValue = document.getElementById('priceRange').value;
   document.getElementById('priceValue').innerText = `₹${priceValue}`;
 }
 
+
+// aply the filter actions
 function applyFilters() {
   const selectedPrice = document.getElementById('priceRange').value;
   const selectedColors = Array.from(document.querySelectorAll('.color-checkbox:checked')).map(cb => cb.value);
@@ -52,7 +57,7 @@ var tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="
 
 
 
-
+// wishlist heart icon
 function toggleHeart(element) {
   if (element.classList.contains("bi-heart")) {
     element.classList.remove("bi-heart");

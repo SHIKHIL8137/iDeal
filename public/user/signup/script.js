@@ -1,3 +1,5 @@
+
+// hide and unhide the password
 document.getElementById('togglePassword').addEventListener('click',function(){
   const passwordField=document.getElementById('password');
   const type= passwordField.getAttribute('type')==="password"?"text":"password";
@@ -11,6 +13,7 @@ document.getElementById('toggleCPassword').addEventListener('click',function(){
   this.innerHTML=type==="password"?' <i class="fa fa-eye" aria-hidden="true"></i>' : ' <i class="fa fa-eye-slash" aria-hidden="true"></i>';
 })
 
+// sign up form validation
 document.getElementById('signupForm').addEventListener('submit', function (e) {
   const password = document.getElementById('password').value;
   const conformPassword = document.getElementById('conformPassword').value;
@@ -47,7 +50,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
   }
 });
 
-
+// show ing the error message
 const serverMsgError=document.getElementById('serverMsg');
 if(serverMsgError){
   serverMsgError.classList.add('alert', 'alert-danger', 'text-center');

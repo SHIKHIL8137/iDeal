@@ -1,4 +1,4 @@
-
+// check the session an hide and unhide the login button
 document.addEventListener("DOMContentLoaded", function () {
   const navbar = document.getElementById('checkSession');
   const sessionCheck = navbar.dataset.sessionCheck === 'true'; 
@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 });
+
+// redirect to login page
 function redirectToLogin() {
   window.location.href = "/user/login";
 }
@@ -60,15 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-
+// reditrect to product details page 
 document.addEventListener('DOMContentLoaded', function() {
   const productCards = document.querySelectorAll('.arrival-card');
   
   productCards.forEach(card => {
     card.addEventListener('click', function(event) {
-      event.preventDefault();  // Prevent default behavior of the click
-      const productId = this.dataset.productId;  // Use productId, not categoryId
-      console.log(productId);  // Check the productId value
+      event.preventDefault();  
+      const productId = this.dataset.productId; 
+      console.log(productId);  
       if (productId) {
         window.location.href = `/user/productDetails/${productId}`;
       } else {

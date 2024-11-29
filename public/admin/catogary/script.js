@@ -67,7 +67,7 @@ document.getElementById('prevPage').addEventListener('click', goToPrevPage);
 
 renderTable();
 
-
+// showing the modal for delete conformation
 
 let categoryIdToDelete = null;
 function showDeleteModal(categoryId) {
@@ -76,12 +76,15 @@ function showDeleteModal(categoryId) {
   deleteModal.show();
 }
 
+// redirecting to edit category
+
 function showEdit(categoryId){
   if (categoryId) {
     window.location.href = `/admin/editCategory/${categoryId}`;
   }
 }
 
+// delete conformation
 
 document.getElementById('deleteConfirmButton').addEventListener('click', function () {
   if (categoryIdToDelete) {
@@ -90,6 +93,7 @@ document.getElementById('deleteConfirmButton').addEventListener('click', functio
 });
 
 
+// redirct to add category
 
 document.getElementById('addCategoryBtn').addEventListener('click', function () {
    console.log('cliked')
@@ -97,7 +101,7 @@ document.getElementById('addCategoryBtn').addEventListener('click', function () 
 });
 
 
-
+// for alert box
 const alertBox = document.getElementById("alertBox");
 alertBox.classList.add("show");
 setTimeout(() => {
@@ -109,6 +113,7 @@ setTimeout(() => {
 }, 3000); 
 
 
+// remove params form te url
 if (window.location.search) {
   const url = window.location.origin + window.location.pathname;
   window.history.replaceState({}, document.title, url);
