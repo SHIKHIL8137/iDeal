@@ -5,6 +5,7 @@ const nodeMailer=require('nodemailer');
 const { Product, Category ,Review} = require('../../model/adminModel');
 require('dotenv').config()
 const crypto = require('crypto');
+const mongoose = require('mongoose')
 
 const validColors = {
   pink: "#FFC0CB",
@@ -638,16 +639,33 @@ const productSearching = async (req, res) => {
 
 const sortedProduct = async (req, res) => {
   try {
-    // Extract and validate query parameter
-    const order = req.query.order?.toLowerCase();
-    const sortOrder = order === "desc" ? -1 : 1; // Default to ascending if invalid or missing
 
-    // Aggregate to sort products by price
+    const order = req.query.order?.toLowerCase();
+    const sortOrder = order === "desc" ? -1 : 1; 
+
+
     const products = await Product.aggregate([
       {
-        $sort: { price: sortOrder }
+        $lookup: {
+          from: 'categories',
+          localField: 'category', 
+          foreignField: '_id', 
+          as: 'categoryDetails' 
+        }
+      },
+      {
+        $unwind: '$categoryDetails' 
+      },
+      {
+        $match: {
+          'categoryDetails.status': true 
+        }
+      },
+      {
+        $sort: { price: sortOrder } 
       }
     ]);
+    
 
     if (!products.length) {
       return res.status(404).json({ message: 'No products found' });
@@ -660,6 +678,279 @@ const sortedProduct = async (req, res) => {
   }
 };
 
+// filter for  product
+
+const filterProduct = async (req, res) => {
+  try {
+    const { price, storage, connectivity, rating ,condition} = req.body;
+
+
+    const query = [];
+
+
+    if (price) {
+      query.push({
+        $match: {
+          price: { $lte: parseFloat(price) } 
+        }
+      });
+    }
+
+
+    if (storage && storage.length > 0) {
+      query.push({
+        $match: {
+          storage: { $in: storage.map(Number) } 
+        }
+      });
+    }
+
+
+    if (connectivity && connectivity.length > 0) {
+      query.push({
+        $match: {
+          connectivity: { $in: connectivity } 
+        }
+      });
+    }
+
+    if (rating && rating.length > 0) {
+      query.push({
+        $lookup: {
+          from: 'reviews',  
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'reviews' 
+        }
+      });
+
+      query.push({
+        $addFields: {
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: "$reviews" }, 0] },
+              then: { $avg: "$reviews.rating" },
+              else: 0 
+            }
+          }
+        }
+      });
+
+      query.push({
+        $match: {
+          averageRating: { $gte: Math.min(...rating), $lte: Math.max(...rating) }
+        }
+      });
+    }
+    if (condition && condition.length > 0) {
+      query.push({
+        $match: {
+          condition: { $in: condition } 
+        }
+      });
+    }
+
+    query.push({
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id', 
+        as: 'categoryDetails' 
+      }
+    });
+    
+
+    query.push({
+      $unwind: '$categoryDetails'
+    });
+    
+   
+    query.push({
+      $match: {
+        'categoryDetails.status': true
+      }
+    });
+
+
+    const products = await Product.aggregate(query);
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error filtering products:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+// sort the product in category route
+const sortCategoryProduct = async(req,res)=>{
+
+  try {
+    const productId = req.query.id
+    const order = req.query.order?.toLowerCase();
+    const sortOrder = order === "desc" ? -1 : 1; 
+ 
+    const products = await Product.aggregate([
+      {
+        $match: {
+          category: new mongoose.Types.ObjectId(productId), 
+        },
+      },
+      {
+        $sort: { price: sortOrder },
+      },
+    ]);
+
+
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+}
+
+
+// search the category product
+
+
+const categoryProductSearching = async (req, res) => {
+  const searchQuery = req.query.search || ''; 
+  const categoryId = req.query.id
+
+  try {
+    const products = await Product.find({
+      category : categoryId,
+      name: { $regex: searchQuery, $options: 'i' }, 
+    })
+      .populate({
+        path: 'category',
+        match: { status: true },
+      })
+      .populate('reviews');
+
+
+    const filteredProducts = products.filter((product) => product.category !== null);
+
+    res.json({ products: filteredProducts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while searching for products' });
+  }
+};
+
+// category shop filter
+
+
+const categoryShopFilter = async(req,res)=>{
+  try {
+    const categoryId = req.query.id
+    const { price, storage, connectivity, rating ,condition} = req.body;
+
+
+    const query = [];
+    query.push({
+      $match: {
+        category: new mongoose.Types.ObjectId(categoryId),
+      },
+    });
+
+    if (price) {
+      query.push({
+        $match: {
+          price: { $lte: parseFloat(price) } 
+        }
+      });
+    }
+
+
+    if (storage && storage.length > 0) {
+      query.push({
+        $match: {
+          storage: { $in: storage.map(Number) } 
+        }
+      });
+    }
+
+
+    if (connectivity && connectivity.length > 0) {
+      query.push({
+        $match: {
+          connectivity: { $in: connectivity } 
+        }
+      });
+    }
+
+    if (rating && rating.length > 0) {
+      query.push({
+        $lookup: {
+          from: 'reviews',  
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'reviews' 
+        }
+      });
+
+      query.push({
+        $addFields: {
+          averageRating: {
+            $cond: {
+              if: { $gt: [{ $size: "$reviews" }, 0] },
+              then: { $avg: "$reviews.rating" },
+              else: 0 
+            }
+          }
+        }
+      });
+
+      query.push({
+        $match: {
+          averageRating: { $gte: Math.min(...rating), $lte: Math.max(...rating) }
+        }
+      });
+    }
+    if (condition && condition.length > 0) {
+      query.push({
+        $match: {
+          condition: { $in: condition } 
+        }
+      });
+    }
+
+    query.push({
+      $lookup: {
+        from: 'categories',
+        localField: 'category',
+        foreignField: '_id', 
+        as: 'categoryDetails' 
+      }
+    });
+    
+
+    query.push({
+      $unwind: '$categoryDetails'
+    });
+    
+   
+    query.push({
+      $match: {
+        'categoryDetails.status': true
+      }
+    });
+
+
+    const products = await Product.aggregate(query);
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error filtering products:", error);
+    res.status(500).send("Internal Server Error");
+  }
+}
 
 
 
@@ -685,5 +976,9 @@ module.exports={
   logOut,
   googleLogin,
   productSearching,
-  sortedProduct
+  sortedProduct,
+  filterProduct,
+  sortCategoryProduct,
+  categoryProductSearching,
+  categoryShopFilter
 };

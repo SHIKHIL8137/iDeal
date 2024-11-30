@@ -21,11 +21,15 @@ router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
 router.get('/search',userController.productSearching)
 router.get('/sortProduct',userController.sortedProduct);
+router.get('/sortCategoryProduct',userController.sortCategoryProduct);
+router.get('/searchCategoryProduct',userController.categoryProductSearching);
+
 
 
 
 router.post('/productReview/:id',userController.productReview);
-
+router.post('/filterProducts',userController.filterProduct);
+router.post('/categoryShopFilter',userController.categoryShopFilter);
 router.post('/changePassword/:id', userController.changePassword);
 router.post('/register',userController.registerUserNormal);
 router.post('/otpVarification',userController.otpVerification)

@@ -48,12 +48,12 @@
           <div class="collapse show" id="priceFilter">
             <div class="d-flex justify-content-between">
               <small class="priceFontFilter">Min: ₹1000</small>
-              <small class="priceFontFilter">Max: ₹20000</small>
+              <small class="priceFontFilter">Max: ₹200000</small>
             </div>
-            <input type="range" id="priceRange" class="form-range" min="1000" max="20000" value="1000"
+            <input type="range" id="priceRange" class="form-range" min="1000" max="200000" value="200000"
               oninput="updatePriceLabel()">
             <div class="text-center">
-              <span class="priceFontFilter" id="priceValue">₹30000</span>
+              <span class="priceFontFilter" id="priceValue">₹200000</span>
             </div>
           </div>
         </div>
@@ -90,25 +90,6 @@
             </div>
           </div>
         </div>
-
-        <hr>
-        <div class="filter-section">
-          <div data-bs-toggle="collapse" href="#categoryFilter" role="button" aria-expanded="false"
-            aria-controls="categoryFilter">
-            <label class="filter-title">Category</label>
-          </div>
-          <div class="collapse" id="categoryFilter">
-            <div>
-              <% if (categories && categories.length > 0) { %>
-                <% categories.forEach(category => { %>
-                  <input type="checkbox" value="<%= category %>"> <%= category %> Series<br>
-                <% }); %>
-              <% } else { %>
-                <p>No categories available</p>
-              <% } %>
-            </div>
-          </div>          
-        </div>
         <hr>
         <div class="filter-section">
           <div data-bs-toggle="collapse" href="#ratingFilter" role="button" aria-expanded="false"
@@ -125,8 +106,22 @@
             </div>
           </div>
         </div>
+        <hr>
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#conditionFilter" role="button" aria-expanded="false"
+            aria-controls="conditionFilter">
+            <label class="filter-title">Condition</label>
+          </div>
+          <div class="collapse" id="conditionFilter">
+            <div>
+              <input type="checkbox" class="condition-checkbox" value="super"> Super <br>
+              <input type="checkbox" class="condition-checkbox" value="good"> Good <br>
+              <input type="checkbox" class="condition-checkbox" value="fair"> Fair <br>
+            </div>
+          </div>
+        </div>
 
-        
+        <hr>
         
         <button class="btn btn-primary mt-4" onclick="applyFilters()">Filter</button>
       </div>
@@ -139,8 +134,8 @@
               Sort By
             </button>
             <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="sortDropdown">
-              <li><button class="dropdown-item" href="#" onclick="sortProduct('acs')">Price (Low-High)</button></li>
-              <li><button class="dropdown-item" href="#" onclick="sortProduct('desc')">Price (High-Low)</button></li>
+              <li><button class="dropdown-item" onclick="sortProduct('acs')">Price (Low-High)</button></li>
+              <li><button class="dropdown-item"  onclick="sortProduct('desc')">Price (High-Low)</button></li>
             </ul>
           </div>
         </div>

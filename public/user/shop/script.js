@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-//Product fillter
+//Product fillter by price order
 
 async function sortProduct(order) {
   try {
@@ -210,3 +210,84 @@ async function sortProduct(order) {
 
 // product filtering
 
+async function applyFilters() {
+  let priceRange = document.getElementById('priceRange').value;
+  let storageValues = Array.from(document.querySelectorAll('.storage-checkbox:checked')).map(e => e.value);
+  let connectivityValues = Array.from(document.querySelectorAll('.connectivity-checkbox:checked')).map(e => e.value);
+  let ratingValues = Array.from(document.querySelectorAll('.rating-checkbox:checked')).map(e => e.value);
+  let conditionValue = Array.from(document.querySelectorAll('.condition-checkbox:checked')).map(e => e.value);
+
+
+  let filterData = {
+    price: priceRange || null, 
+    storage: storageValues.length > 0 ? storageValues : null, 
+    connectivity: connectivityValues.length > 0 ? connectivityValues : null,
+    rating: ratingValues.length > 0 ? ratingValues : null,
+    condition: conditionValue.length > 0 ? conditionValue : null
+  };
+  
+
+  try {
+    const response = await fetch(`/user/filterProducts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(filterData)
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch filtered products");
+
+    const products = await response.json();
+    console.log(products);
+
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = ""; 
+
+    products.forEach((product) => {
+      const averageRating =
+        product.reviews.length > 0
+          ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+          : 0;
+
+      const productCard = document.createElement("div");
+      productCard.classList.add("card", "h-100", "shadow", "arrival-card", "m-2");
+      productCard.style.minWidth = "200px";
+      productCard.style.maxWidth = "250px";
+
+      productCard.innerHTML = `
+      <div class="image-container position-relative m-4">
+        <img src="${product.images && product.images[0] ? product.images[0] : 'fallback-image-url.jpg'}"
+             class="card-img-top img-fluid" alt="${product.name || 'Product'}">
+        <i class="bi bi-heart heart-icon" onclick="toggleHeart(this)"></i>
+      </div>
+      <div class="card-body text-start product-card" data-product-id="${product._id}">
+        <h6 class="card-title mb-1">${product.name || 'Unnamed Product'}</h6>
+        <p class="text-muted mb-1 cardPrice">
+          Storage: <strong>${product.storage >= 1000 ? (product.storage / 1024).toFixed(2) + ' TB' : product.storage + ' GB'}</strong>
+        </p>
+        <p class="text-success fw-bold mb-0 cardPrice">Price: ₹${product.price || 'N/A'}</p>
+        <p class="text-muted mb-0">
+          ${product.reviews.length > 0 
+            ? `<span class="rating-stars filled-star" data-bs-toggle="tooltip" title="${averageRating.toFixed(1)} stars">
+                ${'★'.repeat(Math.round(averageRating))}
+                ${'☆'.repeat(5 - Math.round(averageRating))}
+              </span>`
+            : `<span class="rating-stars empty-star" data-bs-toggle="tooltip" title="No reviews yet">${'☆'.repeat(5)}</span>`}
+          (<span data-bs-toggle="tooltip" title="Total reviews">${product.reviews.length || 0}</span> reviews)
+        </p>
+      </div>
+    `;
+      productList.appendChild(productCard);
+    });
+
+    // Initialize Bootstrap tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+  } catch (error) {
+    console.error("Error applying filters:", error);
+  }
+}
