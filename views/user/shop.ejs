@@ -48,9 +48,9 @@
           <div class="collapse show" id="priceFilter">
             <div class="d-flex justify-content-between">
               <small class="priceFontFilter">Min: ₹1000</small>
-              <small class="priceFontFilter">Max: ₹200000</small>
+              <small class="priceFontFilter">Max: ₹20000</small>
             </div>
-            <input type="range" id="priceRange" class="form-range" min="1000" max="200000" value="30000"
+            <input type="range" id="priceRange" class="form-range" min="1000" max="20000" value="1000"
               oninput="updatePriceLabel()">
             <div class="text-center">
               <span class="priceFontFilter" id="priceValue">₹30000</span>
@@ -109,24 +109,43 @@
             </div>
           </div>          
         </div>
+        <hr>
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#ratingFilter" role="button" aria-expanded="false"
+            aria-controls="ratingFilter">
+            <label class="filter-title">Rating</label>
+          </div>
+          <div class="collapse" id="ratingFilter">
+            <div>
+              <input type="checkbox" class="rating-checkbox" value="5"> 5 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="4"> 4 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="3"> 3 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="2"> 2 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="1"> 1 ★<br>
+            </div>
+          </div>
+        </div>
+
+        
+        
         <button class="btn btn-primary mt-4" onclick="applyFilters()">Filter</button>
       </div>
       <div class="col-md-9 productListShop">
         <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
           <h2>Products</h2>
-          <input type="text" class="form-control w-25 searchBarShope" placeholder="Search">
+          <input type="text" class="form-control w-25 searchBarShope" placeholder="Search" id="searchInput">
           <div class="dropdown">
             <button class="btn dropdown-toggle dropbtn" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               Sort By
             </button>
             <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="sortDropdown">
-              <li><a class="dropdown-item" href="#" onclick="sortProducts('price')">Price (Low-High)</a></li>
-              <li><a class="dropdown-item" href="#" onclick="sortProducts('price')">Price (High-Low)</a></li>
+              <li><button class="dropdown-item" href="#" onclick="sortProduct('acs')">Price (Low-High)</button></li>
+              <li><button class="dropdown-item" href="#" onclick="sortProduct('desc')">Price (High-Low)</button></li>
             </ul>
           </div>
         </div>
         <hr>     
-        <div class="d-flex flex-wrap justify-content-center align-items-stretch">
+        <div class="d-flex flex-wrap justify-content-center align-items-stretch" id="product-list">
           <% productDetails.forEach(product => { %>
             <div class="card h-100 shadow arrival-card m-2" style="min-width: 200px; max-width: 250px;" >
               <div class="image-container position-relative m-4">

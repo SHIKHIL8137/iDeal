@@ -3,23 +3,23 @@
 
 
 
-const rowsPerPage = 10; // Number of rows per page
+const rowsPerPage = 10; 
 let currentPage = 1;
-let products = JSON.parse(document.getElementById('userData').textContent);  // Ensure correct data
+let products = JSON.parse(document.getElementById('userData').textContent); 
 
-console.log(products);  // Check the loaded data
-
-let productIdToDelete = null;  // Variable to store product ID for deletion
+let productIdToDelete = null; 
 
 // Function to render the product table
 function renderTable() {
   const tableBody = document.getElementById('productTableBody');
-  tableBody.innerHTML = '';  // Clear the table body before re-rendering
-
+  tableBody.innerHTML = ''; 
   if (products.length === 0) {
     tableBody.innerHTML = `<tr><td colspan="6" class="text-center">No products available.</td></tr>`;
     return;
   }
+
+  // Sort products by 'createdAt' in descending order (newest first)
+  products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = Math.min(startIndex + rowsPerPage, products.length);
@@ -61,6 +61,7 @@ function renderTable() {
   document.querySelector('.showing1-10Text').textContent = `Showing ${startIndex + 1}-${endIndex} from ${products.length}`;
   updatePaginationButtons();
 }
+
 
 // Pagination logic to go to the next page
 function goToNextPage() {

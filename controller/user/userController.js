@@ -608,6 +608,61 @@ const googleLogin = async(req,res)=>{
 }
 
 
+// shop product searching
+
+const productSearching = async (req, res) => {
+  const searchQuery = req.query.search || ''; 
+
+  try {
+    const products = await Product.find({
+      name: { $regex: searchQuery, $options: 'i' }, 
+    })
+      .populate({
+        path: 'category',
+        match: { status: true },
+      })
+      .populate('reviews');
+
+
+    const filteredProducts = products.filter((product) => product.category !== null);
+
+    res.json({ products: filteredProducts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while searching for products' });
+  }
+};
+
+
+// product sorting
+
+const sortedProduct = async (req, res) => {
+  try {
+    // Extract and validate query parameter
+    const order = req.query.order?.toLowerCase();
+    const sortOrder = order === "desc" ? -1 : 1; // Default to ascending if invalid or missing
+
+    // Aggregate to sort products by price
+    const products = await Product.aggregate([
+      {
+        $sort: { price: sortOrder }
+      }
+    ]);
+
+    if (!products.length) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+
 
 module.exports={
   loadlogin ,
@@ -628,5 +683,7 @@ module.exports={
   changePassword,
   loadProfile,
   logOut,
-  googleLogin
+  googleLogin,
+  productSearching,
+  sortedProduct
 };

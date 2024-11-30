@@ -11,6 +11,9 @@ function renderTable() {
     return;
   }
 
+  // Sort categories by 'createdAt' in descending order (newest first)
+  category.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = Math.min(startIndex + rowsPerPage, category.length);
 
@@ -37,6 +40,7 @@ function renderTable() {
   document.querySelector('.showing1-10Text').textContent = `Showing ${startIndex + 1}-${endIndex} from ${category.length}`;
   updatePaginationButtons();
 }
+
 
 // Function to go to the next page
 function goToNextPage() {

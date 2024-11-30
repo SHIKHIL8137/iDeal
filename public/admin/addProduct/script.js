@@ -1,3 +1,10 @@
+// cancel teh adding product process
+document.getElementById('cancelbtn').addEventListener('click',(e)=>{
+  e.preventDefault()
+  window.location.href = '/admin/product'
+})
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
   const errorMessages = document.querySelectorAll(".error-message");
@@ -188,6 +195,7 @@ const alertBox = document.getElementById("alertBox");
       alertBox.style.display = "none";
     }, 500); 
   }, 3000); 
+
 
 
   // remove the params from the url

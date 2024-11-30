@@ -19,7 +19,8 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
 router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
-
+router.get('/search',userController.productSearching)
+router.get('/sortProduct',userController.sortedProduct);
 
 
 

@@ -14,6 +14,9 @@ function renderTable() {
     return;
   }
 
+  // Sort userDetails by 'createdAt' in descending order (newest first)
+  userDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = Math.min(startIndex + rowsPerPage, userDetails.length);
 
@@ -41,6 +44,7 @@ function renderTable() {
 
   document.querySelector('.showing1-10Text').textContent = `Showing ${startIndex + 1}-${endIndex} from ${userDetails.length}`;
 }
+
 
 function goToNextPage() {
   if (currentPage * rowsPerPage < userDetails.length) {

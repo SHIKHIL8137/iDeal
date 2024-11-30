@@ -97,7 +97,24 @@ function viewImage(event, index) {
   reader.readAsDataURL(input.files[0]);
 }
 
+// code modal conforming the change
 
+document.getElementById('submitButton').addEventListener('click', function () {
+
+  const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+  confirmationModal.show();
+});
+
+document.getElementById('confirmSubmit').addEventListener('click', function () {
+
+  document.querySelector('form').submit();
+});
+
+// cancel the edit
+document.getElementById('cancelbtn').addEventListener('click',(e)=>{
+  e.preventDefault()
+  window.location.href = '/admin/product'
+})
 
 
 

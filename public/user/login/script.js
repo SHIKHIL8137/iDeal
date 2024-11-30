@@ -7,6 +7,41 @@ document.getElementById('togglePassword').addEventListener('click',function(){
   this.innerHTML=type==="password"?' <i class="fa fa-eye" aria-hidden="true"></i>' : ' <i class="fa fa-eye-slash" aria-hidden="true"></i>';
 })
 
+// validation for email and password
+document.getElementById('loginForm').addEventListener('submit', (e) => {
+  const email = document.getElementById('email').value.trim(); 
+  const password = document.getElementById('password').value.trim(); 
+  const errMsg = document.getElementById('errorMsg');
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) { 
+    e.preventDefault();
+    errMsg.innerHTML = 'Enter a valid email address';
+    errMsg.classList.add('alert', 'alert-danger', 'text-center');
+    errMsg.style.fontSize = '12px';
+    errMsg.style.display = 'block';
+    setTimeout(() => {
+      errMsg.innerHTML = '';
+      errMsg.style.display = 'none';
+    }, 3000);
+  } else if (password === "") { 
+    e.preventDefault();
+    errMsg.innerHTML = 'Invalid password';
+    errMsg.classList.add('alert', 'alert-danger', 'text-center');
+    errMsg.style.fontSize = '12px';
+    errMsg.style.display = 'block';
+    setTimeout(() => {
+      errMsg.innerHTML = '';
+      errMsg.style.display = 'none';
+    }, 3000);
+  }
+});
+
+
+
+
+
 
 // for alert box
 const alertBox = document.getElementById("alertBox");

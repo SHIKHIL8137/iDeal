@@ -116,3 +116,24 @@
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
+
+  .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .modal-footer .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+  }

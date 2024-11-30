@@ -1,3 +1,18 @@
+// code modal conforming the change
+
+document.getElementById('submitButton').addEventListener('click', function () {
+
+  const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+  confirmationModal.show();
+});
+
+document.getElementById('confirmSubmit').addEventListener('click', function () {
+
+  document.querySelector('form').submit();
+});
+
+
+
 // validating the new mail id 
 let debounceTimeout;
 const submitButton = document.getElementById('submitButton');
@@ -49,7 +64,6 @@ async function checkEmail(event) {
 
 // Attach the event listener to your input field
 document.getElementById('emailInput').addEventListener('input', checkEmail);
-
 
 
 

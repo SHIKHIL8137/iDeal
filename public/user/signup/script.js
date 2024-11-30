@@ -15,40 +15,45 @@ document.getElementById('toggleCPassword').addEventListener('click',function(){
 
 // sign up form validation
 document.getElementById('signupForm').addEventListener('submit', function (e) {
-  const password = document.getElementById('password').value;
-  const conformPassword = document.getElementById('conformPassword').value;
+  const password = document.getElementById('password').value.trim();
+  const confirmPassword = document.getElementById('conformPassword').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+
   const errMsg = document.getElementById('errorMsg');
-  const checkBox=document.getElementById('agreeCheckBox')
-  const agreetext=document.getElementById('agreetxt');
-   console.log(typeof password)
-  if (password !== conformPassword) {
+  const checkBox = document.getElementById('agreeCheckBox');
+  const agreeText = document.getElementById('agreetxt');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Reusable function to show error messages
+  const showError = (message) => {
     e.preventDefault();
-    errMsg.innerHTML = 'The password and confirm password do not match';
-    errMsg.classList.add('alert', 'alert-danger', 'text-center')
-    errMsg.style.fontSize='12px'
+    errMsg.innerHTML = message;
+    errMsg.classList.add('alert', 'alert-danger', 'text-center');
+    errMsg.style.fontSize = '12px';
+    errMsg.style.display = 'block';
     setTimeout(() => {
       errMsg.innerHTML = '';
       errMsg.style.display = 'none';
     }, 3000);
-  }else if(!checkBox.checked){
+  };
+
+  if (username === "") return showError('Enter a valid username');
+  if (!emailRegex.test(email)) return showError('Enter a valid email address');
+  if (password.length < 8) return showError('The password should be at least 8 characters');
+  if (password !== confirmPassword) return showError('The password and confirm password do not match');
+
+  if (!checkBox.checked) {
     e.preventDefault();
-    agreetext.classList.add('shake');
-    agreetext.style.color='red';
+    agreeText.classList.add('shake');
+    agreeText.style.color = 'red';
     setTimeout(() => {
-      agreetext.style.color='';
-      agreetext.classList.remove('shake');
+      agreeText.style.color = '';
+      agreeText.classList.remove('shake');
     }, 1000);
-  }else if(password.length<8){
-    e.preventDefault();
-    errMsg.innerHTML = 'The password should be minimum 8 characters';
-    errMsg.classList.add('alert', 'alert-danger', 'text-center')
-    errMsg.style.fontSize='12px'
-    setTimeout(() => {
-      errMsg.innerHTML = '';
-      errMsg.style.display = 'none';
-    }, 3000);
   }
 });
+
 
 // show ing the error message
 const serverMsgError=document.getElementById('serverMsg');
