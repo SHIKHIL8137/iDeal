@@ -1,0 +1,217 @@
+<%- include('partials/header.ejs') -%>
+    <link rel="stylesheet" href="/user/checkOut/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/user-circle.svg" alt=""></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
+          <li class="nav-item text-white">2</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<div class="container">
+  <div class="row chechoutRow">
+    <div class="col-md-8">
+      <div class="mb-5 ">
+        <div data-bs-toggle="collapse" href="#deliveryAddress" role="button" aria-expanded="false"
+          aria-controls="deliveryAddress">
+          <h4>Delivery Address</h4>
+        </div>
+        <div class="collapse" id="deliveryAddress">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="address" id="address1" checked>
+            <label class="form-check-label" for="address1">
+              <b>Shikhil K</b> &nbsp;&nbsp; 8137046575<br>
+              Kalarickal (H), Mapranam PO Madayikonam<br>
+              India, Kerala, Thrissur, Pin: 680712<br>
+              shikhilks@gmail.com
+            </label>
+            <div class="float-end">
+              <button class="btn btn-outline-primary">Edit</button>
+              <button class="btn btn-outline-danger ms-2">Delete</button>
+            </div>
+          </div>
+          <hr>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="address" id="address2">
+            <label class="form-check-label" for="address2">
+              <b>Shikhil K</b> &nbsp;&nbsp; 8137046575<br>
+              Kalarickal (H), Mapranam PO Madayikonam<br>
+              India, Kerala, Thrissur, Pin: 680712<br>
+              shikhilks@gmail.com
+            </label>
+            <div class="float-end">
+              <button class="btn btn-outline-primary">Edit</button>
+              <button class="btn btn-outline-danger ms-2">Delete</button>
+            </div>
+          </div>
+          <button class="btn btn-primary mt-3">Add address</button>
+        </div>
+        
+      </div>
+      <div class="mb-5">
+        <div data-bs-toggle="collapse" href="#billingAddress" role="button" aria-expanded="false"
+          aria-controls="billingAddress">
+          <h4>Billing Information</h4>
+        </div>
+        <div class="collapse" id="billingAddress">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="First Name" required>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Last Name" required>
+          </div>
+          <div class="col-md-12">
+            <input type="text" class="form-control" placeholder="Company Name (Optional)">
+          </div>
+          <div class="col-md-12">
+            <textarea class="form-control" rows="2" placeholder="Address"></textarea>
+          </div>
+          <div class="col-md-6">
+            <select class="form-select">
+              <option selected disabled>Country</option>
+              <option>India</option>
+              <option>USA</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <select class="form-select">
+              <option selected disabled>Region/State</option>
+              <option>Kerala</option>
+              <option>Tamil Nadu</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="City">
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Zip Code">
+          </div>
+          <div class="col-md-6">
+            <input type="email" class="form-control" placeholder="Email">
+          </div>
+          <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Phone Number">
+          </div>
+          <div class="col-12">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="sameAsDelivery">
+              <label class="form-check-label" for="sameAsDelivery">Same as delivery address</label>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="mb-5">
+        <div data-bs-toggle="collapse" href="#payment" role="button" aria-expanded="false"
+          aria-controls="payment">
+          <h4>Payment Option</h4>
+        </div>
+        <div class="collapse" id="payment">
+        <div class="d-flex align-items-center justify-content-around py-3 ">
+          <!-- Cash on Delivery -->
+          <div class="text-center">
+            <img src="https://img.icons8.com/ios-filled/50/cash-on-delivery.png" alt="Cash on Delivery" width="40" class="logoCOD">
+            <p class="mb-0 mt-2">Cash on Delivery</p>
+            <input class="form-check-input mt-2" type="radio" name="payment" id="cod" checked>
+          </div>
+          <!-- Divider -->
+          <div class="border-start mx-4" style="height: 50px;"></div>
+          <!-- Razorpay -->
+          <div class="text-center">
+            <img src="/image/icons/razorpay-icon.png" alt="Razorpay" width="40" class="logoCOD">
+            <p class="mb-0 mt-2">Razorpay</p>
+            <input class="form-check-input mt-2" type="radio" name="payment" id="razorpay">
+          </div>
+          <!-- Divider -->
+          <div class="border-start mx-4" style="height: 50px;"></div>
+          <!-- My Wallet -->
+          <div class="text-center">
+            <img src="https://img.icons8.com/material-outlined/50/wallet.png" alt="My Wallet" width="40" class="logoCOD">
+            <p class="mb-0 mt-2">My Wallet</p>
+            <input class="form-check-input mt-2" type="radio" name="payment" id="wallet">
+          </div>
+        </div>
+      </div>
+      </div>
+      
+    </div>
+    <div class="col-md-4">
+      <div class="cart-summary">
+        <h5>Summary</h5>
+        <p>Sub-total: <span class="float-end">₹71,998</span></p>
+        <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
+        <p>Discount: <span class="float-end text-danger">₹1,999</span></p>
+        <p>Coupen Discount: <span class="float-end text-danger">₹1,999</span></p>
+        <hr>
+        <p>Total: <span class="float-end">₹69,999</span></p>
+        <button class="btn btn-primary btn-block mt-4 w-100">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Logo and Tagline -->
+        <div class="col-md-4 text-center text-md-start">
+          <div class="footer-logo">
+            <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
+            <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+          </div>
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="col-md-4 text-center">
+          <a href="/user/home">Home</a>
+          <a href="/user/shop">Shop</a>
+          <a href="#">About Us</a>
+          <a href="#">Contact Us</a>
+        </div>
+        
+        <!-- Social Media Icons -->
+        <div class="col-md-4 text-center text-md-end social-icons pt-3">
+          <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center text-md-start">
+          <small class="footerSpan">Copyright © 2023 iDeal. All rights reserved.</small>
+        </div>
+        <div class="col text-center text-md-end">
+          <a href="#" class="footerSpan">Privacy Policy</a>
+          <a href="#" class="footerSpan">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="/user/checkOut/script.js"></script>
+
+
+  <%- include('partials/footer.ejs') -%>

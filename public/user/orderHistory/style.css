@@ -1,0 +1,135 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+ input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+    body {
+      background-color: #121212;
+      color: white;
+    }
+    .sidebar {
+      height: 308px;
+      background-color: #121212;
+      color: white;
+      width: 300px;
+      padding:0;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #b8b8b8;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #001569;
+    }
+    .sidebar a i {
+      margin-right: 15px;
+    }
+    .sidebar a.active {
+      background-color: #001569;
+    }
+
+    .footer {
+      background-color: #121212;
+      color: #fff;
+      padding: 20px 0;
+      margin-top: 18vh;
+    }
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.9rem;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer .footer-logo img {
+      width: 70px;
+      margin-right: 8px;
+      margin-bottom: 6px;
+    }
+    .footer .social-icons a {
+      color: #fff;
+      margin: 0 8px;
+      font-size: 1.2rem;
+    }
+    .footer hr {
+      border-color: #444;
+      margin: 10px 0;
+    }
+    .footerSpan{
+      font-size: .8em;
+      font-weight: 200;
+    }
+/* #container-div{
+  height: 100vh;
+} */
+  
+.pageMainrow{
+  margin-top: 100px;
+}
+.table{
+  --bs-table-bg: transparent;
+  --bs-table-color: white;
+  --bs-table-border-color : rgba(255, 255, 255, 0.308);
+}
+.showing1-10Text{
+  color: #b8b8b8;
+  font-size: 13px;
+}
+.page-link{
+  background-color: transparent;
+
+}
+.table-hover tbody tr:hover {
+  background-color: #222222 ;
+  --bs-table-hover-color : white;
+}
+.ratingBtn{
+  border: none;
+  background-color: transparent;
+  color: rgb(36, 36, 255);
+}
+thead tr th{
+  font-size: 17px;
+}
+tbody tr td{
+  font-size: 15px;
+}
+.modal-content{
+  background-color: #121212;
+  padding: 20px;
+}
+#feedback{
+  background-color: #1d1d1d;
+  color: white;
+  border: none;
+}
+#feedback::placeholder{
+  color: white;
+}
+.custom-btn{
+  filter: invert(1); 
+  opacity: 1;
+}
+.form-check-label{
+  font-size: 13px;
+}

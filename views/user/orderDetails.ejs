@@ -1,0 +1,144 @@
+<%- include('partials/header.ejs') -%>
+    <link rel="stylesheet" href="/user/orderDetails/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/user-circle.svg" alt=""></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
+          <li class="nav-item text-white">2</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="h-100 gradient-custom" style="background-color: transparent; color: #fff;">
+    <div class="container py-5 h-80">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-10 col-xl-8">
+          <div class="card" style="border-radius: 10px; background-color: #1a1a1a; border: 1px solid #333;">
+            <div class="card-header px-4 py-5" style="background-color: #333;">
+              <h5 class="mb-0" style="color: #ffffff;">Thanks for your Order, <span style="color: #ffffff;">Anna</span>!</h5>
+            </div>
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>
+                <p class="small  mb-0" style="color: #bbb;">Receipt Voucher : 1KAU9-84UIL</p>
+              </div>
+              <div class="card shadow-0 border mb-4" style="background-color: #2a2a2a;">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/13.webp"
+                        class="img-fluid" alt="Phone">
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0" style="color: #fff;">Samsung Galaxy</p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small" style="color: #bbb;">White</p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small" style="color: #bbb;">Capacity: 64GB</p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small" style="color: #bbb;">Qty: 1</p>
+                    </div>
+                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                      <p class=" mb-0 small" style="color: #bbb;">$499</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between pt-2">
+                <p class="fw-bold mb-0" style="color: #fff;">Order Details</p>
+                <p class=" mb-0" style="color: #bbb;"><span class="fw-bold me-4">Total</span> $898.00</p>
+              </div>
+  
+              <div class="d-flex justify-content-between pt-2">
+                <p class=" mb-0" style="color: #bbb;">Invoice Number : 788152</p>
+                <p class=" mb-0" style="color: #bbb;"><span class="fw-bold me-4">Discount</span> $19.00</p>
+              </div>
+              <div class="d-flex justify-content-between mb-5">
+                <p class=" mb-0" style="color: #bbb;">Receipts Voucher : 18KU-62IIK</p>
+                <p class=" mb-0" style="color: #bbb;"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+              </div>
+  
+              <!-- Cancel and Return Buttons -->
+              <div class="d-flex justify-content-between mb-4">
+                <button type="button" class="btn btn-outline-danger">Cancel Order</button>
+                <button type="button" class="btn btn-outline-success">Return Order</button>
+              </div>
+            </div>
+            <div class="card-footer border-0 px-4 py-5"
+              style="background-color: rgb(56, 56, 56); border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+              <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+                paid: <span class="h2 mb-0 ms-2">$1040</span></h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Logo and Tagline -->
+        <div class="col-md-4 text-center text-md-start">
+          <div class="footer-logo">
+            <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
+            <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+          </div>
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="col-md-4 text-center">
+          <a href="/user/home">Home</a>
+          <a href="/user/shop">Shop</a>
+          <a href="#">About Us</a>
+          <a href="#">Contact Us</a>
+        </div>
+        
+        <!-- Social Media Icons -->
+        <div class="col-md-4 text-center text-md-end social-icons pt-3">
+          <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center text-md-start">
+          <small class="footerSpan">Copyright © 2023 iDeal. All rights reserved.</small>
+        </div>
+        <div class="col text-center text-md-end">
+          <a href="#" class="footerSpan">Privacy Policy</a>
+          <a href="#" class="footerSpan">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="/user/orderDetails/script.js"></script>
+
+
+  <%- include('partials/footer.ejs') -%>

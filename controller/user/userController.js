@@ -954,6 +954,57 @@ const categoryShopFilter = async(req,res)=>{
 
 
 
+// load order history page
+
+
+const loadOrderHistory = async(req,res)=>{
+try {
+
+  res.status(200).render('user/orderHistory');
+
+} catch (error) {
+  res.status(500).send('Internal Server Error');
+}
+
+}
+
+
+// load order detailes page
+
+const loadOrderDetails = async(req,res)=>{
+  try {
+    res.status(200).render('user/orderDetails');
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+
+// load cart page
+
+
+const loadCart = async(req,res)=>{
+try {
+  res.status(200).render('user/cart');
+} catch (error) {
+  res.status(500).send('Internal Server Error')
+}
+}
+
+
+// load Checkout page
+
+const loadCheckout =  async(req,res)=>{
+try {
+  res.status(200).render('user/checkOut');
+} catch (error) {
+  res.status(500).send('Internal Server Error')
+}
+
+}
+
+
 
 module.exports={
   loadlogin ,
@@ -980,5 +1031,9 @@ module.exports={
   filterProduct,
   sortCategoryProduct,
   categoryProductSearching,
-  categoryShopFilter
+  categoryShopFilter,
+  loadOrderHistory,
+  loadOrderDetails,
+  loadCart,
+  loadCheckout
 };

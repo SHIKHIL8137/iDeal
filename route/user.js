@@ -23,6 +23,10 @@ router.get('/search',userController.productSearching)
 router.get('/sortProduct',userController.sortedProduct);
 router.get('/sortCategoryProduct',userController.sortCategoryProduct);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
+router.get('/orderHistory',userController.loadOrderHistory);
+router.get('/orderDetails',userController.loadOrderDetails)
+router.get('/cart',userController.loadCart)
+router.get('/checkOut',userController.loadCheckout)
 
 
 
