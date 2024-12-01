@@ -1006,6 +1006,72 @@ try {
 
 
 
+//load address page
+
+const loadAddress = async(req,res)=>{
+  try {
+    res.status(200).render('user/address');
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+//load conformation page
+
+const loadOrderConformation = async(req,res)=>{
+  try {
+    res.status(200).render('user/orderConformation');
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+// save the user data
+
+const userDetailsSave = async(req,res)=>{
+  try {
+  const {fname,lname,username,email,secondEmail,phone} = req.body;
+
+  const updateFields = {};
+    if (fname) updateFields.fname = fname;
+    if (lname) updateFields.lname = lname;
+    if (username) updateFields.username = username;
+    if (secondEmail) updateFields.secondEmail = secondEmail;
+    if (phone) updateFields.phone = phone;
+
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).send('No fields provided for update');
+    }
+
+    const result = await User.updateOne(
+      {email:req.session.isLoggedEmail}
+    )
+
+  } catch (error) {
+    res.status(500).send('Internal Server Error')
+  }
+}
+
+// ajax for checking the email exist or not
+
+const checkEmail=async(req,res)=>{
+  try {
+    const email= req.query.email;
+    if(!email){
+      return res.status(400).json({error:'Email is required'})
+    }
+    const user = await User.findOne({ email });
+  
+  res.json({ exists : !!user}); 
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
+}
+
+
+
+
 module.exports={
   loadlogin ,
   loadsignUp,
@@ -1035,5 +1101,9 @@ module.exports={
   loadOrderHistory,
   loadOrderDetails,
   loadCart,
-  loadCheckout
+  loadCheckout,
+  loadAddress,
+  loadOrderConformation,
+  userDetailsSave,
+  checkEmail
 };

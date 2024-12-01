@@ -58,29 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const alertBox = document.getElementById("alertBox");
 alertBox.classList.add("show");
 setTimeout(() => {

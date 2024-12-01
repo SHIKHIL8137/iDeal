@@ -6,7 +6,6 @@ const userRoute=require('./route/user');
 const adminRoute=require('./route/admin');
 const connectDB=require('./config/connectDB');
 const session=require('express-session');
-const { strict } = require('assert');
 const passport=require('./config/passport')
 
 

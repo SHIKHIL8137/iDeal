@@ -25,6 +25,11 @@ router.get('/dashboard',adminAuth.isLoggedIn,adminController.loadDashboard);
 router.get('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
+router.get('/orders',adminController.loadOrder)
+router.get('/orderDetails',adminController.loadDetails);
+
+
+
 
 
 router.post('/addProduct',uploads.array("images",4),adminController.addProducts);

@@ -17,7 +17,7 @@ router.get('/productDetails/:id',userController.loadProductDetails);
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/user/signUp'}),userMiddleWare.storeSessionEmail,userController.googleLogin)
 router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
-router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
+router.get('/userProfile',userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
 router.get('/search',userController.productSearching)
 router.get('/sortProduct',userController.sortedProduct);
@@ -27,6 +27,9 @@ router.get('/orderHistory',userController.loadOrderHistory);
 router.get('/orderDetails',userController.loadOrderDetails)
 router.get('/cart',userController.loadCart)
 router.get('/checkOut',userController.loadCheckout)
+router.get('/address',userController.loadAddress);
+router.get('/loadOrderConformation',userController.loadOrderConformation);
+router.get('/check-email',userController.checkEmail);
 
 
 
@@ -40,7 +43,7 @@ router.post('/otpVarification',userController.otpVerification)
 router.post('/resend-otp',userController.resendPassword)
 router.post('/loginVelidation',userController.loginVelidation)
 router.post('/forgotPassword',userController.forgotPassword);
-
+router.post('/saveUserDetails',userController.userDetailsSave);
 
 
 

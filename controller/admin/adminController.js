@@ -737,7 +737,34 @@ const changePassword = async (req, res) => {
 };
 
 
+// orders page load
 
+
+const loadOrder = async(req,res)=>{
+try {
+  const username=req.session.username;
+  const message=req.query.message;
+  const products=await Product.find().populate('category');
+  res.status(200).render('admin/orders',{message,username,products})
+} catch (error) {
+  console.log(error)
+  res.status(500).send("Internal Server Error");
+}
+}
+
+
+// load loadDetilas page
+
+const loadDetails = async(req,res)=>{
+  try {
+  const username=req.session.username;
+  const message=req.query.message;
+  const products=await Product.find().populate('category');
+    res.status(200).render('admin/orderDetails',{message,username,products});
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+}
 
 
 
@@ -789,5 +816,7 @@ module.exports={
  deleteProductImage,
  forgotPassword,
  resetPasswordPage,
- changePassword
+ changePassword,
+ loadOrder,
+ loadDetails
 }

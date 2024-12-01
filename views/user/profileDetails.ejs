@@ -4,7 +4,7 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     rel="stylesheet"
   >
-    <link rel="stylesheet" href="/user/porfileDetails/style.css">
+    <link rel="stylesheet" href="/user/profileDetails/style.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
@@ -69,31 +69,32 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="firstName" class="form-label">First Name</label>
-                <input type="text" id="firstName" class="form-control" placeholder="Enter first name" value="<%= user ? user.firstName : '' %>">
+                <input type="text" id="firstName" class="form-control" placeholder="Enter first name" value="<%= user ? user.firstName : '' %>" name="fname">
               </div>
               <div class="col-md-6">
                 <label for="secondName" class="form-label">Second Name</label>
-                <input type="text" id="secondName" class="form-control" placeholder="Enter second name" value="<%= user ? user.secondName : '' %>">
+                <input type="text" id="secondName" class="form-control" placeholder="Enter second name" value="<%= user ? user.secondName : '' %>" name="lname">
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" id="username" class="form-control" placeholder="Enter username" value="<%= user ? user.username : '' %>">
+                <input type="text" id="username" class="form-control" placeholder="Enter username" value="<%= user ? user.username : '' %>" name="username">
               </div>
               <div class="col-md-6">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" placeholder="Enter email" value="<%= user ? user.email : '' %>">
+                <input type="email" id="email" class="form-control" placeholder="Enter email" value="<%= user ? user.email : '' %>" name="email" >
+                <p id="message" class="text-danger"></p>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="secondaryEmail" class="form-label">Secondary Email</label>
-                <input type="email" id="secondaryEmail" class="form-control" placeholder="Enter secondary email" value="<%= user ? user.secondaryEmail : '' %>">
+                <input type="email" id="secondaryEmail" class="form-control" placeholder="Enter secondary email" value="<%= user ? user.secondaryEmail : '' %>" name="secondEmail">
               </div>
               <div class="col-md-6">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" id="phone" class="form-control" placeholder="Enter phone number" value="<%= user ? user.phone : '' %>">
+                <input type="text" id="phone" class="form-control" placeholder="Enter phone number" value="<%= user ? user.phone : '' %>" name="phone">
               </div>
             </div>
             <button type="submit" class="btn btn-primary mt-2">Save Changes</button>
@@ -105,15 +106,15 @@
         <form>
           <div class="mb-3">
             <label for="currentPassword" class="form-label">Current Password</label>
-            <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+            <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password" name="currentPassword">
           </div>
           <div class="mb-3">
             <label for="newPassword" class="form-label">New Password</label>
-            <input type="password" id="newPassword" class="form-control" placeholder="8+ characters">
+            <input type="password" id="newPassword" class="form-control" placeholder="8+ characters" name="newPassword">
           </div>
           <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password">
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" name="conformPassword">
           </div>
           <button type="submit" class="btn btn-primary mt-2">Change Password</button>
         </form>

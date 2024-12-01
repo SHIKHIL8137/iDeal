@@ -110,3 +110,7 @@ nav{
    .form-control ::placeholder{
     color: white;
    }
+   .message{
+    color: red;
+    
+   }

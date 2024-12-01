@@ -1,0 +1,128 @@
+<%- include('partials/header.ejs') -%>
+    <link rel="stylesheet" href="/user/orderConformation/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/user-circle.svg" alt=""></a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
+          <li class="nav-item text-white">2</li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container confirmation-container text-center">
+    <h1 class="mb-4 text-success">Thank You for Your Order!</h1>
+    <p class="lead">Your order has been placed successfully.</p>
+    <p>We will notify you when your items have shipped.</p>
+
+    <hr class="my-4">
+
+    <!-- Order Details -->
+    <h4 class="mb-3">Order Summary</h4>
+    <div class="order-summary text-start">
+      <p><strong>Order ID:</strong> 123456789</p>
+      <p><strong>Date:</strong> December 1, 2024</p>
+      <p><strong>Shipping Address:</strong></p>
+      <p>John Doe<br>123 Main Street<br>Los Angeles, CA 90001<br>United States</p>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- Items -->
+    <h4 class="mb-3">Items Ordered</h4>
+    <table class="table text-start">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>iPhone 13 (Refurbished)</td>
+          <td>1</td>
+          <td>$699</td>
+        </tr>
+        <tr>
+          <td>iPhone Case</td>
+          <td>1</td>
+          <td>$25</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="2">Total</th>
+          <th>$724</th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <hr class="my-4">
+
+    <!-- Footer Buttons -->
+    <div>
+      <a href="index.html" class="btn btn-primary me-2">Continue Shopping</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Logo and Tagline -->
+        <div class="col-md-4 text-center text-md-start">
+          <div class="footer-logo">
+            <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
+            <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+          </div>
+        </div>
+        
+        <!-- Navigation Links -->
+        <div class="col-md-4 text-center">
+          <a href="/user/home">Home</a>
+          <a href="/user/shop">Shop</a>
+          <a href="#">About Us</a>
+          <a href="#">Contact Us</a>
+        </div>
+        
+        <!-- Social Media Icons -->
+        <div class="col-md-4 text-center text-md-end social-icons pt-3">
+          <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
+          <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center text-md-start">
+          <small class="footerSpan">Copyright © 2023 iDeal. All rights reserved.</small>
+        </div>
+        <div class="col text-center text-md-end">
+          <a href="#" class="footerSpan">Privacy Policy</a>
+          <a href="#" class="footerSpan">Terms of Use</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="/user/orderConformation/script.js"></script>
+
+
+  <%- include('partials/footer.ejs') -%>
