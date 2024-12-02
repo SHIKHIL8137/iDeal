@@ -117,27 +117,6 @@
                     <th>Action</th>
                   </tr>
                 </thead>
-                <!-- <tbody>
-            <% category.forEach(function(val, ind) { %>
-              <tr>
-                <td>
-                  <%= val.name %> Series
-                </td>
-                <td>
-                  <span class="badge <%= val.status ? 'bg-success' : 'bg-danger' %>">
-                    <%= val.status ? 'Listed' : 'Unlisted' %>
-                  </span>
-                </td>
-                <td><%= new Date(val.createdAt).toLocaleDateString() %></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('<%= val._id %>')"> Edit
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('<%= val._id %>')"> Delete
-                  </button>
-                </td>
-              </tr>
-            <% }); %>
-          </tbody> -->
                 <tbody id="categoryTableBody">
                 </tbody>
               </table>

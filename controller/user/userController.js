@@ -575,7 +575,6 @@ const changePassword = async (req, res) => {
 const loadProfile = async(req,res)=>{
 try {
   const email = req.session.isLoggedEmail;
-  console.log(email)
   const user =await User.findOne({email});
   res.status(200).render('user/profileDetails',{user})
 } catch (error) {
@@ -1029,45 +1028,104 @@ const loadOrderConformation = async(req,res)=>{
 
 // save the user data
 
-const userDetailsSave = async(req,res)=>{
-  try {
-  const {fname,lname,username,email,secondEmail,phone} = req.body;
 
-  const updateFields = {};
-    if (fname) updateFields.fname = fname;
-    if (lname) updateFields.lname = lname;
+const userDetailsSave = async (req, res) => {
+  try {
+    const { fname, lname, username, email, secondEmail, phone } = req.body;
+
+    const updateFields = {};
+    if (fname) updateFields.firstName = fname;
+    if (lname) updateFields.lastName = lname;
     if (username) updateFields.username = username;
+    if (email) updateFields.email = email;
     if (secondEmail) updateFields.secondEmail = secondEmail;
     if (phone) updateFields.phone = phone;
+
+    if (req.file) {
+      updateFields.profilePicture = `/uploads/re-image/${req.file.filename}`;  
+    }
+
+    updateFields.updatedAt = new Date();
 
     if (Object.keys(updateFields).length === 0) {
       return res.status(400).send('No fields provided for update');
     }
-
     const result = await User.updateOne(
-      {email:req.session.isLoggedEmail}
-    )
-
+      { email: req.session.isLoggedEmail },
+      { $set: updateFields },
+      { upsert: true }
+    );
+    res.status(200).json({ message: 'Data saved successfully!' });
   } catch (error) {
-    res.status(500).send('Internal Server Error')
+    console.error('Error saving user details:', error);
+    res.status(500).send('Internal Server Error');
   }
-}
+};
+
+
+
+
+
 
 // ajax for checking the email exist or not
 
 const checkEmail=async(req,res)=>{
   try {
     const email= req.query.email;
+    const userEmail = req.query.userEmail;
     if(!email){
       return res.status(400).json({error:'Email is required'})
     }
     const user = await User.findOne({ email });
+    const exists = user ? email !== userEmail : false;
+    console.log(exists);
   
-  res.json({ exists : !!user}); 
+  res.json({ exists }); 
   } catch (error) {
     res.status(500).send("Internal server error");
   }
 }
+
+
+// userProfile update password
+
+const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    console.log(currentPassword,newPassword);
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Both current and new passwords are required' });
+    }
+
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({ email });
+
+
+    if (!user || !user.password) {
+      console.log('User or password not found:', user); 
+      return res.status(404).json({ message: 'User not found or password not set' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'The current password does not match' });
+    }
+
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await User.updateOne({ email }, { $set: { password: hashedPassword } });
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
 
 
 
@@ -1105,5 +1163,6 @@ module.exports={
   loadAddress,
   loadOrderConformation,
   userDetailsSave,
-  checkEmail
+  checkEmail,
+  updatePassword
 };

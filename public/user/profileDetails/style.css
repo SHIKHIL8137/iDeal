@@ -114,3 +114,28 @@ nav{
     color: red;
     
    }
+  #alertBox{
+    position: fixed;
+    top: 20px;
+    right: -100%;
+    transition: all 0.7s ease-in-out;
+    z-index: 9999;
+  }
+  
+  #alertBox.show {
+    right: 20px;
+  }
+  
+  #alertBox.hide {
+    right: -100%;
+  }
+  .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background-color: #ffffff;
+    color: #000000;
+  }
+

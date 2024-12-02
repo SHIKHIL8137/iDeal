@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema(
       unique: true,
       sparse: true, 
     },
+    profilePicture: {
+       type: String 
+    },
     firstName: {
       type: String
     },
@@ -123,7 +126,51 @@ const otpSchema= new mongoose.Schema({
 
 otpSchema.index({createdAt:1},{expireAfterSeconds:600})
 
-
+const cartSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true,
+  },
+  items: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product', 
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1, 
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      totalPrice: {
+        type: Number,
+        required: true,
+        default: function () {
+          return this.quantity * this.price;
+        },
+      },
+    },
+  ],
+  totalAmount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 
 
@@ -136,4 +183,5 @@ module.exports = {
   User: mongoose.model('User', userSchema),
   Address: mongoose.model('Address', addressSchema),
   OTP:mongoose.model('OTP',otpSchema),
+  Cart:mongoose.model('Cart',cartSchema),
 };

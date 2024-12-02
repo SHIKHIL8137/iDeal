@@ -3,6 +3,7 @@ const userController=require('../controller/user/userController');
 const userMiddleWare = require('../middleware/userAuth')
 const passport = require('passport');
 const router=express.Router();
+const uploads= require('../helpers/multer');
 
 
 
@@ -43,7 +44,8 @@ router.post('/otpVarification',userController.otpVerification)
 router.post('/resend-otp',userController.resendPassword)
 router.post('/loginVelidation',userController.loginVelidation)
 router.post('/forgotPassword',userController.forgotPassword);
-router.post('/saveUserDetails',userController.userDetailsSave);
+router.post('/saveUserDetails', uploads.single('profilePicture'),userController.userDetailsSave);
+router.post('/updatePassword',userController.updatePassword);
 
 
 
