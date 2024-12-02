@@ -46,7 +46,10 @@ router.post('/loginVelidation',userController.loginVelidation)
 router.post('/forgotPassword',userController.forgotPassword);
 router.post('/saveUserDetails', uploads.single('profilePicture'),userController.userDetailsSave);
 router.post('/updatePassword',userController.updatePassword);
-
+router.post('/addtoCartProduct',userController.addProductToCart)
+router.post('/updateCartQuantity',userController.updateCartQuantity);
+router.post('/removeFromCart',userController.removeFromCart);
+router.post('/applyCoupon',userController.couponValidationCheckout)
 
 
 

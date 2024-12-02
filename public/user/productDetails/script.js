@@ -1,4 +1,7 @@
 
+const product = JSON.parse(document.getElementById('productData').textContent);
+
+
   const productScrollContainer = document.getElementById("scroll-container");
   const productScrollBack = document.getElementById("scroll-back");
   const productScrollForward = document.getElementById("scroll-forward");
@@ -175,3 +178,65 @@ window.onload = function() {
 function redirectToLogin() {
   window.location.href = "/user/login";
 }
+
+
+// addto product to the cart
+
+
+
+document.getElementById('addTocartProduct').addEventListener('click', async () => {
+const productId = product._id;
+const price = product.Dprice;
+  if (!productId) {
+    showAlert('Product ID is missing. Unable to add to cart.', 'danger');
+    return;
+  }
+
+  const datatoSet = { productId ,price};
+
+  const button = document.getElementById('addTocartProduct');
+  button.disabled = true; 
+  button.innerText = 'Adding...';
+
+  try {
+    const response = await fetch('/user/addtoCartProduct', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(datatoSet),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      showAlert(result.message, 'success');
+    } else {
+      showAlert(result.message || 'Failed to add product to cart. Please try again.', 'danger');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showAlert('Failed to add product to cart. Please try again.', 'danger');
+  } finally {
+    button.disabled = false; 
+    button.innerText = 'Add to Cart';
+  }
+});
+
+function showAlert(message, type) {
+  const alertBox = document.getElementById('alertBox');
+  if (!alertBox) {
+    console.error('Alert box element not found!');
+    return;
+  }
+
+  alertBox.innerHTML = message;
+  alertBox.className = `alert alert-${type} show`;
+
+
+  const timeout = Math.max(3000, message.length * 100); 
+  setTimeout(() => {
+    alertBox.className = `alert alert-${type} hide`;
+  }, timeout);
+}
+

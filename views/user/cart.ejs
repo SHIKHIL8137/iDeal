@@ -31,43 +31,61 @@
     <div class="row">
         <!-- Shopping Cart Items -->
         <div class="col-md-8">
-            <div class="card mb-3">
+          <% if (userCart && userCart.items.length > 0) { %>
+            <% userCart.items.forEach((item) => { %>
+              <div class="card mb-3">
                 <div class="card-body d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <img src="https://via.placeholder.com/60" alt="Product" class="me-3">
-                        <div>
-                            <h6 class="mb-1">iPhone 13 256 GB</h6>
-                            <small class="text-muted">Price: ₹35,999</small>
-                        </div>
+                  <!-- Product Info -->
+                  <div class="d-flex align-items-center" style="max-width:250px; width: 100%;">
+                    <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="me-3" style="width: 60px; height: 60px; object-fit: contain;">
+                    <div>
+                      <h6 class="mb-1"><%= item.productId.name %></h6>
+                      <small class="text-muted">Price: ₹<%= item.price.toLocaleString() %></small>
                     </div>
-                    <div class="input-group input-group-sm w-auto">
-                        <button class="btn btn-outline-light" type="button">-</button>
-                        <input type="text" class="form-control text-center no-focus" value="1" style="max-width: 50px;" readonly>
-                        <button class="btn btn-outline-light" type="button">+</button>
-                    </div>
-                    <button class="btn btn-outline-danger btn-sm">&times;</button>
+                  </div>
+                  <div>
+                    <small class="text-muted">₹<%= item.totalPrice.toLocaleString() %></small>
+                  </div>
+        
+                  <!-- Quantity Controls -->
+                  <div class="input-group input-group-sm w-auto">
+                    <button class="btn btn-outline-dark" type="button" onclick="updateQuantity('<%= item.productId._id %>', 'decrement')">-</button>
+                    <input type="text" class="form-control text-center no-focus" value="<%= item.quantity %>" style="max-width: 50px;" readonly>
+                    <button class="btn btn-outline-dark" type="button" onclick="updateQuantity('<%= item.productId._id %>', 'increment')">+</button>
+                  </div>
+        
+                  <!-- Remove Button -->
+                  <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart('<%= item.productId._id %>')">&times;</button>
                 </div>
-            </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>Your cart is empty.</p>
+          <% } %>
         </div>
+        
 
         <!-- Summary Section -->
         <div class="col-md-4">
-            <div class="cart-summary">
-                <h5>Summary</h5>
-                <p>Sub-total: <span class="float-end">₹71,998</span></p>
-                <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
-                <p>Discount: <span class="float-end text-danger">₹1,999</span></p>
-                <hr>
-                <p>Total: <span class="float-end">₹69,999</span></p>
-                <div class="mt-3">
-                    <label for="coupon" class="form-label">Enter a coupon code</label>
-                    <div class="input-group">
-                        <input type="text" id="coupon" class="form-control" placeholder="Coupon Code">
-                        <button class="btn btn-primary" type="button">Apply</button>
-                    </div>
-                </div>
-                <button class="btn btn-primary btn-block mt-4 w-100">Check Out</button>
+          <div class="cart-summary">
+            <h5>Summary</h5>
+            <p>Sub-total: <span class="float-end">₹<%= userCart.totalAmount.toLocaleString() %></span></p>
+            <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
+            <p>Discount: <span class="float-end text-danger">₹<%= userCart.discount || 0 %></span></p>
+            <hr>
+            <p>Total: <span class="float-end">₹<%= (userCart.totalAmount - (userCart.discount || 0)).toLocaleString() %></span></p>
+        
+   
+            <div class="mt-3">
+              <label for="coupon" class="form-label">Enter a coupon code</label>
+              <div class="input-group">
+                <input type="text" id="coupon" class="form-control" placeholder="Coupon Code">
+                <button class="btn btn-primary" type="button" onclick="applyCoupon()">Apply</button>
+              </div>
             </div>
+
+            <button class="btn btn-primary btn-block mt-4 w-100" onclick="checkout()">Check Out</button>
+          </div>
         </div>
     </div>
 </div>
