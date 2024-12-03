@@ -96,4 +96,67 @@ nav{
     .btn-outline-danger{
       border: none;
     }
+    .couponNote{
+      color: #ffffff45;
+    }
+    #alertBox{
+      position: fixed;
+      top: 20px;
+      right: -100%;
+      transition: all 0.7s ease-in-out;
+      z-index: 9999;
+    }
+    
+    #alertBox.show {
+      right: 20px;
+    }
+    
+    #alertBox.hide {
+      right: -100%;
+    }
+    #appliedCoupon {
+      display: flex;
+      align-items: center;
+      /* justify-content: space-between; */
+      position: relative;
+      border: 1px solid #28a745;
+      border-radius: 5px;
+      padding: 8px 12px;
+      background-color: #eaf6ea;
+    }
+    
+    #appliedCoupon .badge {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #155724;
+      background-color: #28a745;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    #appliedCoupon .badge i {
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+    
+    #appliedCoupon button {
+      background-color: transparent;
+      border: none;
+      color: rgb(255, 0, 0);
+      left: 95%;
+       top: 30%;
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      border-radius: 3px;
+    }
+    
+    #appliedCoupon button:hover {
+      background-color: #c8233300;
+    }
+    
+    #appliedCoupon button i {
+      font-size: 1.2rem;
+    }
+    
+    
 

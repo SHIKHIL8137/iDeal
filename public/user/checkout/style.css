@@ -49,7 +49,7 @@ nav{
       background-color: #121212;
       color: #fff;
       padding: 20px 0;
-      margin-top: 16vh;
+      margin-top: 20vh;
     }
     .footer a {
       color: #fff;
@@ -85,4 +85,19 @@ nav{
 
     .chechoutRow{
       padding-top: 15vh;
+    }
+    .input-field{
+      background-color: #1E1E1E;
+      outline: none;
+      border: none;
+      border-radius: 10px;
+      color: white;
+    }
+    .input-field:focus{
+      background-color: #1E1E1E;
+      color: white;
+    }
+    .input-field::placeholder{
+      color: rgba(255, 255, 255, 0.562); 
+      opacity: 1;
     }

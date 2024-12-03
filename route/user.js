@@ -31,6 +31,9 @@ router.get('/checkOut',userController.loadCheckout)
 router.get('/address',userController.loadAddress);
 router.get('/loadOrderConformation',userController.loadOrderConformation);
 router.get('/check-email',userController.checkEmail);
+router.get('/checkoutSummery',userController.getCheckoutSummery);
+router.get('/editAddress/:id',userController.loadEditAddress);
+
 
 
 
@@ -49,8 +52,15 @@ router.post('/updatePassword',userController.updatePassword);
 router.post('/addtoCartProduct',userController.addProductToCart)
 router.post('/updateCartQuantity',userController.updateCartQuantity);
 router.post('/removeFromCart',userController.removeFromCart);
-router.post('/applyCoupon',userController.couponValidationCheckout)
+router.post('/applyCoupon',userController.couponValidationCheckout);
+router.post('/removeCoupon',userController.removeCoupon);
+router.post('/saveAddress',userController.addAddress);
+router.post('/checkout',userController.checkoutDataStore);
+router.post('/editAddress',userController.editAddress);
 
+
+
+router.delete('/deleteAddress/:id',userController.deleteAddress);
 
 
 module.exports=router

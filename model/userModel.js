@@ -22,10 +22,12 @@ const userSchema = new mongoose.Schema(
       unique:false,
       required: true,
     },
-    address: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Address',
-    },
+    addresses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Address', 
+      },
+    ],
     password: {
       type: String,
       required: false,
@@ -162,6 +164,10 @@ const cartSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
+  totalDiscountAmount: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -173,7 +179,38 @@ const cartSchema = new mongoose.Schema({
 });
 
 
+const checkoutSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true,
+  },
+  totalAmount: {
+    type: Number,
+    required: true,
 
+  },
+  discount: {
+    type: Number,
+    default: 0,
+  },
+  deliveryFee: {
+    type: Number,
+    required: true,
+  },
+  finalTotal: {
+    type: Number,
+    required: true,
+  },
+  appliedCoupon: {
+    type: String,
+    default: null,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 
 
@@ -184,4 +221,5 @@ module.exports = {
   Address: mongoose.model('Address', addressSchema),
   OTP:mongoose.model('OTP',otpSchema),
   Cart:mongoose.model('Cart',cartSchema),
+  CheckOut : mongoose.model('CheckOut',checkoutSchema),
 };

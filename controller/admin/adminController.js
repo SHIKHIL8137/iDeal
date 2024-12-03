@@ -1,4 +1,4 @@
-const {Product,Category,Admin} = require('../../model/adminModel');
+const {Product,Category,Admin,Coupon} = require('../../model/adminModel');
 const {User,Address,OTP}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
@@ -767,7 +767,51 @@ const loadDetails = async(req,res)=>{
 }
 
 
+// add coupon route
 
+const addCoupon = async(req,res)=>{
+  try {
+    const {
+      code,
+      discountPercentage,
+      minOrderAmount,
+      maxDiscountAmount,
+      validFrom,
+      validTill,
+      isActive,
+      usageLimit,
+    } = req.body;
+
+    // Validate request data
+    if (!code || !discountPercentage || !validFrom || !validTill) {
+      return res.status(400).json({ status: 'error', message: 'All required fields must be provided.' });
+    }
+
+    // Create a new coupon
+    const newCoupon = new Coupon({
+      code,
+      discountPercentage,
+      minOrderAmount: minOrderAmount || 0,
+      maxDiscountAmount: maxDiscountAmount || null,
+      validFrom: new Date(validFrom),
+      validTill: new Date(validTill),
+      isActive: isActive !== undefined ? isActive : true,
+      usageLimit: usageLimit || null,
+    });
+
+    // Save coupon to the database
+    await newCoupon.save();
+
+    res.status(201).json({
+      status: 'success',
+      message: 'Coupon added successfully.',
+      data: newCoupon,
+    });
+  } catch (error) {
+    console.error('Error adding coupon:', error);
+    res.status(500).json({ status: 'error', message: 'Internal server error.' });
+  }
+}
 
 
 
@@ -818,5 +862,6 @@ module.exports={
  resetPasswordPage,
  changePassword,
  loadOrder,
- loadDetails
+ loadDetails,
+ addCoupon
 }

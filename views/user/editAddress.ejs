@@ -36,94 +36,69 @@
   </nav>
   <div class="container" id="container-div">
     <div class="row pageMainrow">
-      <!-- Sidebar -->
-      <div class="sidebar d-flex flex-column col-md-3 col-12 gap-2">
-        <a href="#">
-          <i class="fas fa-user"></i> Account Details
-        </a>
-        <a href="#">
-          <i class="fas fa-clock"></i> Order History
-        </a>
-        <a href="#">
-          <i class="fas fa-wallet"></i> Wallet
-        </a>
-        <a href="#">
-          <i class="fas fa-shopping-cart"></i> Shopping Cart
-        </a>
-        <a href="#">
-          <i class="fas fa-heart"></i> Wishlist
-        </a>
-        <a href="#" class="active">
-          <i class="fas fa-map-marker-alt"></i> Address
-        </a>
-        <a href="/user/logOut">
-          <i class="fas fa-sign-out-alt"></i> Log-out
-        </a>
-      </div>
-
       <!-- Content -->
-      <div class="col-md-9 col-12">
+      <div class="col-md-12">
         <div class="container form-container">
-          <h4 class="mb-3">DELIVERY ADDRESS</h4>
+          <h4 class="mb-3">Edit ADDRESS</h4>
           <form action="/user/saveAddress" method="post">
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="firstName" class="form-label">First name</label>
-                <input type="text" class="form-control input-field" id="firstName" placeholder="First name" name="fname">
+                <input type="text" class="form-control input-field" id="firstName" placeholder="First name" name="fname" value="<%= editedAddress.fname %>">
               </div>
               <div class="col-md-6">
                 <label for="lastName" class="form-label">Last name</label>
-                <input type="text" class="form-control input-field" id="lastName" placeholder="Last name" name="lname">
+                <input type="text" class="form-control input-field" id="lastName" placeholder="Last name" name="lname" value="<%= editedAddress.lname %>">
               </div>
             </div>
       
             <div class="mb-3">
               <label for="companyName" class="form-label">Company Name (Optional)</label>
-              <input type="text" class="form-control input-field" id="companyName" placeholder="Company name" name="companyName">
+              <input type="text" class="form-control input-field" id="companyName" placeholder="Company name" name="companyName" value="<%= editedAddress.companyName %>">
             </div>
       
             <div class="mb-3">
               <label for="address" class="form-label">House Name</label>
-              <input type="text" class="form-control input-field" id="address" placeholder="House Name" name="houseName">
+              <input type="text" class="form-control input-field" id="address" placeholder="House Name" name="houseName" value="<%= editedAddress.houseName %>">
             </div>
       
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="country" class="form-label">Country</label>
                 <select class="form-select input-field" id="country" name="country">
-                  <option selected>Select...</option>
                   <option value="India">India</option>
                 </select>
               </div>
               <div class="col-md-6">
                 <label for="region" class="form-label">Region/State</label>
-                <input type="text" class="form-control input-field" id="state" placeholder="State" name="state">
+                <input type="text" class="form-control input-field" id="state" placeholder="State" name="state" value="<%= editedAddress.state %>">
               </div>
             </div>
       
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="city" class="form-label">City</label>
-                <input type="text" class="form-control input-field" id="city" placeholder="City" name="city">
+                <input type="text" class="form-control input-field" id="city" placeholder="City" name="city" value="<%= editedAddress.city %>">
               </div>
               <div class="col-md-6">
                 <label for="zipCode" class="form-label">Zip Code</label>
-                <input type="text" class="form-control input-field" id="zipCode" placeholder="Zip Code" name="zipCode">
+                <input type="text" class="form-control input-field" id="zipCode" placeholder="Zip Code" name="zipCode" value="<%= editedAddress.zipCode %>">
               </div>
             </div>
       
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control input-field" id="email" placeholder="Email" name="email">
+                <input type="email" class="form-control input-field" id="email" placeholder="Email" name="email" value="<%= editedAddress.email %>">
               </div>
               <div class="col-md-6">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control input-field" id="phone" placeholder="Phone Number" name="phone">
+                <input type="text" class="form-control input-field" id="phone" placeholder="Phone Number" name="phone" value="<%= editedAddress.phone %>">
               </div>
             </div>
             <div class="float-end mt-2">
-              <button type="submit" class="btn btn-primary">Save Changes</button>
+              <button type="submit" class="btn btn-outline-danger">Cancel</button>
+              <button type="submit" class="btn btn-outline-primary">Save Changes</button>
             </div>
           </form>
         </div>

@@ -1,11 +1,12 @@
-const {User,Address,OTP,Cart}=require('../../model/userModel');
+const {User,Address,OTP,Cart,CheckOut}=require('../../model/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
-const { Product, Category ,Review} = require('../../model/adminModel');
+const { Product, Category ,Review,Coupon} = require('../../model/adminModel');
 require('dotenv').config()
 const crypto = require('crypto');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { triggerAsyncId } = require('async_hooks');
 
 const validColors = {
   pink: "#FFC0CB",
@@ -985,7 +986,7 @@ const loadOrderDetails = async(req,res)=>{
 
 const loadCart = async (req, res) => {
   try {
-    const email = req.session.isLoggedEmail;
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
 
     const user = await User.findOne({ email });
 
@@ -1010,7 +1011,12 @@ const loadCart = async (req, res) => {
 
 const loadCheckout =  async(req,res)=>{
 try {
-  res.status(200).render('user/checkOut');
+  const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com'; 
+  const user = await User.findOne({ email: userEmail }).populate('addresses');
+  if (!user || user.addresses.length === 0) {
+    return res.status(404).send('User is not valid');
+  }
+  res.status(200).render('user/checkOut',{user});
 } catch (error) {
   res.status(500).send('Internal Server Error')
 }
@@ -1023,7 +1029,10 @@ try {
 
 const loadAddress = async(req,res)=>{
   try {
-    res.status(200).render('user/address');
+
+    const errBoolean = req.query.err === 'true'?true:false;
+    const message = req.query.message;
+    res.status(200).render('user/address',{message,errBoolean});
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
@@ -1147,7 +1156,7 @@ const updatePassword = async (req, res) => {
 const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity = 1, price } = req.body; 
-    const email = req.session.isLoggedEmail;
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
 
     if (!productId || !price) {
       return res.status(400).json({ status: 'error', message: 'Product ID and price are required.' });
@@ -1246,7 +1255,7 @@ const addProductToCart = async (req, res) => {
 const updateCartQuantity = async (req, res) => {
   try {
     const { productId, action } = req.body;
-    const email = req.session.isLoggedEmail;
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
 
     const user = await User.findOne({ email });
     const cart = await Cart.findOne({ userId: user._id });
@@ -1293,7 +1302,7 @@ const updateCartQuantity = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const email = req.session.isLoggedEmail;
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
 
     const user = await User.findOne({ email });
     const cart = await Cart.findOne({ userId: user._id });
@@ -1308,7 +1317,7 @@ const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: 'Product not found in cart.' });
     }
 
-    cart.items.splice(itemIndex, 1); // Remove the item from the cart
+    cart.items.splice(itemIndex, 1); 
     cart.totalAmount = cart.items.reduce((total, item) => total + item.totalPrice, 0);
 
     await cart.save();
@@ -1320,59 +1329,256 @@ const removeFromCart = async (req, res) => {
   }
 };
 
-const couponValidationCheckout = async(req,res)=>{
+const couponValidationCheckout = async (req, res) => {
+  const { couponCode } = req.body;
+  const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
 
   try {
-    const { coupon } = req.body;
-    const email = req.session.isLoggedEmail;
-
-
-    if (!email) {
-      return res.status(400).json({ message: 'Please log in to apply a coupon.' });
-    }
-
-
-    // const validCoupon = await Coupon.findOne({ code: coupon });
-    // if (!validCoupon || validCoupon.isExpired) {
-    //   return res.status(400).json({ message: 'Invalid or expired coupon.' });
-    // }
-   const validCoupon = {
-    discountPercentage : 5
-   }
-
     const user = await User.findOne({ email });
-    const userCart = await Cart.findOne({ userId: user._id });
+    const userId = user._id;
+    const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
 
-    if (!userCart) {
-      return res.status(404).json({ message: 'Cart not found.' });
+    if (!coupon) {
+      return res.status(404).json({ success: false, message: 'Invalid or inactive coupon.' });
     }
 
+    const now = new Date();
 
-    const discountAmount = validCoupon.discountPercentage
-      ? (userCart.totalAmount * validCoupon.discountPercentage) / 100
-      : validCoupon.discountAmount; 
+    if (now < coupon.validFrom || now > coupon.validTill) {
+      return res.status(400).json({ success: false, message: 'Coupon is not valid at this time.' });
+    }
+
+    if (coupon.usageLimit !== null && coupon.usageCount >= coupon.usageLimit) {
+      return res.status(400).json({ success: false, message: 'Coupon usage limit exceeded.' });
+    }
+
+    if (coupon.usersUsed.includes(userId)) {
+      return res.status(400).json({ success: false, message: 'You have already used this coupon.' });
+    }
+
+    const cart = await Cart.findOne({ userId }).populate('items.productId');
+
+    if (!cart || cart.totalAmount < coupon.minOrderAmount) {
+      return res.status(400).json({
+        success: false,
+        message: `Minimum order amount of ₹${coupon.minOrderAmount} is required for this coupon.`,
+      });
+    }
+
+    const discount = Math.min(
+      (coupon.discountPercentage / 100) * cart.totalAmount,
+      coupon.maxDiscountAmount || Infinity
+    );
+    const newPrice = cart.totalAmount - discount
+    console.log(newPrice);
+    res.status(200).json({
+      success: true, // Added field
+      message: 'Coupon is valid.',
+      discount: discount,
+      newTotalAmount: newPrice,
+    });
+  } catch (error) {
+    console.error('Error validating coupon:', error);
+    res.status(500).json({ success: false, message: 'An error occurred while validating the coupon.' });
+  }
+};
 
 
-    userCart.discount = discountAmount;
-    userCart.totalAmount -= discountAmount;
+const removeCoupon = async (req, res) => {
+  try {
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const user = await User.findOne({ email });
+    const userId = user._id;
 
+    const cart = await Cart.findOne({ userId });
 
-    // await userCart.save();
+    if (!cart) {
+      return res.status(404).json({ success: false, message: 'Cart not found.' });
+    }
 
+    // Reset discount-related fields
+    const originalTotal = cart.totalAmount;
+    cart.discount = 0;
+    cart.couponCode = null;
+
+    await cart.save();
 
     res.status(200).json({
       success: true,
-      message: `Coupon applied successfully! You saved ₹${discountAmount.toLocaleString()}.`,
-      discountAmount,
-      totalAmount: userCart.totalAmount,
+      message: 'Coupon removed successfully.',
+      originalTotal: originalTotal,
     });
   } catch (error) {
-    console.error('Error applying coupon:', error);
+    console.error('Error removing coupon:', error);
+    res.status(500).json({ success: false, message: 'An error occurred while removing the coupon.' });
+  }
+};
+
+
+// add new address
+
+
+const addAddress = async(req,res)=>{
+  try {
+    const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
+    const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    if (!userEmail) return res.status(400).json({ message: 'User ID is required' });
+    const user = await User.findOne({email:userEmail});
+    console.log(user.addresses.length)
+    if(user.addresses.length>=5) return res.status(200).redirect('/user/address?message=You can only store up to 5 addresses&err=false');
+    const userId = user._id;
+    const address = new Address({ 
+      user: userId, 
+      fname:fname.trim(), 
+      lname:lname.trim(), 
+      companyName:companyName.trim(), 
+      houseName:houseName.trim(), 
+      country:country.trim(), 
+      state:state.trim(), 
+      city:city.trim(), 
+      zipCode:zipCode.trim(), 
+      email:email.trim(), 
+      phone :phone.trim()
+    });
+
+    await address.save();
+  
+    if (!user) return res.status(404).redirect('user/address?message=User not found&err=false');
+    user.addresses.push(address._id);
+    await user.save();
+
+    res.status(200).redirect('/user/address?message=Address added successfully&err=true');
+  } catch (error) {
+    console.error('Error adding address:', error);
+    res.status(500).send('Inernal Server Error');
+  }
+}
+
+// post the checkout data amd  store in a collecion
+
+const checkoutDataStore = async (req, res) => {
+  try {
+    const  checkOutData  = req.body;
+    console.log(req.body)
+    console.log(checkOutData);
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+
+    // Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    console.log(user);
+    const userId = new mongoose.Types.ObjectId(user._id);
+
+    // Debugging
+    console.log('Query Filter:', { userId });
+    console.log('Update Data:', { checkOutData });
+
+    // Check if checkout data exists for the user
+    const existUser = await CheckOut.findOne({ userId });
+    if (existUser) {
+      // Update the existing record
+      const result = await CheckOut.updateOne(
+        { userId },
+        { $set:checkOutData}
+      );
+      console.log('Update Result:', result);
+      if (result.matchedCount === 0) {
+        console.error('No matching record found for update.');
+        return res.status(404).json({ message: 'Record not found for update' });
+      }
+    } else {
+      // Create a new checkout data entry
+      const newCheckOut = new CheckOut({ userId, checkOutData });
+      await newCheckOut.save();
+    }
+
+    res.status(200).json({ message: 'Checkout data saved successfully.' });
+  } catch (error) {
+    console.error('Error in checkoutDataStore:', error);
     res.status(500).json({ message: 'Internal server error.' });
   }
+};
 
+// get the checkout summary
 
+const getCheckoutSummery = async(req,res)=>{
+  try {
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const user = await User.findOne({email});
+    const userId = user._id;
+    const userSummeryDetails = await CheckOut.findOne({userId});
+    console.log(userSummeryDetails);
+    res.status(200).json(userSummeryDetails);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Internal server error.' });
+  }
 }
+
+
+// delete the address
+
+const deleteAddress = async (req,res)=>{
+  try {
+    const addressId = req.params.id;
+
+
+    if (!addressId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: 'Invalid address ID' });
+    }
+
+    const deletedAddress = await Address.findByIdAndDelete(addressId);
+
+    if (!deletedAddress) {
+      return res.status(404).json({ message: 'Address not found' });
+    }
+
+
+    await User.updateOne(
+      { _id: deletedAddress.user },
+      { $pull: { addresses: addressId } } 
+    );
+
+    res.status(200).json({ message: 'Address deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting address:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+//edit address
+const editAddress = async (req,res)=>{
+  try {
+    
+  } catch (error) {
+    res.status(500).send('Inernal Server Error');
+  }
+}
+
+//load edit address 
+
+const loadEditAddress = async (req, res) => {
+  try {
+    const message = req.query.message;
+    const addressId = req.params.id; // ID from route params
+    const errBoolean = req.query.err === "true";
+
+    // Correct usage of findById
+    const editedAddress = await Address.findById(addressId); 
+
+    if (!editedAddress) {
+      return res.status(404).send('Address not found');
+    }
+
+    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 
@@ -1415,5 +1621,12 @@ module.exports={
   addProductToCart,
   removeFromCart,
   updateCartQuantity,
-  couponValidationCheckout
+  couponValidationCheckout,
+  removeCoupon,
+  addAddress,
+  checkoutDataStore,
+  getCheckoutSummery,
+  deleteAddress,
+  editAddress,
+  loadEditAddress
 };

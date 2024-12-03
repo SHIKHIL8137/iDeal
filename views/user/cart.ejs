@@ -1,7 +1,10 @@
 <%- include('partials/header.ejs') -%>
+
     <link rel="stylesheet" href="/user/cart/style.css">
 </head>
 <body>
+  <div id="alertBox">
+  </div>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
@@ -64,29 +67,60 @@
           <% } %>
         </div>
         
-
-        <!-- Summary Section -->
         <div class="col-md-4">
-          <div class="cart-summary">
-            <h5>Summary</h5>
-            <p>Sub-total: <span class="float-end">₹<%= userCart.totalAmount.toLocaleString() %></span></p>
-            <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
-            <p>Discount: <span class="float-end text-danger">₹<%= userCart.discount || 0 %></span></p>
-            <hr>
-            <p>Total: <span class="float-end">₹<%= (userCart.totalAmount - (userCart.discount || 0)).toLocaleString() %></span></p>
+          <form id="cartSummery">
+            <div class="cart-summary">
+              <h5 class="mb-3">Summary</h5>
+              <p>Sub-total:
+                <span class="float-end" id="totalAmount">₹<%= userCart.totalAmount.toLocaleString() %></span>
+              </p>
+              <p>Shipping Fees:
+                <span class="float-end text-success" id="shippingFee">
+                  <%= userCart.totalAmount> 5000 ? 'Free' : '₹40' %>
+                </span>
+              </p>
+              <p>Discount:
+                <span class="float-end text-danger" id="discountAmount">₹<%= userCart.discount || 0 %></span>
+              </p>
+              <hr>
+              <p class="fw-bold">Total:
+                <span class="float-end" id="finalTotal">
+                  ₹<%= (userCart.totalAmount - (userCart.discount || 0) + (userCart.totalAmount> 5000 ? 0 :
+                    40)).toLocaleString() %>
+                </span>
+              </p>
         
-   
-            <div class="mt-3">
-              <label for="coupon" class="form-label">Enter a coupon code</label>
-              <div class="input-group">
-                <input type="text" id="coupon" class="form-control" placeholder="Coupon Code">
-                <button class="btn btn-primary" type="button" onclick="applyCoupon()">Apply</button>
+              <div id="couponSection" class="mt-3">
+                <!-- Coupon Input Section -->
+                <div id="couponInput">
+                  <label for="coupon" class="form-label">Enter a coupon code</label>
+                  <div class="input-group">
+                    <input type="text" id="coupon" class="form-control" placeholder="Coupon Code" aria-label="Coupon Code">
+                    <button class="btn btn-primary" type="button" onclick="applyCoupon()" id="applyCouponButton">Apply</button>
+                  </div>
+                  <small class="d-block mt-1 couponNote">Note: Only one coupon can be applied.</small>
+                </div>
+        
+                <!-- Applied Coupon Badge -->
+                <div id="appliedCoupon" class="d-none position-relative">
+                  <span class="badge bg-success p-2 d-flex align-items-center">
+                    <i class="bi bi-tag-fill me-2"></i>
+                    Applied Coupon: <span id="appliedCouponCode"></span>
+                  </span>
+                  <button class="btn btn-sm btn-outline-danger position-absolute top-5 end-0 translate-middle p-1"
+                    onclick="removeCoupon()" id="closeBtnCoupon">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
               </div>
+        
+              <button class="btn btn-primary btn-block mt-4 w-100" id="btnCheckout">Check Out</button>
             </div>
-
-            <button class="btn btn-primary btn-block mt-4 w-100" onclick="checkout()">Check Out</button>
-          </div>
+          </form>
         </div>
+        
+        
+        
     </div>
 </div>
 

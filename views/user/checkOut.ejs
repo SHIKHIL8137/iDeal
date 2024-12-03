@@ -34,34 +34,6 @@
           <h4>Delivery Address</h4>
         </div>
         <div class="collapse" id="deliveryAddress">
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="address" id="address1" checked>
-            <label class="form-check-label" for="address1">
-              <b>Shikhil K</b> &nbsp;&nbsp; 8137046575<br>
-              Kalarickal (H), Mapranam PO Madayikonam<br>
-              India, Kerala, Thrissur, Pin: 680712<br>
-              shikhilks@gmail.com
-            </label>
-            <div class="float-end">
-              <button class="btn btn-outline-primary">Edit</button>
-              <button class="btn btn-outline-danger ms-2">Delete</button>
-            </div>
-          </div>
-          <hr>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="address" id="address2">
-            <label class="form-check-label" for="address2">
-              <b>Shikhil K</b> &nbsp;&nbsp; 8137046575<br>
-              Kalarickal (H), Mapranam PO Madayikonam<br>
-              India, Kerala, Thrissur, Pin: 680712<br>
-              shikhilks@gmail.com
-            </label>
-            <div class="float-end">
-              <button class="btn btn-outline-primary">Edit</button>
-              <button class="btn btn-outline-danger ms-2">Delete</button>
-            </div>
-          </div>
-          <button class="btn btn-primary mt-3">Add address</button>
         </div>
         
       </div>
@@ -71,52 +43,46 @@
           <h4>Billing Information</h4>
         </div>
         <div class="collapse" id="billingAddress">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="First Name" required>
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Last Name" required>
-          </div>
-          <div class="col-md-12">
-            <input type="text" class="form-control" placeholder="Company Name (Optional)">
-          </div>
-          <div class="col-md-12">
-            <textarea class="form-control" rows="2" placeholder="Address"></textarea>
-          </div>
-          <div class="col-md-6">
-            <select class="form-select">
-              <option selected disabled>Country</option>
-              <option>India</option>
-              <option>USA</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <select class="form-select">
-              <option selected disabled>Region/State</option>
-              <option>Kerala</option>
-              <option>Tamil Nadu</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="City">
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Zip Code">
-          </div>
-          <div class="col-md-6">
-            <input type="email" class="form-control" placeholder="Email">
-          </div>
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Phone Number">
-          </div>
-          <div class="col-12">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="sameAsDelivery">
-              <label class="form-check-label" for="sameAsDelivery">Same as delivery address</label>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingFirstName" placeholder="First Name">
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingLastName" placeholder="Last Name">
+            </div>
+            <div class="col-md-12">
+              <input type="text" class="form-control input-field" id="billingCompany" placeholder="Company Name (Optional)">
+            </div>
+            <div class="col-md-12">
+              <input type="text" class="form-control input-field" id="billingHouseName" placeholder="House Name">
+            </div>
+            <div class="col-md-6">
+              <select class="form-select input-field" id="billingCountry" name="country">
+                <option value="India">India</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingState" placeholder="State">
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingCity" placeholder="City">
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingZip" placeholder="Zip Code">
+            </div>
+            <div class="col-md-6">
+              <input type="email" class="form-control input-field" id="billingEmail" placeholder="Email">
+            </div>
+            <div class="col-md-6">
+              <input type="text" class="form-control input-field" id="billingPhone" placeholder="Phone Number">
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="sameAsDelivery">
+                <label class="form-check-label" for="sameAsDelivery">Same as delivery address</label>
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
       <div class="mb-5">
@@ -158,11 +124,10 @@
         <h5>Summary</h5>
         <p>Sub-total: <span class="float-end">₹71,998</span></p>
         <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
-        <p>Discount: <span class="float-end text-danger">₹1,999</span></p>
         <p>Coupen Discount: <span class="float-end text-danger">₹1,999</span></p>
         <hr>
         <p>Total: <span class="float-end">₹69,999</span></p>
-        <button class="btn btn-primary btn-block mt-4 w-100">Place Order</button>
+        <button class="btn btn-primary btn-block mt-4 w-100" id="placeOrderBtn">Place Order</button>
       </div>
     </div>
   </div>
@@ -207,8 +172,7 @@
       </div>
     </div>
   </div>
-
-
+  <script type="application/json" id="userData"><%- JSON.stringify(user) %></script>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="/user/checkOut/script.js"></script>

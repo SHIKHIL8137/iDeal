@@ -46,5 +46,6 @@ router.post('/editCustomer/:id',adminController.updateCustomer);
 router.post('/addCustomer',adminController.addCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
 router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
+router.post('/addCoupon',adminController.addCoupon);
 
 module.exports=router
