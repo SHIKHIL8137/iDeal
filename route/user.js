@@ -25,11 +25,11 @@ router.get('/sortProduct',userController.sortedProduct);
 router.get('/sortCategoryProduct',userController.sortCategoryProduct);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userController.loadOrderHistory);
-router.get('/orderDetails',userController.loadOrderDetails)
+router.get('/orderDetails/:id',userController.loadOrderDetails)
 router.get('/cart',userController.loadCart)
 router.get('/checkOut',userController.loadCheckout)
 router.get('/address',userController.loadAddress);
-router.get('/loadOrderConformation',userController.loadOrderConformation);
+router.get('/loadOrderConformation/:id',userController.loadOrderConformation);
 router.get('/check-email',userController.checkEmail);
 router.get('/checkoutSummery',userController.getCheckoutSummery);
 router.get('/editAddress/:id',userController.loadEditAddress);
@@ -57,6 +57,8 @@ router.post('/removeCoupon',userController.removeCoupon);
 router.post('/saveAddress',userController.addAddress);
 router.post('/checkout',userController.checkoutDataStore);
 router.post('/editAddress',userController.editAddress);
+router.post('/updateAddress/:addressId',userController.saveUpdatedAddress)
+router.post('/orderSubmit',userController.submitOrder);
 
 
 

@@ -140,7 +140,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 </p>
               </div>
             `;
-            productList.appendChild(productCard);
+            productList.appendChild(productCard);  
+            
           });
         } else {
           productList.innerHTML = '<p>No products found!</p>';

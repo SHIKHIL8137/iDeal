@@ -36,17 +36,24 @@
     <!-- Order Details -->
     <h4 class="mb-3">Order Summary</h4>
     <div class="order-summary text-start">
-      <p><strong>Order ID:</strong> 123456789</p>
-      <p><strong>Date:</strong> December 1, 2024</p>
+      <p><strong>Order ID:</strong> <%= orderDetails.orderId %></p>
+      <p><strong>Date:</strong> <%= new Date(orderDetails.orderDate).toLocaleDateString() %></p>
       <p><strong>Shipping Address:</strong></p>
-      <p>John Doe<br>123 Main Street<br>Los Angeles, CA 90001<br>United States</p>
+      <p>
+        <%= orderDetails.billingAddress.fname %> <%= orderDetails.billingAddress.lname %><br>
+        <%= orderDetails.billingAddress.houseName %><br>
+        <%= orderDetails.billingAddress.city %>, <%= orderDetails.billingAddress.state %> <%= orderDetails.billingAddress.zipCode %><br>
+        <%= orderDetails.billingAddress.country %><br>
+        <%= orderDetails.billingAddress.phone %><br>
+        <%= orderDetails.billingAddress.email %>
+      </p>
     </div>
 
     <hr class="my-4">
 
     <!-- Items -->
     <h4 class="mb-3">Items Ordered</h4>
-    <table class="table text-start">
+    <table class="table text-center">
       <thead>
         <tr>
           <th>Product</th>
@@ -55,32 +62,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>iPhone 13 (Refurbished)</td>
-          <td>1</td>
-          <td>$699</td>
-        </tr>
-        <tr>
-          <td>iPhone Case</td>
-          <td>1</td>
-          <td>$25</td>
-        </tr>
+        <% orderDetails.products.forEach(product => { %>
+          <tr>
+            <td><%= product.productId.name %></td> 
+            <td><%= product.quantity %></td>
+            <td>₹<%= product.price.toLocaleString('en-IN') %></td>
+          </tr>
+        <% }) %>
       </tbody>
       <tfoot>
         <tr>
-          <th colspan="2">Total</th>
-          <th>$724</th>
+          <th>Subtotal</th>
+          <th></th>
+          <th>₹<%= orderDetails.subtotal.toLocaleString('en-IN') %></th>   
+        </tr>
+        <tr>
+          <th>Discount</th>
+          <th></th>
+          <th class="text-success"><%= orderDetails.discount.toLocaleString('en-IN')%></th> 
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th></th> 
+          <th>₹<%= orderDetails.totalAmount.toLocaleString('en-IN') %> /-</th>
         </tr>
       </tfoot>
     </table>
 
-    <hr class="my-4">
-
     <!-- Footer Buttons -->
     <div>
-      <a href="index.html" class="btn btn-primary me-2">Continue Shopping</a>
+      <a href="/" class="btn btn-primary me-2">Continue Shopping</a>
     </div>
-  </div>
+</div>
+
+
 
   <div class="footer">
     <div class="container">

@@ -133,3 +133,6 @@ tbody tr td{
 .form-check-label{
   font-size: 13px;
 }
+.order-row{
+cursor: pointer;
+}

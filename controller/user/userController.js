@@ -1,4 +1,4 @@
-const {User,Address,OTP,Cart,CheckOut}=require('../../model/userModel');
+const {User,Address,OTP,Cart,CheckOut,Orders}=require('../../model/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
@@ -425,7 +425,7 @@ const loginVelidation=async(req,res)=>{
 const productReview=async(req,res)=>{
   try {
     const productId = req.params.id;
-  const userId = req.session.userId;
+  const userId = req.session.userId || '6745ee262ef67315e2da1c5e';
   const {rating,reviewText} =req.body;
 
   const existingReview = await Review.findOne({ productId, userId });
@@ -957,27 +957,61 @@ const categoryShopFilter = async(req,res)=>{
 // load order history page
 
 
-const loadOrderHistory = async(req,res)=>{
-try {
+const loadOrderHistory = async (req, res) => {
+  try {
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';  // Get the email from session
+    const user = await User.findOne({ email });
 
-  res.status(200).render('user/orderHistory');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-} catch (error) {
-  res.status(500).send('Internal Server Error');
-}
+    const userId = new mongoose.Types.ObjectId(user._id);
+    // Fetch orders for the user
+    const orders = await Orders.find({ userId }).sort({ orderDate: -1 }); // Sort by date descending
 
-}
+    // For each order, fetch the name of the first product
+    for (let order of orders) {
+      const firstProduct = order.products[0]; // Get the first product
+      const productDetails = await Product.findById(firstProduct.productId); // Fetch product by ID
+      order.firstProductName = productDetails.name; // Add product name to the order object
+      order.firstProductQuantity = firstProduct.quantity; // Add product quantity to the order object
+    }
+
+    res.status(200).render('user/orderHistory', { orders });
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+  
+
+
 
 
 // load order detailes page
 
-const loadOrderDetails = async(req,res)=>{
+const loadOrderDetails = async (req, res) => {
   try {
-    res.status(200).render('user/orderDetails');
+    const orderId = req.params.id;
+    // Fetch the order details from the database
+    const order = await Orders.findOne({ orderId })
+      .populate('userId', 'username email') // Populating the user details
+      .populate('deliveryAddress') // Populating the delivery address
+      .populate('billingAddress') // Populating the billing address
+      .populate('products.productId'); // Populating product details
+    
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Pass the order details to the EJS template
+    res.status(200).render('user/orderDetails', { order });
   } catch (error) {
+    console.error(error);
     res.status(500).send('Internal Server Error');
   }
-}
+};
 
 
 
@@ -1012,11 +1046,10 @@ const loadCart = async (req, res) => {
 const loadCheckout =  async(req,res)=>{
 try {
   const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com'; 
+  const message = req.query.message;
+  const errBoolean = req.query.err;
   const user = await User.findOne({ email: userEmail }).populate('addresses');
-  if (!user || user.addresses.length === 0) {
-    return res.status(404).send('User is not valid');
-  }
-  res.status(200).render('user/checkOut',{user});
+  res.status(200).render('user/checkOut',{user,message,errBoolean});
 } catch (error) {
   res.status(500).send('Internal Server Error')
 }
@@ -1041,13 +1074,20 @@ const loadAddress = async(req,res)=>{
 
 //load conformation page
 
-const loadOrderConformation = async(req,res)=>{
+const loadOrderConformation = async (req, res) => {
   try {
-    res.status(200).render('user/orderConformation');
+    const orderId = req.params.id;
+    const orderDetails = await Orders.findOne({ orderId }).populate('userId').populate('products.productId').populate('deliveryAddress').exec();
+    if (!orderDetails) {
+      return res.status(404).send('Order not found');
+    }
+    res.status(200).render('user/orderConformation', { orderDetails });
   } catch (error) {
+    console.error('Error in loadOrderConformation:', error);
     res.status(500).send('Internal Server Error');
   }
-}
+};
+
 
 // save the user data
 
@@ -1459,21 +1499,15 @@ const addAddress = async(req,res)=>{
 const checkoutDataStore = async (req, res) => {
   try {
     const  checkOutData  = req.body;
-    console.log(req.body)
-    console.log(checkOutData);
     const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
-
+    console.log(checkOutData)
     // Find the user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log(user);
     const userId = new mongoose.Types.ObjectId(user._id);
 
-    // Debugging
-    console.log('Query Filter:', { userId });
-    console.log('Update Data:', { checkOutData });
 
     // Check if checkout data exists for the user
     const existUser = await CheckOut.findOne({ userId });
@@ -1490,7 +1524,7 @@ const checkoutDataStore = async (req, res) => {
       }
     } else {
       // Create a new checkout data entry
-      const newCheckOut = new CheckOut({ userId, checkOutData });
+      const newCheckOut = new CheckOut({ userId, ...checkOutData });
       await newCheckOut.save();
     }
 
@@ -1509,7 +1543,6 @@ const getCheckoutSummery = async(req,res)=>{
     const user = await User.findOne({email});
     const userId = user._id;
     const userSummeryDetails = await CheckOut.findOne({userId});
-    console.log(userSummeryDetails);
     res.status(200).json(userSummeryDetails);
   } catch (error) {
     console.log(error)
@@ -1572,12 +1605,151 @@ const loadEditAddress = async (req, res) => {
       return res.status(404).send('Address not found');
     }
 
-    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress });
+    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress});
   } catch (error) {
     console.log(error);
     res.status(500).send('Internal Server Error');
   }
 };
+
+
+
+// save the updated address
+
+const saveUpdatedAddress = async (req, res) => {
+  try {
+    const sessionEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const user = await User.findOne({ email: sessionEmail });
+    const addressId = req.params.addressId;
+
+    if (!mongoose.Types.ObjectId.isValid(addressId)) {
+      return res.status(400).send('Invalid address ID');
+    }
+
+    const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    const address = await Address.findById(addressId);
+    if (!address) {
+      return res.status(404).send('Address not found');
+    }
+
+    address.fname = fname;
+    address.lname = lname;
+    address.companyName = companyName;
+    address.houseName = houseName;
+    address.country = country;
+    address.state = state;
+    address.city = city;
+    address.zipCode = zipCode;
+    address.email = email;
+    address.phone = phone;
+
+    await address.save();
+    const addressIndex = user.addresses.findIndex(
+      (addressIdObj) => addressIdObj.toString() === addressId
+    );
+    if (addressIndex !== -1) {
+      user.addresses[addressIndex] = address._id; 
+    }
+
+    await user.save();
+    
+    res.status(200).redirect('/user/checkOut?message=Address updation SuccessFully&err=true');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+// place oreder 
+
+const submitOrder = async (req, res) => {
+  try {
+    const { deliveryAddress, billingAddress, paymentMethod } = req.body;
+
+    if (!deliveryAddress || !deliveryAddress._id) {
+      return res.status(400).json({ message: 'Invalid delivery address' });
+    }
+    const deliveryAddressData = await Address.findById(deliveryAddress._id);
+    if (!deliveryAddressData) {
+      return res.status(400).json({ message: 'Delivery address not found' });
+    }
+
+    const userId = deliveryAddressData.user;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const checkout = await CheckOut.findOne({ userId });
+    if (!checkout) {
+      return res.status(400).json({ message: 'Checkout data not found' });
+    }
+
+    const cart = await Cart.findOne({ userId: user._id });
+    if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
+      return res.status(400).json({ message: 'Cart is empty' });
+    }
+
+    const products = cart.items.map(item => ({
+      productId: item.productId,
+      quantity: item.quantity,
+      price: item.price,
+      total: item.quantity * item.price,
+    }));
+
+    const subtotal = products.reduce((sum, item) => sum + item.total, 0);
+    const discount = checkout.discount || 0;
+    const totalAmount = subtotal + discount;
+
+    const order = new Orders({
+      orderId: `ORD${Date.now()}`,
+      userId: user._id,
+      orderDate: new Date(),
+      status: 'Processing',
+      paymentStatus: 'Unpaid',
+      paymentMethod,
+      deliveryAddress: deliveryAddressData._id,
+      billingAddress:billingAddress,
+      products,
+      subtotal,
+      discount,
+      totalAmount,
+    });
+
+    await order.save();
+
+
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return res.status(400).json({ message: `Product with ID ${item.productId} not found` });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ message: `Insufficient stock for product ID ${item.productId}` });
+      }
+
+      product.stock -= item.quantity; 
+      await product.save(); 
+    }
+
+  
+    await CheckOut.deleteOne({ userId }); 
+    await Cart.deleteOne({ userId });
+    res.status(200).json({ message: 'Order placed successfully', orderId: order.orderId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
 
 
 
@@ -1628,5 +1800,7 @@ module.exports={
   getCheckoutSummery,
   deleteAddress,
   editAddress,
-  loadEditAddress
+  loadEditAddress,
+  saveUpdatedAddress,
+  submitOrder
 };

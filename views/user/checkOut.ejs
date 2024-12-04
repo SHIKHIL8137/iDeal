@@ -2,6 +2,15 @@
     <link rel="stylesheet" href="/user/checkOut/style.css">
 </head>
 <body>
+  <% if (message && errBoolean) { %>
+    <div id="alertBox" class="alert alert-success" role="alert">
+      <%= message %>
+    </div>
+  <% } else if (message && !errBoolean) { %>
+    <div id="alertBox" class="alert alert-danger" role="alert">
+      <%= message %>
+    </div>
+  <% } %>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
@@ -121,13 +130,6 @@
     </div>
     <div class="col-md-4">
       <div class="cart-summary">
-        <h5>Summary</h5>
-        <p>Sub-total: <span class="float-end">₹71,998</span></p>
-        <p>Shipping Fees: <span class="float-end text-success">Free</span></p>
-        <p>Coupen Discount: <span class="float-end text-danger">₹1,999</span></p>
-        <hr>
-        <p>Total: <span class="float-end">₹69,999</span></p>
-        <button class="btn btn-primary btn-block mt-4 w-100" id="placeOrderBtn">Place Order</button>
       </div>
     </div>
   </div>

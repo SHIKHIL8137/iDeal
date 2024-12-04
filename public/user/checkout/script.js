@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById("sameAsDelivery").checked) {
     fillBillingAddressForm(selectedDeliveryAddress);
   }
+  
 });
 
 // Handle selecting a delivery address
@@ -117,4 +118,133 @@ try {
 } catch (error) {
   alert('an error occure please try again later');
 }
+
+
+
+
+// Handle selecting a delivery address
+function selectDeliveryAddress(addressId) {
+  const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
+  const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
+
+  selectedDeliveryAddress = addresses[selectedIndex];
+
+  // If "Same as delivery address" checkbox is checked, fill the billing form with the selected delivery address
+  if (document.getElementById("sameAsDelivery").checked) {
+    fillBillingAddressForm(selectedDeliveryAddress);
+  }
+}
+
+
+
+
+
+
+document.getElementById('placeOrder').addEventListener('click',async(e)=>{
+  e.preventDefault();
+
+  try {
+    
+
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').id;
+    const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
+    const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
+    const selectedDeliveryAddress = addresses[selectedIndex];
+
+
+    const billingAddress = {
+      fname: document.getElementById("billingFirstName").value,
+      lname: document.getElementById("billingLastName").value,
+      companyName: document.getElementById("billingCompany").value,
+      houseName: document.getElementById("billingHouseName").value,
+      country: document.getElementById("billingCountry").value,
+      state: document.getElementById("billingState").value,
+      city: document.getElementById("billingCity").value,
+      zipCode: document.getElementById("billingZip").value,
+      email: document.getElementById("billingEmail").value,
+      phone: document.getElementById("billingPhone").value,
+    };
+  
+    const orderDetails = {
+      deliveryAddress: selectedDeliveryAddress,
+      billingAddress: billingAddress,
+      paymentMethod: paymentMethod,
+    };
+console.log(orderDetails)
+
+    const response = await fetch("/user/orderSubmit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderDetails),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      window.location.href = `/user/loadOrderConformation/${result.orderId}`;
+
+      console.log('succes')
+    } else {
+      alert(`Failed to place order: ${result.message}`);
+    }
+
+
+  } catch (error) {
+    console.error("Error placing order:", error);
+    alert("An error occurred while placing the order. Please try again.");
+  }
+
+
 })
+
+
+})
+
+
+
+
+
+// for alert box
+const alertBox = document.getElementById("alertBox");
+  alertBox.classList.add("show");
+  setTimeout(() => {
+    alertBox.classList.remove("show");
+    alertBox.classList.add("hide");
+    setTimeout(() => {
+      alertBox.style.display = "none";
+    }, 500); 
+  }, 3000); 
+
+// remove the params from the url
+  if (window.location.search) {
+    const url = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, url);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

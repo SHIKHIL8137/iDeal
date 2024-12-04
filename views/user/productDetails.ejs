@@ -142,7 +142,7 @@
   
             <!-- Quantity Selector -->
             <div class="d-flex align-items-center mb-3">
-              <button class="btn btn-outline-primary  addTocartProductDetails" id="addTocartProduct">Add To Cart</button>
+              <button class="btn btn-outline-primary  addTocartProductDetails" id="addTocartProduct" <% if (product.stock === 0) { %> disabled <% } %>>Add To Cart</button>
           </div>
           <div>
             <button class="btn btn-primary w-100 bayProductDetails" id="buyNowBtn" <% if (product.stock === 0) { %> disabled <% } %>>Buy Now</button>

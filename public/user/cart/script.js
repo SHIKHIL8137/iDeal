@@ -1,3 +1,6 @@
+
+
+
 async function updateQuantity(productId, action) {
   try {
     const response = await fetch('/user/updateCartQuantity', {
@@ -117,7 +120,8 @@ function removeCoupon() {
 }
 
 
-
+const cart = JSON.parse(document.getElementById('cartData').textContent);
+const cartId = cart._id;
 
 document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
   e.preventDefault();
@@ -133,6 +137,7 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
     discount: parseFloat(discount) || 0,
     finalTotal: parseInt(finalTotal.replace(/,/g, ''), 10) || 0,
     appliedCoupon: appliedCoupon || 'N/A',
+    cartId
   };
   console.log(checkOutData)
 
@@ -149,7 +154,7 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
 
     if (response.ok) {
       console.log('Order saved successfully:', result);
-      window.location.href='/user/checkOut';
+      window.location.href=`/user/checkOut`;
     } else {
       console.error('Error saving order:', result);
       alert('Failed to save the order. Please try again.');

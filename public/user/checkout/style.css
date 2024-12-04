@@ -100,4 +100,26 @@ nav{
     .input-field::placeholder{
       color: rgba(255, 255, 255, 0.562); 
       opacity: 1;
+    }#alertBox {
+      position: fixed;
+      top: 20px;
+      right: -100%;
+      transition: all 0.5s ease-in-out;
+      z-index: 9999;
     }
+    
+    #alertBox.show {
+      right: 20px;
+    }
+    
+    #alertBox.hide {
+      right: -100%;
+    }
+    .is-invalid {
+      border-color: #dc3545;
+    }
+    
+    .text-danger {
+      font-size: 0.875em; /* Smaller font size */
+    }
+    

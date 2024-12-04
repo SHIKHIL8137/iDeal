@@ -1,4 +1,7 @@
-
+document.getElementById('cancellBtn').addEventListener('click',(e)=>{
+  e.preventDefault();
+  window.location.href="/user/checkOut"
+})
 
 
 

@@ -55,6 +55,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [{ 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Orders' 
+    }]
   },
   { timestamps: true } 
 );
@@ -189,6 +193,10 @@ const checkoutSchema = new mongoose.Schema({
     type: Number,
     required: true,
 
+  },cartId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart', 
+    required: true
   },
   discount: {
     type: Number,
@@ -214,6 +222,105 @@ const checkoutSchema = new mongoose.Schema({
 
 
 
+const orderSchema = new mongoose.Schema({
+  orderId: { 
+    type: String, 
+    required: true, 
+    unique: true 
+  }, 
+  userId: {
+     type: mongoose.Schema.Types.ObjectId,
+     ref: 'User', 
+     required: true 
+    },
+  orderDate: { 
+    type: Date, 
+    default: Date.now 
+  },
+  status: {
+     type: String, 
+     enum: ['Processing', 'Confirmed','Delivered', 'Cancelled'], 
+     default: 'Pending' },
+  paymentStatus: { 
+    type: String, 
+    enum: ['Paid', 'Unpaid', 'Refund Initiated'], required: true 
+  },
+  paymentMethod: { 
+    type: String, 
+    required: true 
+  }, 
+
+  deliveryAddress: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Address', 
+    required: true 
+  },
+
+  billingAddress: {
+    fname: { type: String, required: true }, 
+    lname: { type: String, required: true },
+    companyName: { type: String },
+    houseName: { type: String },
+    country: { type: String, required: true },
+    state: { type: String, required: true },
+    city: { type: String, required: true },
+    zipCode: { type: String, required: true },
+    email: { type: String, required: true, match: /\S+@\S+\.\S+/ }, 
+    phone: { type: String, required: true, }
+  },
+
+  products: [
+    {
+      productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product', 
+        required: true 
+      },
+      quantity: { 
+        type: Number, 
+        required: true 
+      }, 
+      price: { 
+        type: Number, 
+        required: true 
+      }, 
+      total: { 
+        type: Number, 
+        required: true 
+      } 
+    }
+  ],
+
+  subtotal: { 
+    type: Number, 
+    required: true }, 
+  discount: { 
+    type: Number, 
+    default: 0 }, 
+  totalAmount: { 
+    type: Number, 
+    required: true },
+
+ 
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 module.exports = {
@@ -222,4 +329,5 @@ module.exports = {
   OTP:mongoose.model('OTP',otpSchema),
   Cart:mongoose.model('Cart',cartSchema),
   CheckOut : mongoose.model('CheckOut',checkoutSchema),
+  Orders : mongoose.model('Orders',orderSchema),
 };
