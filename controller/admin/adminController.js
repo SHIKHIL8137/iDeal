@@ -830,31 +830,68 @@ const addCoupon = async(req,res)=>{
 
 //update the order status
 
-const updateOrderStatus = async(req,res)=>{
-  const  orderId  = req.params.orderId; 
-  const { status } = req.body; 
+// const updateOrderStatus = async(req,res)=>{
+//   const  orderId  = req.params.orderId; 
+//   const { status } = req.body; 
+//   console.log('Received orderId:', orderId);
+//   console.log('Received new status:', status); 
+//   try {
+//     const updatedOrder = await Orders.findByIdAndUpdate(
+//       orderId,
+//       { status: status }, 
+//       { new: true } 
+//     );
+
+
+//     if (!updatedOrder) {
+//       return res.status(404).json({ success: false, message: 'Order not found' });
+//     }
+
+//     res.status(200).json({ success: true, order: updatedOrder });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: 'Server error' });
+//   }
+// }
+
+
+const updateOrderStatus = async (req, res) => {
+  const orderId = req.params.orderId;
+  const { status } = req.body;
+
   console.log('Received orderId:', orderId);
-  console.log('Received new status:', status); 
+  console.log('Received new status:', status);
+
   try {
-    const updatedOrder = await Orders.findByIdAndUpdate(
-      orderId,
-      { status: status }, 
-      { new: true } 
-    );
+    // Fetch the order details to access the products in the order
+    const order = await Orders.findById(orderId).populate('products.productId'); // Populate product details
 
-
-    if (!updatedOrder) {
+    if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
+    // Check if the status is being changed to "Cancelled"
+    if (status === 'Cancelled') {
+      // Loop through the products in the order and update their stock
+      for (const item of order.products) {
+        const product = await Product.findById(item.productId); // Access productId in products array
+        if (product) {
+          product.stock += item.quantity; // Increment stock by order quantity
+          await product.save(); // Save the updated stock
+        }
+      }
+    }
+
+    // Update the order status
+    order.status = status;
+    const updatedOrder = await order.save(); // Save the order with the new status
+
     res.status(200).json({ success: true, order: updatedOrder });
   } catch (error) {
-    console.error(error);
+    console.error('Error updating order status:', error);
     res.status(500).json({ success: false, message: 'Server error' });
   }
-}
-
-
+};
 
 
 

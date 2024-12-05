@@ -18,21 +18,21 @@ router.get('/productDetails/:id',userController.loadProductDetails);
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/user/signUp'}),userMiddleWare.storeSessionEmail,userController.googleLogin)
 router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
-router.get('/userProfile',userController.loadProfile);
+router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
 router.get('/search',userController.productSearching)
 router.get('/sortProduct',userController.sortedProduct);
 router.get('/sortCategoryProduct',userController.sortCategoryProduct);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
-router.get('/orderHistory',userController.loadOrderHistory);
-router.get('/orderDetails/:id',userController.loadOrderDetails)
-router.get('/cart',userController.loadCart)
-router.get('/checkOut',userController.loadCheckout)
-router.get('/address',userController.loadAddress);
-router.get('/loadOrderConformation/:id',userController.loadOrderConformation);
-router.get('/check-email',userController.checkEmail);
-router.get('/checkoutSummery',userController.getCheckoutSummery);
-router.get('/editAddress/:id',userController.loadEditAddress);
+router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
+router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
+router.get('/cart',userMiddleWare.isLoggedIn,userController.loadCart)
+router.get('/checkOut',userMiddleWare.isLoggedIn,userController.loadCheckout)
+router.get('/address',userMiddleWare.isLoggedIn,userController.loadAddress);
+router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,userController.loadOrderConformation);
+router.get('/check-email',userMiddleWare.isLoggedIn,userController.checkEmail);
+router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getCheckoutSummery);
+router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditAddress);
 
 
 

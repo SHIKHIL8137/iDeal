@@ -71,6 +71,56 @@ document.getElementById('prevPage').addEventListener('click', goToPrevPage);
 
 renderTable();
 
+
+
+
+// Search functionality
+document.querySelector('.form-control').addEventListener('input', function (event) {
+  const searchQuery = event.target.value.trim().toLowerCase();
+  const filteredCategories = category.filter(item => {
+    return item.name.toLowerCase().includes(searchQuery);
+  });
+
+  const tableBody = document.getElementById('categoryTableBody');
+  tableBody.innerHTML = '';
+
+  if (filteredCategories.length === 0) {
+    tableBody.innerHTML = `<tr><td colspan="4" class="text-center">No matching records found.</td></tr>`;
+  } else {
+    filteredCategories.forEach(val => {
+      const row = `
+        <tr>
+          <td>${val.name} Series</td>
+          <td>
+            <span class="badge ${val.status ? 'bg-success' : 'bg-danger'}">
+              ${val.status ? 'Listed' : 'Unlisted'}
+            </span>
+          </td>
+          <td>${new Date(val.createdAt).toLocaleDateString()}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('${val._id}')">Edit</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('${val._id}')">Delete</button>
+          </td>
+        </tr>
+      `;
+      tableBody.innerHTML += row;
+    });
+  }
+
+  document.querySelector('.showing1-10Text').textContent = `Showing 1-${Math.min(rowsPerPage, filteredCategories.length)} from ${filteredCategories.length}`;
+  document.getElementById('prevPage').disabled = true;
+  document.getElementById('nextPage').disabled = true;
+});
+
+
+
+
+
+
+
+
+
+
 // showing the modal for delete conformation
 
 let categoryIdToDelete = null;
@@ -103,6 +153,8 @@ document.getElementById('addCategoryBtn').addEventListener('click', function () 
    console.log('cliked')
     window.location.href = `/admin/addCategory`;
 });
+
+
 
 
 // for alert box

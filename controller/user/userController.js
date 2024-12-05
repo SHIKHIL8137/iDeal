@@ -1286,19 +1286,16 @@ const addProductToCart = async (req, res) => {
 
 // update Quantity in cart
 
-
 const updateCartQuantity = async (req, res) => {
   try {
     const { productId, action } = req.body;
-    const email = req.session.isLoggedEmail ;
-
+    const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
     const cart = await Cart.findOne({ userId: user._id });
 
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found.' });
     }
-
     const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
 
     if (itemIndex === -1) {
@@ -1306,13 +1303,20 @@ const updateCartQuantity = async (req, res) => {
     }
 
     const item = cart.items[itemIndex];
-
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found in the inventory.' });
+    }
     if (action === 'increment') {
       if (item.quantity >= 10) {
         return res.status(400).json({ message: 'Maximum quantity reached (10).' });
       }
+      if (item.quantity + 1 > product.stock) {
+        return res.status(400).json({ message: 'Insufficient stock available.' });
+      }
       item.quantity += 1;
       item.totalPrice = item.quantity * item.price;
+
     } else if (action === 'decrement') {
       if (item.quantity <= 1) {
         return res.status(400).json({ message: 'Minimum quantity is 1.' });
@@ -1330,6 +1334,13 @@ const updateCartQuantity = async (req, res) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
+
+
+
+
+
+
 
 // delete product from cart
 

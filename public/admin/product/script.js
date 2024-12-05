@@ -1,8 +1,4 @@
 
-
-
-
-
 const rowsPerPage = 10; 
 let currentPage = 1;
 let products = JSON.parse(document.getElementById('userData').textContent); 
@@ -121,6 +117,66 @@ window.location.href=`/admin/category`
 document.getElementById('addProductbtn').addEventListener('click',function(){
   window.location.href=`/admin/addProduct`
 })
+
+// Function to filter products by status
+function filterProducts(filterType) {
+  let filteredProducts;
+
+  switch (filterType) {
+    case 'all':
+      filteredProducts = originalProducts; 
+      break;
+    case 'published':
+      filteredProducts = originalProducts.filter(product => product.stock >= 10);
+      break;
+    case 'lowstock':
+      filteredProducts = originalProducts.filter(product => product.stock > 0 && product.stock < 10);
+      break;
+    case 'outofstock':
+      filteredProducts = originalProducts.filter(product => product.stock === 0);
+      break;
+    default:
+      filteredProducts = originalProducts;
+  }
+
+  products = filteredProducts;
+  currentPage = 1;
+  renderTable();
+}
+
+// Add event listeners for filter buttons
+document.querySelectorAll('.btn-outline-primary, .btn-outline-secondary, .btn-outline-warning, .btn-outline-danger')
+  .forEach(button => {
+    button.addEventListener('click', event => {
+      document.querySelectorAll('.btn-outline-primary, .btn-outline-secondary, .btn-outline-warning, .btn-outline-danger')
+        .forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      const filterType = event.target.getAttribute('data-filter');
+      filterProducts(filterType);
+    });
+  });
+const originalProducts = [...products];
+filterProducts('all');
+
+
+
+// Search functionality
+document.querySelector('.form-control').addEventListener('input', function (event) {
+  const searchQuery = event.target.value.trim().toLowerCase();
+
+  const filteredProducts = originalProducts.filter(product => {
+    const nameMatch = product.name.toLowerCase().includes(searchQuery);
+    const categoryMatch = product.category.name.toLowerCase().includes(searchQuery);
+    return nameMatch || categoryMatch;
+  });
+
+  products = filteredProducts; 
+  currentPage = 1; 
+  renderTable(); 
+});
+
+
+
 
 
 // alert box

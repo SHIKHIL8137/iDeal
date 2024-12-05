@@ -58,10 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>₹${order.totalAmount.toFixed(2)}</td>
           <td>
             <button type="button" class="btn btn-sm btn-outline-success editOrderStatusBtn"
-                    data-bs-toggle="modal" data-bs-target="#editOrderStatusModal"
-                    data-order-id="${order.orderId}" data-current-status="${order.status}" data-order-dbid="${order._id}">
-              Edit
-            </button>
+                data-bs-toggle="modal" data-bs-target="#editOrderStatusModal"
+                data-order-id="${order.orderId}" data-current-status="${order.status}" data-order-dbid="${order._id}"
+                ${order.status === 'Cancelled' ? 'disabled' : ''}>
+          Edit
+        </button>
           </td>
         </tr>
       `;
@@ -160,7 +161,14 @@ searchBar.addEventListener("input", (event) => {
 
 
 
+  
   document.getElementById('saveOrderStatus').addEventListener('click', async () => {
+    const confirmSave = confirm('Are you sure you want to save the changes to the order status?');
+    
+    if (!confirmSave) {
+      return;
+    }
+  
     try {
       const orderId = orderIdDbField.value;
       const newStatus = orderStatusField.value;
@@ -192,6 +200,7 @@ searchBar.addEventListener("input", (event) => {
     }
   });
   
+
   
 });
 

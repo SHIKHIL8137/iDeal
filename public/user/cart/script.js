@@ -10,10 +10,11 @@ async function updateQuantity(productId, action) {
     });
 
     const result = await response.json();
+    console.log(result);
     if (response.ok) {
       location.reload(); 
     } else {
-      showAlert('Error updating quantity','danger')
+      showAlert(result.message,'danger')
     }
   } catch (error) {
     console.error('Error updating quantity:', error);
