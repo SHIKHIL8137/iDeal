@@ -59,6 +59,7 @@ router.post('/checkout',userController.checkoutDataStore);
 router.post('/editAddress',userController.editAddress);
 router.post('/updateAddress/:addressId',userController.saveUpdatedAddress)
 router.post('/orderSubmit',userController.submitOrder);
+router.post('/cancel-order/:orderId',userController.cancelOreder);
 
 
 

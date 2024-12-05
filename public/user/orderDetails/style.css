@@ -82,3 +82,30 @@ nav{
   height: 100vh;
 }
   
+.modal-content{
+  background-color: #121212;
+  padding: 20px;
+}
+#feedback{
+  background-color: #1d1d1d;
+  color: white;
+  border: none;
+}
+#feedback::placeholder{
+  color: white;
+}
+#alertBox {
+  position: fixed;
+  top: 20px;
+  right: -100%;
+  transition: all 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+#alertBox.show {
+  right: 20px;
+}
+
+#alertBox.hide {
+  right: -100%;
+}

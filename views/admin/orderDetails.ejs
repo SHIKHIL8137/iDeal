@@ -2,24 +2,24 @@
 <link rel="stylesheet" href="/admin/orderDetails/style.css">
 </head>
 <body>
-  <% if(message){ %>
+  <% if (message) { %>
     <div id="alertBox" class="alert alert-success" role="alert">
-     <%= message %>
+      <%= message %>
     </div>
-    <% }%>
+  <% } %>
   <div class="container-fluid">
     <div class="row flex-nowrap">
       <!-- Sidebar -->
-      <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
-        <ul class="nav nav-pills flex-column ">
+      <div class="d-flex flex-column p-3 text-white vh-100 col-md-2" style="width: 250px;">
+        <ul class="nav nav-pills flex-column">
           <li>
             <a href="#" class="nav-link text-dark">
-              <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
+              <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Logo">
             </a>
           </li>
         </ul>
         <p class="text-uppercase text-primary navMainHeading mt-3">Menu</p>
-        <ul class="nav nav-pills flex-column ">
+        <ul class="nav nav-pills flex-column">
           <li class="nav-item">
             <a href="/admin/dashboard" class="nav-link text-dark">
               <i class="fas fa-th-large"></i> Dashboard
@@ -31,7 +31,7 @@
             </a>
           </li>
           <li>
-            <a href="/admin/order" class="nav-link text-dark">
+            <a href="/admin/orders" class="nav-link text-dark">
               <i class="fas fa-shopping-cart"></i> Orders
             </a>
           </li>
@@ -53,7 +53,7 @@
         </ul>
       
         <p class="text-uppercase text-primary mt-4 mb-2 navMainHeading">User Management</p>
-        <ul class="nav nav-pills flex-column ">
+        <ul class="nav nav-pills flex-column">
           <li>
             <a href="/admin/manageAdmin" class="nav-link text-dark">
               <i class="fas fa-user-cog"></i> Manage Admins
@@ -74,9 +74,7 @@
           <h2>Order Details</h2>
           <div class="d-flex align-items-center">
             <!-- Search Bar -->
-            <input type="text" class="form-control me-3 w-50" placeholder="Search...">
-            
-            <!-- Admin Profile -->
+
             <div class="dropdown">
               <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <%= username %>
@@ -93,7 +91,7 @@
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
               <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Dashboard</a></li>
-              <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Order</a></li>
+              <li class="breadcrumb-item"><a href="/admin/order" class="breadcrumb-item-style-atag">Orders</a></li>
               <li class="breadcrumb-item active" aria-current="page">Order Details</li>
             </ol>
           </nav>
@@ -103,39 +101,41 @@
           <div class="col-lg-6">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Order #302011</h5>
-                <span class="badge bg-warning text-dark">Processing</span>
+                <h5 class="card-title">Order <%= order.orderId %></h5>
+                <span class="badge bg-warning text-dark"><%= order.status %></span>
                 <ul class="list-unstyled mt-3">
-                  <li><strong>Added:</strong> 08 Nov 2024</li>
-                  <li><strong>Payment Method:</strong> Visa</li>
-                  <li><strong>Shipping Method:</strong> Flat Shipping</li>
+                  <li><strong>Added:</strong> <%= order.orderDate.toLocaleDateString() %></li>
+                  <li><strong>Payment Method:</strong> <%= order.paymentMethod %></li>
                 </ul>
               </div>
             </div>
           </div>
+          
           <!-- Customer Details -->
           <div class="col-lg-6">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Customer</h5>
                 <ul class="list-unstyled mt-3">
-                  <li><strong>Name:</strong> Josh Adam</li>
-                  <li><strong>Email:</strong> joshadam@mail.com</li>
-                  <li><strong>Phone:</strong> 909 427 2910</li>
+                  <li><strong>Name:</strong> <%= order.userId.firstName %> <%= order.userId.lastName %></li>
+                  <li><strong>Email:</strong> <%= order.userId.email %></li>
+                  <li><strong>Phone:</strong> <%= order.userId.phone %></li>
                 </ul>
               </div>
             </div>
           </div>
+
           <!-- Address Details -->
           <div class="col-lg-6">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Address</h5>
-                <p><strong>Billing Address:</strong> <br> 1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
-                <p><strong>Shipping Address:</strong> <br> 1833 Bel Meadow Drive, Fontana, California 92335, USA</p>
+                <p><strong>Billing Address:</strong> <br> <%= order.billingAddress.houseName %>, <%= order.billingAddress.city %>, <%= order.billingAddress.state %>, <%= order.billingAddress.zipCode %>, <%= order.billingAddress.country %></p>
+                <p><strong>Shipping Address:</strong> <br> <%= order.deliveryAddress.houseName %>, <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>, <%= order.deliveryAddress.zipCode %>, <%= order.deliveryAddress.country %></p>
               </div>
             </div>
           </div>
+
           <!-- Order List -->
           <div class="col-lg-12">
             <div class="card">
@@ -154,37 +154,25 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>iPhone 13 Pro (Black)</td>
-                      <td>302011</td>
-                      <td>1 pcs</td>
-                      <td>$121.00</td>
-                      <td>$121.00</td>
-                    </tr>
-                    <tr>
-                      <td>iPhone SE (Black)</td>
-                      <td>302011</td>
-                      <td>1 pcs</td>
-                      <td>$590.00</td>
-                      <td>$590.00</td>
-                    </tr>
+                    <% order.products.forEach(function(product) { %>
+                      <tr>
+                        <td><%= product.productId.name %></td>
+                        <td><%= product.productId._id %></td>
+                        <td><%= product.quantity %> pcs</td>
+                        <td>₹<%= product.price.toFixed(2) %></td>
+                        <td>₹<%= product.total.toFixed(2) %></td> 
+                      </tr>
+                    <% }); %>
                   </tbody>
                   <tfoot>
                     <tr>
                       <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                      <td>$711.00</td>
+                      <td>₹<%= order.subtotal %></td>
                     </tr>
-                    <tr>
-                      <td colspan="4" class="text-end"><strong>VAT (0%):</strong></td>
-                      <td>$0.00</td>
-                    </tr>
-                    <tr>
-                      <td colspan="4" class="text-end"><strong>Shipping Rate:</strong></td>
-                      <td>$10.00</td>
-                    </tr>
+                   
                     <tr>
                       <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                      <td>$721.00</td>
+                      <td>₹<%= order.totalAmount %></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -192,14 +180,14 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
+
+  
+
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script type="application/json" id="userData"><%- JSON.stringify(products) %></script>
   <script src="/admin/orderDetails/script.js"></script>
   <%- include('partials/footer.ejs') -%>
-
-

@@ -427,7 +427,7 @@ const productReview=async(req,res)=>{
     const productId = req.params.id;
   const userId = req.session.userId || '6745ee262ef67315e2da1c5e';
   const {rating,reviewText} =req.body;
-
+console.log('review')
   const existingReview = await Review.findOne({ productId, userId });
   if(existingReview) return res.status(200).send('user already exist');
 
@@ -959,7 +959,7 @@ const categoryShopFilter = async(req,res)=>{
 
 const loadOrderHistory = async (req, res) => {
   try {
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';  // Get the email from session
+    const email = req.session.isLoggedEmail;  
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -967,15 +967,13 @@ const loadOrderHistory = async (req, res) => {
     }
 
     const userId = new mongoose.Types.ObjectId(user._id);
-    // Fetch orders for the user
-    const orders = await Orders.find({ userId }).sort({ orderDate: -1 }); // Sort by date descending
+    const orders = await Orders.find({ userId }).sort({ orderDate: -1 }); 
 
-    // For each order, fetch the name of the first product
     for (let order of orders) {
-      const firstProduct = order.products[0]; // Get the first product
-      const productDetails = await Product.findById(firstProduct.productId); // Fetch product by ID
-      order.firstProductName = productDetails.name; // Add product name to the order object
-      order.firstProductQuantity = firstProduct.quantity; // Add product quantity to the order object
+      const firstProduct = order.products[0]; 
+      const productDetails = await Product.findById(firstProduct.productId); 
+      order.firstProductName = productDetails.name;
+      order.firstProductQuantity = firstProduct.quantity; 
     }
 
     res.status(200).render('user/orderHistory', { orders });
@@ -994,18 +992,15 @@ const loadOrderHistory = async (req, res) => {
 const loadOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
-    // Fetch the order details from the database
     const order = await Orders.findOne({ orderId })
-      .populate('userId', 'username email') // Populating the user details
-      .populate('deliveryAddress') // Populating the delivery address
-      .populate('billingAddress') // Populating the billing address
-      .populate('products.productId'); // Populating product details
+      .populate('userId', 'username email') 
+      .populate('deliveryAddress') 
+      .populate('billingAddress') 
+      .populate('products.productId');
     
     if (!order) {
       return res.status(404).send('Order not found');
     }
-
-    // Pass the order details to the EJS template
     res.status(200).render('user/orderDetails', { order });
   } catch (error) {
     console.error(error);
@@ -1020,7 +1015,7 @@ const loadOrderDetails = async (req, res) => {
 
 const loadCart = async (req, res) => {
   try {
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail ;
 
     const user = await User.findOne({ email });
 
@@ -1045,7 +1040,7 @@ const loadCart = async (req, res) => {
 
 const loadCheckout =  async(req,res)=>{
 try {
-  const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com'; 
+  const userEmail = req.session.isLoggedEmail;
   const message = req.query.message;
   const errBoolean = req.query.err;
   const user = await User.findOne({ email: userEmail }).populate('addresses');
@@ -1196,7 +1191,7 @@ const updatePassword = async (req, res) => {
 const addProductToCart = async (req, res) => {
   try {
     const { productId, quantity = 1, price } = req.body; 
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail ;
 
     if (!productId || !price) {
       return res.status(400).json({ status: 'error', message: 'Product ID and price are required.' });
@@ -1295,7 +1290,7 @@ const addProductToCart = async (req, res) => {
 const updateCartQuantity = async (req, res) => {
   try {
     const { productId, action } = req.body;
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail ;
 
     const user = await User.findOne({ email });
     const cart = await Cart.findOne({ userId: user._id });
@@ -1342,7 +1337,7 @@ const updateCartQuantity = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail ;
 
     const user = await User.findOne({ email });
     const cart = await Cart.findOne({ userId: user._id });
@@ -1371,7 +1366,7 @@ const removeFromCart = async (req, res) => {
 
 const couponValidationCheckout = async (req, res) => {
   const { couponCode } = req.body;
-  const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+  const email = req.session.isLoggedEmail;
 
   try {
     const user = await User.findOne({ email });
@@ -1426,7 +1421,7 @@ const couponValidationCheckout = async (req, res) => {
 
 const removeCoupon = async (req, res) => {
   try {
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail ;
     const user = await User.findOne({ email });
     const userId = user._id;
 
@@ -1461,7 +1456,7 @@ const removeCoupon = async (req, res) => {
 const addAddress = async(req,res)=>{
   try {
     const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
-    const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const userEmail = req.session.isLoggedEmail ;
     if (!userEmail) return res.status(400).json({ message: 'User ID is required' });
     const user = await User.findOne({email:userEmail});
     console.log(user.addresses.length)
@@ -1499,7 +1494,7 @@ const addAddress = async(req,res)=>{
 const checkoutDataStore = async (req, res) => {
   try {
     const  checkOutData  = req.body;
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail;
     console.log(checkOutData)
     // Find the user
     const user = await User.findOne({ email });
@@ -1539,7 +1534,7 @@ const checkoutDataStore = async (req, res) => {
 
 const getCheckoutSummery = async(req,res)=>{
   try {
-    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const email = req.session.isLoggedEmail;
     const user = await User.findOne({email});
     const userId = user._id;
     const userSummeryDetails = await CheckOut.findOne({userId});
@@ -1595,7 +1590,7 @@ const editAddress = async (req,res)=>{
 const loadEditAddress = async (req, res) => {
   try {
     const message = req.query.message;
-    const addressId = req.params.id; // ID from route params
+    const addressId = req.params.id; 
     const errBoolean = req.query.err === "true";
 
     // Correct usage of findById
@@ -1618,7 +1613,7 @@ const loadEditAddress = async (req, res) => {
 
 const saveUpdatedAddress = async (req, res) => {
   try {
-    const sessionEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const sessionEmail = req.session.isLoggedEmail;
     const user = await User.findOne({ email: sessionEmail });
     const addressId = req.params.addressId;
 
@@ -1741,7 +1736,17 @@ const submitOrder = async (req, res) => {
 
   
     await CheckOut.deleteOne({ userId }); 
-    await Cart.deleteOne({ userId });
+    await Cart.updateOne(
+      { userId }, 
+      {
+        $set: { 
+          'items': [], 
+          'totalAmount': 0, 
+          'totalDiscountAmount': 0, 
+          'updatedAt': new Date(),
+        }
+      }
+    );
     res.status(200).json({ message: 'Order placed successfully', orderId: order.orderId });
   } catch (error) {
     console.error(error);
@@ -1750,7 +1755,33 @@ const submitOrder = async (req, res) => {
 };
 
 
+// cancel the order
 
+
+const cancelOreder = async(req,res)=>{
+  try {
+    const orderId = req.params.orderId;
+    const order = await Orders.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    for (const productItem of order.products) {
+      const product = await Product.findById(productItem.productId);
+      if (product) {
+        product.stock += productItem.quantity;
+        await product.save(); 
+      }
+    }
+    order.status = 'Cancelled';
+    await order.save(); 
+    res.json({ message: 'Order canceled successfully', order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+
+}
 
 
 
@@ -1802,5 +1833,6 @@ module.exports={
   editAddress,
   loadEditAddress,
   saveUpdatedAddress,
-  submitOrder
+  submitOrder,
+  cancelOreder
 };

@@ -26,7 +26,8 @@ router.get('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
 router.get('/orders',adminController.loadOrder)
-router.get('/orderDetails',adminController.loadDetails);
+router.get('/orderDetails/:orderId',adminController.loadDetails);
+
 
 
 
@@ -47,5 +48,9 @@ router.post('/addCustomer',adminController.addCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
 router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 router.post('/addCoupon',adminController.addCoupon);
+
+
+
+router.post('/updateStatusOrder/:orderId',adminController.updateOrderStatus);
 
 module.exports=router

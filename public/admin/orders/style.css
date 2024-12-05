@@ -152,3 +152,12 @@ ol li{
   #ProductImage{
     object-fit: contain;
   }
+ 
+td div {
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+
+td div::-webkit-scrollbar {
+  display: none;
+}

@@ -2,6 +2,8 @@
     <link rel="stylesheet" href="/user/orderDetails/style.css">
 </head>
 <body>
+  <div id="alertBox">
+  </div>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
@@ -62,6 +64,14 @@
                         <p class="mb-0 small" style="color: #bbb;">₹<%= product.total.toLocaleString() %></p>
                       </div>
                     </div>
+                    <!-- Review Button (Only Enabled for Delivered Products) -->
+                    <div class="text-center mt-2">
+                      <% if (order.status === 'Delivered') { %>
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn btn-outline-primary" onclick="writeReview('<%= product.productId._id %>')">Write a Review</button>
+                      <% } else { %>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Write a Review</button>
+                      <% } %>
+                    </div>
                   </div>
                 </div>
               <% }) %>
@@ -85,11 +95,13 @@
                 <p class="mb-0" style="color: #bbb;"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
               </div>
               <!-- Cancel and Return Buttons -->
-              <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
                 <% if (order.status === 'Delivered') { %>
                   <button type="button" class="btn btn-outline-success">Return Order</button>
                 <% } else if (order.status !== 'Cancelled') { %>
-                  <button type="button" class="btn btn-outline-danger">Cancel Order</button>
+                  <button type="button" class="btn btn-outline-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+                <% } else if (order.status === 'Cancelled') { %>
+                  <p class="text-danger">Order Has been Cancelled</p>
                 <% } %>
               </div>
             </div>
@@ -143,6 +155,58 @@
       </div>
     </div>
   </div>
+
+
+
+  <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+                <button type="button" class="btn-close custom-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <!-- Rating Radio Buttons -->
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="rating1" name="rating" value="1">
+                                <label class="form-check-label" for="rating1">1 - Poor</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="rating2" name="rating" value="2">
+                                <label class="form-check-label" for="rating2">2 - Fair</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="rating3" name="rating" value="3">
+                                <label class="form-check-label" for="rating3">3 - Good</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="rating4" name="rating" value="4">
+                                <label class="form-check-label" for="rating4">4 - Very Good</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="rating5" name="rating" value="5">
+                                <label class="form-check-label" for="rating5">5 - Excellent</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Textarea -->
+                    <div class="mb-3">
+                        <label for="feedback" class="form-label">Feedback</label>
+                        <textarea class="form-control" id="feedback" name="feedback" rows="4" placeholder="Write your feedback here..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button id="reviewSubmitBtn" class="btn btn-outline-primary">Publish Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 
   

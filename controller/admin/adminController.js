@@ -1,5 +1,5 @@
 const {Product,Category,Admin,Coupon} = require('../../model/adminModel');
-const {User,Address,OTP}=require('../../model/userModel');
+const {User,Address,OTP,Orders}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
 const sharp=require('sharp');
@@ -740,17 +740,25 @@ const changePassword = async (req, res) => {
 // orders page load
 
 
-const loadOrder = async(req,res)=>{
-try {
-  const username=req.session.username;
-  const message=req.query.message;
-  const products=await Product.find().populate('category');
-  res.status(200).render('admin/orders',{message,username,products})
-} catch (error) {
-  console.log(error)
-  res.status(500).send("Internal Server Error");
-}
-}
+const loadOrder = async (req, res) => {
+  try {
+    const username = req.session.username;
+    const message = req.query.message;
+
+    const orders = await Orders.find()
+      .populate('userId', 'firstName lastName email')
+      .populate('products.productId', 'name price')
+      .exec();
+
+  
+
+    res.status(200).render('admin/orders', { username, message, orders});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 // load loadDetilas page
@@ -759,10 +767,20 @@ const loadDetails = async(req,res)=>{
   try {
   const username=req.session.username;
   const message=req.query.message;
-  const products=await Product.find().populate('category');
-    res.status(200).render('admin/orderDetails',{message,username,products});
+  const orderId = req.params.orderId;
+    const order = await Orders.findById(orderId)
+      .populate('userId products.productId deliveryAddress billingAddress')
+      .exec();
+
+    // Pass the order data to the template
+    res.render('admin/orderDetails', {
+      order,
+      username, 
+      message
+    });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    console.error(error);
+    res.status(500).send('Server error');
   }
 }
 
@@ -782,12 +800,9 @@ const addCoupon = async(req,res)=>{
       usageLimit,
     } = req.body;
 
-    // Validate request data
     if (!code || !discountPercentage || !validFrom || !validTill) {
       return res.status(400).json({ status: 'error', message: 'All required fields must be provided.' });
     }
-
-    // Create a new coupon
     const newCoupon = new Coupon({
       code,
       discountPercentage,
@@ -799,7 +814,6 @@ const addCoupon = async(req,res)=>{
       usageLimit: usageLimit || null,
     });
 
-    // Save coupon to the database
     await newCoupon.save();
 
     res.status(201).json({
@@ -814,8 +828,31 @@ const addCoupon = async(req,res)=>{
 }
 
 
+//update the order status
+
+const updateOrderStatus = async(req,res)=>{
+  const  orderId  = req.params.orderId; 
+  const { status } = req.body; 
+  console.log('Received orderId:', orderId);
+  console.log('Received new status:', status); 
+  try {
+    const updatedOrder = await Orders.findByIdAndUpdate(
+      orderId,
+      { status: status }, 
+      { new: true } 
+    );
 
 
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    res.status(200).json({ success: true, order: updatedOrder });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+}
 
 
 
@@ -863,5 +900,6 @@ module.exports={
  changePassword,
  loadOrder,
  loadDetails,
- addCoupon
+ addCoupon,
+ updateOrderStatus,
 }
