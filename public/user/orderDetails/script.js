@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
       reviewText: reviewText,
     };
 
+    console.log(reviewData)
+
     try {
 
       const response = await fetch(`/user/productReview/${window.currentProductId}`, {

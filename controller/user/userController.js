@@ -425,7 +425,10 @@ const loginVelidation=async(req,res)=>{
 const productReview=async(req,res)=>{
   try {
     const productId = req.params.id;
-  const userId = req.session.userId || '6745ee262ef67315e2da1c5e';
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({email});
+    const userId = user._id;
+  console.log(email,productId)
   const {rating,reviewText} =req.body;
 console.log('review')
   const existingReview = await Review.findOne({ productId, userId });
@@ -1768,6 +1771,12 @@ const submitOrder = async (req, res) => {
         }
       }
     );
+
+    await User.updateOne(
+      { _id: userId },
+      { $push: { orders: order._id } }
+    );
+
     req.session.checkOutData = false;
     res.status(200).json({ message: 'Order placed successfully', orderId: order.orderId });
   } catch (error) {

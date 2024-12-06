@@ -25,7 +25,7 @@ router.get('/sortProduct',userController.sortedProduct);
 router.get('/sortCategoryProduct',userController.sortCategoryProduct);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
-router.get('/orderDetails/:id',userController.loadOrderDetails)
+router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
 router.get('/cart',userMiddleWare.isLoggedIn,userController.loadCart)
 router.get('/checkOut',userMiddleWare.isLoggedIn,userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
 router.get('/address',userMiddleWare.isLoggedIn,userController.loadAddress);
@@ -38,7 +38,7 @@ router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditA
 
 
 
-router.post('/productReview/:id',userMiddleWare.isLoggedIn,userController.productReview);
+router.post('/productReview/:id',userController.productReview);
 router.post('/filterProducts',userController.filterProduct);
 router.post('/categoryShopFilter',userController.categoryShopFilter);
 router.post('/changePassword/:id', userController.changePassword);
