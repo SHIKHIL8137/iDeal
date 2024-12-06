@@ -211,7 +211,7 @@ const loadProductDetails = async (req, res) => {
         path: 'reviews',
         populate: {
           path: 'userId',
-          select: 'username image',
+          select: 'username profilePicture',
         },
       });
       const relatedProducts = await Product.find({
@@ -1001,6 +1001,7 @@ const loadOrderDetails = async (req, res) => {
     if (!order) {
       return res.status(404).send('Order not found');
     }
+    console.log(order)
     res.status(200).render('user/orderDetails', { order });
   } catch (error) {
     console.error(error);
@@ -1154,19 +1155,27 @@ const checkEmail=async(req,res)=>{
 const updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    console.log(currentPassword,newPassword);
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'Both current and new passwords are required' });
-    }
-
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    if (!user || !user.password) {
-      console.log('User or password not found:', user); 
-      return res.status(404).json({ message: 'User not found or password not set' });
+    if (!user.password) {
+      if (!newPassword) {
+        return res.status(400).json({ message: 'New password is required' });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      await User.updateOne({ email }, { $set: { password: hashedPassword } });
+
+      return res.status(200).json({ message: 'Password set successfully for the first time' });
+    }
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Both current and new passwords are required' });
     }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
@@ -1174,7 +1183,6 @@ const updatePassword = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'The current password does not match' });
     }
-
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -1186,6 +1194,7 @@ const updatePassword = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 

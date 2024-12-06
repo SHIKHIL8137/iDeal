@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: false,
+      default: null
     },
     email: {
       type: String,
@@ -243,7 +244,8 @@ const orderSchema = new mongoose.Schema({
      default: 'Pending' },
   paymentStatus: { 
     type: String, 
-    enum: ['Paid', 'Unpaid', 'Refund Initiated'], required: true 
+    enum: ['Paid', 'Unpaid', 'Refund Initiated'], 
+    required: true 
   },
   paymentMethod: { 
     type: String, 
@@ -257,16 +259,45 @@ const orderSchema = new mongoose.Schema({
   },
 
   billingAddress: {
-    fname: { type: String, required: true }, 
-    lname: { type: String, required: true },
-    companyName: { type: String },
-    houseName: { type: String },
-    country: { type: String, required: true },
-    state: { type: String, required: true },
-    city: { type: String, required: true },
-    zipCode: { type: String, required: true },
-    email: { type: String, required: true, match: /\S+@\S+\.\S+/ }, 
-    phone: { type: String, required: true, }
+    fname: { 
+      type: String,
+      required: true 
+    }, 
+    lname: { 
+      type: String, 
+      required: true 
+    },
+    companyName: {
+       type: String 
+      },
+    houseName: {
+       type: String 
+      },
+    country: {
+       type: String, 
+       required: true 
+      },
+    state: { 
+      type: String, 
+      required: true 
+    },
+    city: {
+       type: String, 
+       required: true 
+      },
+    zipCode: { 
+      type: String, 
+      required: true 
+    },
+    email: {
+       type: String, 
+       required: true, 
+       match: /\S+@\S+\.\S+/ 
+      }, 
+    phone: { 
+      type: String, 
+      required: true, 
+    }
   },
 
   products: [
@@ -293,13 +324,16 @@ const orderSchema = new mongoose.Schema({
 
   subtotal: { 
     type: Number, 
-    required: true }, 
+    required: true 
+  }, 
   discount: { 
     type: Number, 
-    default: 0 }, 
+    default: 0 
+  }, 
   totalAmount: { 
     type: Number, 
-    required: true },
+    required: true 
+  },
     orderConformStatus:{
       type:String
     }

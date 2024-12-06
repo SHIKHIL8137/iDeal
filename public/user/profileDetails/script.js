@@ -209,7 +209,7 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
   const message = document.getElementById('passwordMessage');
 
 
-  if (!currentPassword || !newPassword || !confirmPassword) {
+  if (!newPassword || !confirmPassword) {
     message.innerHTML = 'All fields are required.';
     message.style.color = 'red';
     return;
