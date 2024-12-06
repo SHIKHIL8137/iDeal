@@ -169,18 +169,6 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 function showAlert(message, type) {
 
   const alertBox = document.createElement('div');

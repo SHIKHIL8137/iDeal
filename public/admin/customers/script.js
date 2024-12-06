@@ -1,35 +1,34 @@
-// pagination and customer listing
-
-const rowsPerPage = 10; // Number of rows per page
+const rowsPerPage = 10; 
 let currentPage = 1;
-const userDetails = JSON.parse(document.getElementById('userData').textContent);
-console.log(document.getElementById('userData').textContent);
+let currentFilter = "all"; 
+const userDetails = JSON.parse(document.getElementById("userData").textContent);
 
-function renderTable() {
-  const tableBody = document.querySelector('tbody');
-  tableBody.innerHTML = '';
+// Function to render the table
+function renderTable(data) {
+  const tableBody = document.querySelector("tbody");
+  tableBody.innerHTML = "";
 
-  if (userDetails.length === 0) {
+  if (data.length === 0) {
     tableBody.innerHTML = `<tr><td colspan="6" class="text-center">No records available.</td></tr>`;
     return;
   }
 
-  // Sort userDetails by 'createdAt' in descending order (newest first)
-  userDetails.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  // Sort data by 'createdAt' in descending order
+  data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const startIndex = (currentPage - 1) * rowsPerPage;
-  const endIndex = Math.min(startIndex + rowsPerPage, userDetails.length);
+  const endIndex = Math.min(startIndex + rowsPerPage, data.length);
 
   for (let i = startIndex; i < endIndex; i++) {
-    const val = userDetails[i];
+    const val = data[i];
     const row = `
       <tr>
         <td>${val.username}</td>
         <td>${val.email}</td>
-        <td>${val.phone || ''}</td>
+        <td>${val.phone || ""}</td>
         <td>
-          <span class="badge ${val.block ? 'bg-danger' : 'bg-success'}">
-            ${val.block ? 'Blocked' : 'Active'}
+          <span class="badge ${val.block ? "bg-danger" : "bg-success"}">
+            ${val.block ? "Blocked" : "Active"}
           </span>
         </td>
         <td>${new Date(val.createdAt).toLocaleDateString()}</td>
@@ -42,28 +41,63 @@ function renderTable() {
     tableBody.innerHTML += row;
   }
 
-  document.querySelector('.showing1-10Text').textContent = `Showing ${startIndex + 1}-${endIndex} from ${userDetails.length}`;
+  document.querySelector(".showing1-10Text").textContent = `Showing ${startIndex + 1}-${endIndex} from ${data.length}`;
 }
 
+// Function to handle filter buttons
+function filterTable(status) {
+  currentPage = 1;
+  currentFilter = status;
 
+  // Filter data based on the selected status
+  let filteredData;
+  if (status === "all") {
+    filteredData = userDetails;
+  } else if (status === "active") {
+    filteredData = userDetails.filter((user) => !user.block);
+  } else if (status === "blocked") {
+    filteredData = userDetails.filter((user) => user.block);
+  }
+  renderTable(filteredData);
+}
+
+// Event listeners for filter buttons
+document.querySelectorAll(".filter-btn").forEach((button) => {
+  button.addEventListener("click", (e) => {
+    document.querySelectorAll(".filter-btn").forEach((btn) => btn.classList.remove("active"));
+    e.target.classList.add("active");
+    const status = e.target.getAttribute("data-status");
+    filterTable(status);
+  });
+});
+
+// Pagination functions
 function goToNextPage() {
-  if (currentPage * rowsPerPage < userDetails.length) {
+  const filteredData = getFilteredData();
+  if (currentPage * rowsPerPage < filteredData.length) {
     currentPage++;
-    renderTable();
+    renderTable(filteredData);
   }
 }
 
 function goToPrevPage() {
   if (currentPage > 1) {
     currentPage--;
-    renderTable();
+    renderTable(getFilteredData());
   }
 }
 
-document.getElementById('nextPage').addEventListener('click', goToNextPage);
-document.getElementById('prevPage').addEventListener('click', goToPrevPage);
+document.getElementById("nextPage").addEventListener("click", goToNextPage);
+document.getElementById("prevPage").addEventListener("click", goToPrevPage);
 
-renderTable();
+// Helper function to get currently filtered data
+function getFilteredData() {
+  if (currentFilter === "all") return userDetails;
+  if (currentFilter === "active") return userDetails.filter((user) => !user.block);
+  if (currentFilter === "blocked") return userDetails.filter((user) => user.block);
+}
+renderTable(userDetails);
+
 
 
 // shw delete modal

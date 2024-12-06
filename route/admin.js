@@ -25,8 +25,8 @@ router.get('/dashboard',adminAuth.isLoggedIn,adminController.loadDashboard);
 router.get('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
-router.get('/orders',adminController.loadOrder)
-router.get('/orderDetails/:orderId',adminController.loadDetails);
+router.get('/orders',adminAuth.isLoggedIn,adminController.loadOrder)
+router.get('/orderDetails/:orderId',adminAuth.isLoggedIn ,adminController.loadDetails);
 
 
 
@@ -35,22 +35,17 @@ router.get('/orderDetails/:orderId',adminController.loadDetails);
 
 router.post('/addProduct',uploads.array("images",4),adminController.addProducts);
 router.post('/editProduct/:id', uploads.array("images", 4), adminController.editProduct);
-router.delete('/deleteProductImage/:id/:index', adminController.deleteProductImage);
-
-
-
 router.post('/updateCategory/:id',adminController.updateCategory)
-router.post('/addCategory',adminController.addCategory);
-router.post('/addAdmin',adminController.addAdmin);  
+router.post('/addCategory',adminAuth.isLoggedIn ,adminController.addCategory);
+router.post('/addAdmin',adminAuth.isLoggedIn ,adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
-router.post('/editCustomer/:id',adminController.updateCustomer);
-router.post('/addCustomer',adminController.addCustomer);
+router.post('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
+router.post('/addCustomer',adminAuth.isLoggedIn ,adminController.addCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
 router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 router.post('/addCoupon',adminController.addCoupon);
+router.post('/updateStatusOrder/:orderId',adminAuth.isLoggedIn ,adminController.updateOrderStatus);
 
 
-
-router.post('/updateStatusOrder/:orderId',adminController.updateOrderStatus);
-
+router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
 module.exports=router

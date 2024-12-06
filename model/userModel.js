@@ -300,8 +300,9 @@ const orderSchema = new mongoose.Schema({
   totalAmount: { 
     type: Number, 
     required: true },
-
- 
+    orderConformStatus:{
+      type:String
+    }
 });
 
 

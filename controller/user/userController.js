@@ -1076,6 +1076,10 @@ const loadOrderConformation = async (req, res) => {
     if (!orderDetails) {
       return res.status(404).send('Order not found');
     }
+
+    if (orderDetails.status === 'expired') {
+      return res.status(403).redirect('/user/shop');
+    }
     res.status(200).render('user/orderConformation', { orderDetails });
   } catch (error) {
     console.error('Error in loadOrderConformation:', error);
@@ -1514,11 +1518,8 @@ const checkoutDataStore = async (req, res) => {
     }
     const userId = new mongoose.Types.ObjectId(user._id);
 
-
-    // Check if checkout data exists for the user
     const existUser = await CheckOut.findOne({ userId });
     if (existUser) {
-      // Update the existing record
       const result = await CheckOut.updateOne(
         { userId },
         { $set:checkOutData}
@@ -1529,11 +1530,10 @@ const checkoutDataStore = async (req, res) => {
         return res.status(404).json({ message: 'Record not found for update' });
       }
     } else {
-      // Create a new checkout data entry
       const newCheckOut = new CheckOut({ userId, ...checkOutData });
       await newCheckOut.save();
     }
-
+     req.session.checkOutData = true;
     res.status(200).json({ message: 'Checkout data saved successfully.' });
   } catch (error) {
     console.error('Error in checkoutDataStore:', error);
@@ -1726,6 +1726,7 @@ const submitOrder = async (req, res) => {
       subtotal,
       discount,
       totalAmount,
+      orderConformStatus:'Confirmed'
     });
 
     await order.save();
@@ -1758,6 +1759,7 @@ const submitOrder = async (req, res) => {
         }
       }
     );
+    req.session.checkOutData = false;
     res.status(200).json({ message: 'Order placed successfully', orderId: order.orderId });
   } catch (error) {
     console.error(error);
@@ -1794,6 +1796,39 @@ const cancelOreder = async(req,res)=>{
 
 }
 
+
+
+// chenge oreder conformation expire status
+
+
+
+const chnageOrderConformationStatus = async(req,res)=>{
+
+  const { orderId } = req.params;
+
+  try {
+    const order = await Orders.findById(orderId);
+
+    if (!order) {
+      return res.status(404).send({ message: 'Order not found' });
+    }
+
+    if (order.status === 'expired') {
+      return res.status(400).send({ message: 'Order is already expired' });
+    }
+
+    // Update the order status to expired
+    order.orderConformStatus = 'expired';
+    await order.save();
+
+    res.send({ message: 'Order expired successfully' });
+  } catch (error) {
+    console.error('Error expiring order:', error);
+    res.status(500).send({ message: 'Server error' });
+  }
+
+
+}
 
 
 
@@ -1845,5 +1880,6 @@ module.exports={
   loadEditAddress,
   saveUpdatedAddress,
   submitOrder,
-  cancelOreder
+  cancelOreder,
+  chnageOrderConformationStatus
 };

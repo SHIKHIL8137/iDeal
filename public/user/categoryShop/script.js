@@ -52,7 +52,6 @@ function toggleHeart(element) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Select all product cards using a class (or by id if you're using unique ids)
   const productCards = document.querySelectorAll('.product-card');
   
   productCards.forEach(card => {
@@ -107,6 +106,14 @@ async function sortProduct(order) {
         </div>
       `;
       productList.appendChild(productCard);
+    });
+    const productCards = document.querySelectorAll('.product-card');
+  
+    productCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        window.location.href = `/user/productDetails/${productId}`;
+      });
     });
     
   } catch (error) {
@@ -180,6 +187,15 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             productList.appendChild(productCard);
           });
+          const productCards = document.querySelectorAll('.product-card');
+  
+          productCards.forEach(card => {
+            card.addEventListener('click', function() {
+              const productId = this.dataset.productId;
+              window.location.href = `/user/productDetails/${productId}`;
+            });
+          });
+
         } else {
           productList.innerHTML = '<p>No products found!</p>';
         }
@@ -263,6 +279,14 @@ async function applyFilters() {
       </div>
     `;
       productList.appendChild(productCard);
+    });
+    const productCards = document.querySelectorAll('.product-card');
+  
+    productCards.forEach(card => {
+      card.addEventListener('click', function() {
+        const productId = this.dataset.productId;
+        window.location.href = `/user/productDetails/${productId}`;
+      });
     });
 
     // Initialize Bootstrap tooltips

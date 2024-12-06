@@ -1,4 +1,4 @@
-const {User}=require('../model/userModel');
+const {User,Orders}=require('../model/userModel');
 
 
 const checkSessionResetPassword=async(req,res,next)=>{
@@ -39,7 +39,7 @@ const logOut=async (req,res,next)=>{
 }
 
 
-const storeSessionEmail = (req, res, next) => {
+const storeSessionEmail =async(req, res, next) => {
   if (req.user) {
     req.session.isLoggedEmail = req.user.email; 
   }
@@ -48,10 +48,24 @@ const storeSessionEmail = (req, res, next) => {
 
 
 
+const checkOutPageUserValid = async(req,res,next)=>{
+  try {
+    if(!req.session.checkOutData){
+      res.redirect('/user/cart');
+    }
+    next();
+  } catch (error) {
+    re.status(500).send('Internal server Error');
+  }
+}
+
+
+
 module.exports ={
   checkSessionResetPassword,
   logOut,
   checkSession,
   isLoggedIn,
-  storeSessionEmail
+  storeSessionEmail,
+  checkOutPageUserValid
 }

@@ -51,9 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   productCards.forEach(card => {
     card.addEventListener('click', function(event) {
-      event.preventDefault();  // Prevent default behavior of the click
-      const productId = this.dataset.productId;  // Use productId, not categoryId
-      console.log(productId);  // Check the productId value
+      event.preventDefault();  
+      const productId = this.dataset.productId;  
+      console.log(productId); 
       if (productId) {
         window.location.href = `/user/productDetails/${productId}`;
       } else {
@@ -143,6 +143,23 @@ document.addEventListener("DOMContentLoaded", function () {
             productList.appendChild(productCard);  
             
           });
+
+          const productCards = document.querySelectorAll('.product-card');
+  
+          productCards.forEach(card => {
+            card.addEventListener('click', function(event) {
+              event.preventDefault(); 
+              const productId = this.dataset.productId;  
+              console.log(productId); 
+              if (productId) {
+                window.location.href = `/user/productDetails/${productId}`;
+              } else {
+                console.error('Product ID is missing!');
+              }
+            });
+          });
+
+
         } else {
           productList.innerHTML = '<p>No products found!</p>';
         }
@@ -202,6 +219,21 @@ async function sortProduct(order) {
       `;
       productList.appendChild(productCard);
     });
+
+    const productCards = document.querySelectorAll('.product-card');
+  
+  productCards.forEach(card => {
+    card.addEventListener('click', function(event) {
+      event.preventDefault(); 
+      const productId = this.dataset.productId;  
+      console.log(productId); 
+      if (productId) {
+        window.location.href = `/user/productDetails/${productId}`;
+      } else {
+        console.error('Product ID is missing!');
+      }
+    });
+  });
     
   } catch (error) {
     console.error('Failed to fetch product details:', error);
@@ -281,6 +313,21 @@ async function applyFilters() {
     `;
       productList.appendChild(productCard);
     });
+
+    const productCards = document.querySelectorAll('.product-card');
+  
+  productCards.forEach(card => {
+    card.addEventListener('click', function(event) {
+      event.preventDefault(); 
+      const productId = this.dataset.productId; 
+      console.log(productId);  
+      if (productId) {
+        window.location.href = `/user/productDetails/${productId}`;
+      } else {
+        console.error('Product ID is missing!');
+      }
+    });
+  });
 
     // Initialize Bootstrap tooltips
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

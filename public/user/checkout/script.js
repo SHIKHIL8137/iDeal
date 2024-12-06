@@ -128,29 +128,22 @@ function selectDeliveryAddress(addressId) {
   const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
 
   selectedDeliveryAddress = addresses[selectedIndex];
-
-  // If "Same as delivery address" checkbox is checked, fill the billing form with the selected delivery address
   if (document.getElementById("sameAsDelivery").checked) {
     fillBillingAddressForm(selectedDeliveryAddress);
   }
 }
 
 
-
-
-
-
-document.getElementById('placeOrder').addEventListener('click',async(e)=>{
+document.getElementById('placeOrder').addEventListener('click', async (e) => {
   e.preventDefault();
 
-  try {
-    
+  if (!validateForm()) return; 
 
-    const paymentMethod = document.querySelector('input[name="payment"]:checked').id;
+  try {
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id || "default";
     const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
     const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
     const selectedDeliveryAddress = addresses[selectedIndex];
-
 
     const billingAddress = {
       fname: document.getElementById("billingFirstName").value,
@@ -164,13 +157,14 @@ document.getElementById('placeOrder').addEventListener('click',async(e)=>{
       email: document.getElementById("billingEmail").value,
       phone: document.getElementById("billingPhone").value,
     };
-  
+
     const orderDetails = {
       deliveryAddress: selectedDeliveryAddress,
-      billingAddress: billingAddress,
-      paymentMethod: paymentMethod,
+      billingAddress,
+      paymentMethod,
     };
-console.log(orderDetails)
+
+    console.log(orderDetails);
 
     const response = await fetch("/user/orderSubmit", {
       method: "POST",
@@ -183,24 +177,118 @@ console.log(orderDetails)
     const result = await response.json();
 
     if (response.ok) {
-      window.location.href = `/user/loadOrderConformation/${result.orderId}`;
-
-      console.log('succes')
+      window.open(`/user/loadOrderConformation/${result.orderId}`, '_blank');
+      window.location.href = '/user/cart';
     } else {
       alert(`Failed to place order: ${result.message}`);
     }
-
-
   } catch (error) {
     console.error("Error placing order:", error);
     alert("An error occurred while placing the order. Please try again.");
   }
+});
+
+function validateForm() {
+  const firstName = document.getElementById('billingFirstName').value.trim();
+  const lastName = document.getElementById('billingLastName').value.trim();
+  const companyName = document.getElementById('billingCompany').value.trim();
+  const address = document.getElementById('billingHouseName').value.trim();
+  const country = document.getElementById('billingCountry').value.trim();
+  const state = document.getElementById('billingState').value.trim();
+  const city = document.getElementById('billingCity').value.trim();
+  const zipCode = document.getElementById('billingZip').value.trim();
+  const email = document.getElementById('billingEmail').value.trim();
+  const phone = document.getElementById('billingPhone').value.trim();
+
+  let isValid = true;
+
+  // Clear existing errors
+  document.querySelectorAll('.error').forEach(error => error.remove());
+
+  if (firstName === '') {
+    displayError('billingFirstName', 'First name is required');
+    isValid = false;
+  }
+  if (lastName === '') {
+    displayError('billingLastName', 'Last name is required');
+    isValid = false;
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    displayError('billingEmail', 'Please enter a valid email');
+    isValid = false;
+  }
+
+  const phoneRegex = /^\d{10}$/;
+  if (!phoneRegex.test(phone)) {
+    displayError('billingPhone', 'Please enter a valid phone number (10 digits)');
+    isValid = false;
+  }
+
+  const zipCodeRegex = /^\d{6}$/;
+  if (!zipCodeRegex.test(zipCode)) {
+    displayError('billingZip', 'Please enter a valid zip code');
+    isValid = false;
+  }
+
+  if (address === '') {
+    displayError('billingHouseName', 'Address is required');
+    isValid = false;
+  }
+  if (state === '') {
+    displayError('billingState', 'State is required');
+    isValid = false;
+  }
+  if (city === '') {
+    displayError('billingCity', 'City is required');
+    isValid = false;
+  }
+  if (country === 'Select...') {
+    displayError('billingCountry', 'Please select a country');
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+// Function to display error message
+function displayError(fieldId, message) {
+  const field = document.getElementById(fieldId);
+  const error = document.createElement('div');
+  error.classList.add('error');
+  error.style.color = 'red';
+  error.textContent = message;
+  field.parentElement.appendChild(error);
+
+  // Scroll to the first error for better UX
+  if (document.querySelector('.error') === error) {
+    field.scrollIntoView({ behavior: 'smooth' });
+    field.focus();
+  }
+}
 
 
 })
 
 
-})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

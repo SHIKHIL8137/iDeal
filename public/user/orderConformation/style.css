@@ -104,4 +104,72 @@ nav{
       --bs-table-bg: transparent;
       --bs-table-color: white;
       --bs-table-border-color : rgba(255, 255, 255, 0.123);
+    }#alertBox{
+      position: fixed;
+      top: 20px;
+      right: -100%;
+      transition: all 0.7s ease-in-out;
+      z-index: 9999;
     }
+    
+    #alertBox.show {
+      right: 20px;
+    }
+    
+    #alertBox.hide {
+      right: -100%;
+    }
+    /* Center alignment */
+#countdown {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+}
+
+#timer-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  border: 5px solid #00000047;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#timer {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+#countdown p {
+  margin-top: 20px;
+  font-size: 1rem;
+  color: #333333;
+}
+
+#timer-text {
+  font-weight: bold;
+  color: #ff0000;
+}
+
+/* Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#timer-wrapper {
+  animation: pulse 1s infinite;
+}
+

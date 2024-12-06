@@ -91,6 +91,13 @@
     <!-- Footer Buttons -->
     <div>
       <a href="/user/shop" class="btn btn-primary me-2">Continue Shopping</a>
+      <div id="countdown">
+        <div id="timer-wrapper">
+          <span id="timer">20</span>
+        </div>
+        <p>This page will expire in <span id="timer-text">20</span> seconds.</p>
+      </div>      
+      <input type="hidden" id="orderId" value="<%= orderDetails._id %>">
     </div>
 </div>
 
