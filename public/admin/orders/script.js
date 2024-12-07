@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tableBody.innerHTML = "";
 
+    filteredOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
     filteredOrders.slice(start, end).forEach(order => {
       const row = `
         <tr>

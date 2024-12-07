@@ -7,6 +7,7 @@ require('dotenv').config()
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const { triggerAsyncId } = require('async_hooks');
+const { title } = require('process');
 
 const validColors = {
   pink: "#FFC0CB",
@@ -41,7 +42,7 @@ try {
     const message=req.query.message;
     const err=req.query.err
     const errBoolean = err === 'true';
-    res.status(200).render('user/login',{message,errBoolean})
+    res.status(200).render('user/login',{message,errBoolean,title:"Login"})
   }else{
   return res.status(200).redirect('/user/home');
   }
@@ -57,7 +58,7 @@ const loadsignUp=async(req,res)=>{
   try {
       const message=req.session.message;
       req.session.message=null;
-      res.status(200).render('user/signUp',{message,title:"Home"});
+      res.status(200).render('user/signUp',{message,title:"Sign Up"});
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
@@ -68,7 +69,7 @@ const loadsignUp=async(req,res)=>{
 const loadForgotPassword= async(req,res)=>{
   try {
     const message = req.query.message;
-    res.status(200).render('user/forgotPassword',{message});
+    res.status(200).render('user/forgotPassword',{message,title:"Forgot Password"});
   } catch (error) {
     res.status(200).send('Internal server Error');
   }
@@ -80,7 +81,7 @@ const loadForgotPassword= async(req,res)=>{
 
 const loadChangePassword=async(req,res)=>{
   try {
-    res.status(200).render('user/changePassword')
+    res.status(200).render('user/changePassword',{title:"Change Password"})
   } catch (err) {
     res.status(500).send('Internal server Error');
   }
@@ -131,7 +132,8 @@ const loadHome = async (req, res) => {
       categoryImages, 
       categories, 
       recentAddProduct ,
-      sessionCheck
+      sessionCheck,
+      title:"Home"
     });
   } catch (error) {
     res.status(500).send('Internal server Error');
@@ -161,7 +163,7 @@ const loadShop = async (req, res) => {
 
     const activeCategories = [...new Set(filteredProducts.map(product => product.category.name))];
 
-    res.status(200).render('user/shop', { productDetails: filteredProducts , categories: activeCategories,sessionCheck});
+    res.status(200).render('user/shop', { productDetails: filteredProducts , categories: activeCategories,sessionCheck,title:"Shop"});
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
@@ -189,7 +191,7 @@ const loadCategoryShop = async (req, res) => {
     }
 
 
-    res.status(200).render('user/CategoryShop', { productDetails: filteredProducts ,sessionCheck});
+    res.status(200).render('user/CategoryShop', { productDetails: filteredProducts ,sessionCheck,title:"Shop Category"});
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
@@ -232,7 +234,7 @@ const loadProductDetails = async (req, res) => {
       return res.status(404).send('Product not found or category is unlisted');
     }
     const sessionCheck = req.session.isUser || false;
-    res.status(200).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts});
+    res.status(200).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts,title:"Product Details"});
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
@@ -284,7 +286,7 @@ async function sendOTPEmail(email, username, password, req, res) {
     req.session.email = email;
     req.session.password = password;
     req.session.otpPending=true;
-      res.status(200).render('user/otp',{message:"OTP Send successfuly",email});
+      res.status(200).render('user/otp',{message:"OTP Send successfuly",email,title:"OTP Varification"});
     return otp;
   } catch (error) {
     res.status(500).send('Failed to send OTP. Please try again later.');
@@ -516,7 +518,7 @@ async function sendResetPasswordLink(email, req, res) {
 
     req.session.email = email;
     req.session.resetTokenPending = true; 
-    res.status(200).render('user/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox." });
+    res.status(200).render('user/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox." ,title:'Forgot Password'});
 
   } catch (error) {
     console.error('Error sending password reset email:', error);
@@ -535,7 +537,7 @@ const resetPasswordPage = async (req, res) => {
     }
 
  
-    res.render('user/changePassword',{token});
+    res.render('user/changePassword',{token,title:"Change password"});
   } catch (error) {
     console.error('Error during reset password page access:', error);
     res.status(500).send('Internal Server Error. Please try again later.');
@@ -580,7 +582,7 @@ const loadProfile = async(req,res)=>{
 try {
   const email = req.session.isLoggedEmail;
   const user =await User.findOne({email});
-  res.status(200).render('user/profileDetails',{user})
+  res.status(200).render('user/profileDetails',{user,title:"Profile"})
 } catch (error) {
   res.status(401).send('Internal Server Error');
 }
@@ -979,7 +981,7 @@ const loadOrderHistory = async (req, res) => {
       order.firstProductQuantity = firstProduct.quantity; 
     }
 
-    res.status(200).render('user/orderHistory', { orders });
+    res.status(200).render('user/orderHistory', { orders ,title:"Order History"});
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
@@ -1005,7 +1007,7 @@ const loadOrderDetails = async (req, res) => {
       return res.status(404).send('Order not found');
     }
     console.log(order)
-    res.status(200).render('user/orderDetails', { order });
+    res.status(200).render('user/orderDetails', { order , title : "Oreder Details"});
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -1031,7 +1033,7 @@ const loadCart = async (req, res) => {
 
 
     const userCart = await Cart.findOne({ userId }).populate('items.productId');
-    res.status(200).render('user/cart', { userCart });
+    res.status(200).render('user/cart', { userCart ,title:"Cart"});
   } catch (error) {
     console.error('Error loading cart:', error);
     res.status(500).send('Internal Server Error');
@@ -1048,7 +1050,7 @@ try {
   const message = req.query.message;
   const errBoolean = req.query.err;
   const user = await User.findOne({ email: userEmail }).populate('addresses');
-  res.status(200).render('user/checkOut',{user,message,errBoolean});
+  res.status(200).render('user/checkOut',{user,message,errBoolean ,title:"Check Out"});
 } catch (error) {
   res.status(500).send('Internal Server Error')
 }
@@ -1064,7 +1066,7 @@ const loadAddress = async(req,res)=>{
 
     const errBoolean = req.query.err === 'true'?true:false;
     const message = req.query.message;
-    res.status(200).render('user/address',{message,errBoolean});
+    res.status(200).render('user/address',{message,errBoolean,title:"Address"});
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
@@ -1084,7 +1086,7 @@ const loadOrderConformation = async (req, res) => {
     if (orderDetails.status === 'expired') {
       return res.status(403).redirect('/user/shop');
     }
-    res.status(200).render('user/orderConformation', { orderDetails });
+    res.status(200).render('user/orderConformation', { orderDetails ,title:"Order Conformation"});
   } catch (error) {
     console.error('Error in loadOrderConformation:', error);
     res.status(500).send('Internal Server Error');
@@ -1623,7 +1625,7 @@ const loadEditAddress = async (req, res) => {
       return res.status(404).send('Address not found');
     }
 
-    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress});
+    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress,title:"Edit Address"});
   } catch (error) {
     console.log(error);
     res.status(500).send('Internal Server Error');

@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodeMailer=require('nodemailer');
+const { title } = require('process');
 
 
 // admin login validation
@@ -57,7 +58,7 @@ const loadLogin=async(req,res)=>{
     const message = req.query.message;
     const err=req.query.err
     const errBoolean = err === 'true';
-    res.status(200).render('admin/login',{message,errBoolean})
+    res.status(200).render('admin/login',{message,errBoolean,title:"Login"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -70,7 +71,7 @@ const loadLogin=async(req,res)=>{
 const loadforgotPassword=async(req,res)=>{
   try {
     const message = req.query.message;
-    res.status(200).render('admin/forgotPassword',{message})
+    res.status(200).render('admin/forgotPassword',{message,title:"Forgot Password"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -85,7 +86,7 @@ const loadProduct=async(req,res)=>{
     const username=req.session.username;
     const message=req.query.message;
     const products=await Product.find().populate('category');
-    res.status(200).render('admin/product',{products,message,username})
+    res.status(200).render('admin/product',{products,message,username,title:"Products"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -100,7 +101,7 @@ const loadAddProduct=async(req,res)=>{
     req.query.message=null;
     const category=await Category.find();
 
-    res.status(200).render('admin/addProduct',{message,category,username})
+    res.status(200).render('admin/addProduct',{message,category,username,title:"Add Product"})
     message=null
   } catch (error) {
     console.log(error)
@@ -116,7 +117,7 @@ const loadEditProduct=async(req,res)=>{
     const productId=req.params.id;
     const productDetails = await Product.findById(productId).populate('category');
     const categoryDetails = await Category.find();
-    res.status(200).render('admin/editProduct',{productDetails,categoryDetails,username});
+    res.status(200).render('admin/editProduct',{productDetails,categoryDetails,username,title:"Edit Product"});
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -130,7 +131,7 @@ const loadCategory=async(req,res)=>{
     const username=req.session.username;
 const category=await Category.find();
 const message=req.query.message;
-    res.status(200).render('admin/category',{category,message,username})
+    res.status(200).render('admin/category',{category,message,username,title:"Category"});
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -144,7 +145,7 @@ const loadAddCategory=async(req,res)=>{
     const message=req.query.message;
     const err=req.query.err;
     const errBoolean = err === 'true';
-    res.status(200).render('admin/addCategory',{message,errBoolean,username})
+    res.status(200).render('admin/addCategory',{message,errBoolean,username,title:"Add Category"});
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -160,7 +161,7 @@ const loadEditCategory=async(req,res)=>{
     if (!category) {
       return res.status(404).redirect('/admin/category?message=Category not found please try again later');
     }
-  res.status(200).render('admin/editCategory',{category,username});
+  res.status(200).render('admin/editCategory',{category,username,title:"Edit Category"});
   } catch (err) {
     res.status(500).send('Server error');
   }
@@ -173,7 +174,7 @@ const loadCustomers=async(req,res)=>{
     const message = req.query.message;
     const username=req.session.username;
     const userDetails=await User.find();
-    res.status(200).render('admin/customers',{userDetails,message,username})
+    res.status(200).render('admin/customers',{userDetails,message,username,title:"Customers"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -189,7 +190,7 @@ const loadEditCustomer=async(req,res)=>{
     if (!userDetails) {
       return res.status(404).redirect('/admin/customers?message=Category not found please try again later');
     }
-    res.status(200).render('admin/editCustomer',{userDetails,username})
+    res.status(200).render('admin/editCustomer',{userDetails,username,title:"Edit Customer"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -201,7 +202,7 @@ const loadAddCustomer=async(req,res)=>{
   try {
     const username=req.session.username;
     const message = req.query.message
-    res.status(200).render('admin/addCustomer',{message,username})
+    res.status(200).render('admin/addCustomer',{message,username,title:"Add Customer"});
   } catch (error) {
     res.status(500).send('Internal server error');
   }
@@ -475,7 +476,7 @@ const loadDashboard=async(req,res)=>{
 try {
   const username=req.session.username;
   const message=req.query.message;
-  res.status(200).render('admin/dashboard',{message,username});
+  res.status(200).render('admin/dashboard',{message,username,title:"Dashboard"});
 } catch (error) {
   res.status(500).send('internal server error');
 }
@@ -676,7 +677,7 @@ async function sendResetPasswordLink(email, req, res) {
 
     req.session.email = email;
     req.session.resetTokenPending = true; 
-    res.status(200).render('admin/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox." });
+    res.status(200).render('admin/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox.",title:"Forgot Password" });
 
   } catch (error) {
     console.error('Error sending password reset email:', error);
@@ -698,7 +699,7 @@ const resetPasswordPage = async (req, res) => {
     }
 
  
-    res.render('admin/changePassword',{token});
+    res.render('admin/changePassword',{token,title:"Change Password"});
   } catch (error) {
     console.error('Error during reset password page access:', error);
     res.status(500).send('Internal Server Error. Please try again later.');
@@ -752,7 +753,7 @@ const loadOrder = async (req, res) => {
 
   
 
-    res.status(200).render('admin/orders', { username, message, orders});
+    res.status(200).render('admin/orders', { username, message, orders , title:"Orders"});
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -772,11 +773,11 @@ const loadDetails = async(req,res)=>{
       .populate('userId products.productId deliveryAddress billingAddress')
       .exec();
 
-    // Pass the order data to the template
     res.render('admin/orderDetails', {
       order,
       username, 
-      message
+      message,
+      title:"Order Details"
     });
   } catch (error) {
     console.error(error);
@@ -830,30 +831,6 @@ const addCoupon = async(req,res)=>{
 
 //update the order status
 
-// const updateOrderStatus = async(req,res)=>{
-//   const  orderId  = req.params.orderId; 
-//   const { status } = req.body; 
-//   console.log('Received orderId:', orderId);
-//   console.log('Received new status:', status); 
-//   try {
-//     const updatedOrder = await Orders.findByIdAndUpdate(
-//       orderId,
-//       { status: status }, 
-//       { new: true } 
-//     );
-
-
-//     if (!updatedOrder) {
-//       return res.status(404).json({ success: false, message: 'Order not found' });
-//     }
-
-//     res.status(200).json({ success: true, order: updatedOrder });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ success: false, message: 'Server error' });
-//   }
-// }
-
 
 const updateOrderStatus = async (req, res) => {
   const orderId = req.params.orderId;
@@ -863,28 +840,23 @@ const updateOrderStatus = async (req, res) => {
   console.log('Received new status:', status);
 
   try {
-    // Fetch the order details to access the products in the order
-    const order = await Orders.findById(orderId).populate('products.productId'); // Populate product details
+    const order = await Orders.findById(orderId).populate('products.productId'); 
 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
-
-    // Check if the status is being changed to "Cancelled"
     if (status === 'Cancelled') {
-      // Loop through the products in the order and update their stock
       for (const item of order.products) {
-        const product = await Product.findById(item.productId); // Access productId in products array
+        const product = await Product.findById(item.productId); 
         if (product) {
-          product.stock += item.quantity; // Increment stock by order quantity
-          await product.save(); // Save the updated stock
+          product.stock += item.quantity; 
+          await product.save(); 
         }
       }
     }
 
-    // Update the order status
     order.status = status;
-    const updatedOrder = await order.save(); // Save the order with the new status
+    const updatedOrder = await order.save(); 
 
     res.status(200).json({ success: true, order: updatedOrder });
   } catch (error) {

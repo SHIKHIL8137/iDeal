@@ -35,10 +35,6 @@ app.set('views',path.join(__dirname,'views'));
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
-app.use((req, res, next) => {
-  res.set('Cache-Control', 'no-store');
-  next();
-});
 
 app.use('/user',userRoute);
 app.use('/admin',adminRoute);
