@@ -430,9 +430,8 @@ const productReview=async(req,res)=>{
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({email});
     const userId = user._id;
-  console.log(email,productId)
   const {rating,reviewText} =req.body;
-console.log('review')
+
   const existingReview = await Review.findOne({ productId, userId });
   if(existingReview) return res.status(200).send('user already exist');
 
@@ -976,8 +975,7 @@ const loadOrderHistory = async (req, res) => {
 
     for (let order of orders) {
       const firstProduct = order.products[0]; 
-      const productDetails = await Product.findById(firstProduct.productId); 
-      order.firstProductName = productDetails.name;
+      order.firstProductName = firstProduct.productName;
       order.firstProductQuantity = firstProduct.quantity; 
     }
 
@@ -998,15 +996,11 @@ const loadOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
     const order = await Orders.findOne({ orderId })
-      .populate('userId', 'username email') 
-      .populate('deliveryAddress') 
-      .populate('billingAddress') 
-      .populate('products.productId');
+      .populate('userId', 'username email');
     
     if (!order) {
       return res.status(404).send('Order not found');
     }
-    console.log(order)
     res.status(200).render('user/orderDetails', { order , title : "Oreder Details"});
   } catch (error) {
     console.error(error);
@@ -1078,7 +1072,7 @@ const loadAddress = async(req,res)=>{
 const loadOrderConformation = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const orderDetails = await Orders.findOne({ orderId }).populate('userId').populate('products.productId').populate('deliveryAddress').exec();
+    const orderDetails = await Orders.findOne({ orderId }).populate('userId').exec();
     if (!orderDetails) {
       return res.status(404).send('Order not found');
     }
@@ -1133,8 +1127,6 @@ const userDetailsSave = async (req, res) => {
 
 
 
-
-
 // ajax for checking the email exist or not
 
 const checkEmail=async(req,res)=>{
@@ -1146,7 +1138,6 @@ const checkEmail=async(req,res)=>{
     }
     const user = await User.findOne({ email });
     const exists = user ? email !== userEmail : false;
-    console.log(exists);
   
   res.json({ exists }); 
   } catch (error) {
@@ -1355,11 +1346,6 @@ const updateCartQuantity = async (req, res) => {
 
 
 
-
-
-
-
-
 // delete product from cart
 
 
@@ -1392,6 +1378,9 @@ const removeFromCart = async (req, res) => {
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
+
+//coupon validation and check out
 
 const couponValidationCheckout = async (req, res) => {
   const { couponCode } = req.body;
@@ -1434,7 +1423,6 @@ const couponValidationCheckout = async (req, res) => {
       coupon.maxDiscountAmount || Infinity
     );
     const newPrice = cart.totalAmount - discount
-    console.log(newPrice);
     res.status(200).json({
       success: true, // Added field
       message: 'Coupon is valid.',
@@ -1447,6 +1435,8 @@ const couponValidationCheckout = async (req, res) => {
   }
 };
 
+
+// Remove coupon
 
 const removeCoupon = async (req, res) => {
   try {
@@ -1488,7 +1478,6 @@ const addAddress = async(req,res)=>{
     const userEmail = req.session.isLoggedEmail ;
     if (!userEmail) return res.status(400).json({ message: 'User ID is required' });
     const user = await User.findOne({email:userEmail});
-    console.log(user.addresses.length)
     if(user.addresses.length>=5) return res.status(200).redirect('/user/address?message=You can only store up to 5 addresses&err=false');
     const userId = user._id;
     const address = new Address({ 
@@ -1524,7 +1513,6 @@ const checkoutDataStore = async (req, res) => {
   try {
     const  checkOutData  = req.body;
     const email = req.session.isLoggedEmail;
-    console.log(checkOutData)
     // Find the user
     const user = await User.findOne({ email });
     if (!user) {
@@ -1538,7 +1526,6 @@ const checkoutDataStore = async (req, res) => {
         { userId },
         { $set:checkOutData}
       );
-      console.log('Update Result:', result);
       if (result.matchedCount === 0) {
         console.error('No matching record found for update.');
         return res.status(404).json({ message: 'Record not found for update' });
@@ -1565,7 +1552,6 @@ const getCheckoutSummery = async(req,res)=>{
     const userSummeryDetails = await CheckOut.findOne({userId});
     res.status(200).json(userSummeryDetails);
   } catch (error) {
-    console.log(error)
     res.status(500).json({ message: 'Internal server error.' });
   }
 }
@@ -1627,7 +1613,6 @@ const loadEditAddress = async (req, res) => {
 
     res.status(200).render('user/editAddress', { message, errBoolean, editedAddress,title:"Edit Address"});
   } catch (error) {
-    console.log(error);
     res.status(500).send('Internal Server Error');
   }
 };
@@ -1691,7 +1676,6 @@ const saveUpdatedAddress = async (req, res) => {
 const submitOrder = async (req, res) => {
   try {
     const { deliveryAddress, billingAddress, paymentMethod } = req.body;
-
     if (!deliveryAddress || !deliveryAddress._id) {
       return res.status(400).json({ message: 'Invalid delivery address' });
     }
@@ -1699,14 +1683,13 @@ const submitOrder = async (req, res) => {
     if (!deliveryAddressData) {
       return res.status(400).json({ message: 'Delivery address not found' });
     }
-
-    const userId = deliveryAddressData.user;
-    const user = await User.findById(userId);
+   const email = req.session.isLoggedEmail;
+    const user = await User.findOne({email:email});
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    const checkout = await CheckOut.findOne({ userId });
+    const userId = user._id;
+    const checkout = await CheckOut.findOne({ userId :user._id });
     if (!checkout) {
       return res.status(400).json({ message: 'Checkout data not found' });
     }
@@ -1715,13 +1698,42 @@ const submitOrder = async (req, res) => {
     if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
+    if (checkout.appliedCoupon) {
+      const coupon = await Coupon.findOne({ code: checkout.appliedCoupon });
+      if (coupon && coupon.isActive) {
+          coupon.usersUsed.push(user._id);
+          coupon.usageCount += 1;
+          await coupon.save();
+      } else {
+        return res.status(200).json({message : 'Invalid or inactive coupon.'});
+      }
+    }
 
-    const products = cart.items.map(item => ({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.price,
-      total: item.quantity * item.price,
-    }));
+
+    const productIds = cart.items.map((item) => item.productId);
+    const productDetails = await Product.find({ _id: { $in: productIds } });
+    const productMap = productDetails.reduce((map, product) => {
+      map[product._id.toString()] = product;
+      return map;
+    }, {});
+
+    // Build products array with product details
+    const products = cart.items.map((item) => {
+      const product = productMap[item.productId.toString()];
+      if (!product) {
+        throw new Error(`Product with ID ${item.productId} not found`);
+      }
+      return {
+        productId: item.productId,
+        productName: product.name,
+        productColor : product.color,
+        productStorage : product.storage,
+        firstImage: product.images[0] || null,
+        quantity: item.quantity,
+        price: product.price,
+        total: item.quantity * product.price, 
+      };
+    });
 
     const subtotal = products.reduce((sum, item) => sum + item.total, 0);
     const discount = checkout.discount || 0;
@@ -1734,13 +1746,14 @@ const submitOrder = async (req, res) => {
       status: 'Processing',
       paymentStatus: 'Unpaid',
       paymentMethod,
-      deliveryAddress: deliveryAddressData._id,
+      deliveryAddress: deliveryAddressData,
       billingAddress:billingAddress,
       products,
       subtotal,
       discount,
       totalAmount,
-      orderConformStatus:'Confirmed'
+      orderConformStatus:'Confirmed',
+      appliedCoupon : checkout.appliedCoupon
     });
 
     await order.save();
@@ -1795,7 +1808,6 @@ const cancelOreder = async(req,res)=>{
   try {
     const orderId = req.params.orderId;
     const order = await Orders.findById(orderId);
-
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
@@ -1806,6 +1818,17 @@ const cancelOreder = async(req,res)=>{
         await product.save(); 
       }
     }
+    if (order.appliedCoupon) {
+      const coupon = await Coupon.findOne({ code: order.appliedCoupon });
+      if (coupon) {
+        if (coupon.usageCount > 0) {
+          coupon.usageCount -= 1;
+        }
+        coupon.usersUsed = coupon.usersUsed.filter((userId) => userId.toString() !== order.userId.toString());
+        await coupon.save();
+      }
+    }
+
     order.status = 'Cancelled';
     await order.save(); 
     res.json({ message: 'Order canceled successfully', order });
@@ -1822,7 +1845,7 @@ const cancelOreder = async(req,res)=>{
 
 
 
-const chnageOrderConformationStatus = async(req,res)=>{
+const changeOrderConformationStatus = async(req,res)=>{
 
   const { orderId } = req.params;
 
@@ -1836,8 +1859,6 @@ const chnageOrderConformationStatus = async(req,res)=>{
     if (order.status === 'expired') {
       return res.status(400).send({ message: 'Order is already expired' });
     }
-
-    // Update the order status to expired
     order.orderConformStatus = 'expired';
     await order.save();
 
@@ -1850,6 +1871,44 @@ const chnageOrderConformationStatus = async(req,res)=>{
 
 }
 
+
+
+// load whish list
+
+const loadWishlist = async(req,res)=>{
+try {
+  res.status(200).render('user/wishlist',{title : "Wish List"});
+  
+} catch (error) {
+  res.status(500).send('Internal Server Error');
+}
+
+}
+
+
+// load wallet 
+
+
+const loadWallet = async(req,res)=>{
+try {
+  res.status(200).render('user/wallet',{title : "Wallet"})
+} catch (error) {
+  res.status(500).send('Internal Server Error');
+}
+
+}
+
+
+// load referral 
+
+
+const loadReferral = async(req,res)=>{
+  try {
+    res.status(200).render('user/referral',{title : "referral"})
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
 module.exports={
@@ -1901,5 +1960,8 @@ module.exports={
   saveUpdatedAddress,
   submitOrder,
   cancelOreder,
-  chnageOrderConformationStatus
+  changeOrderConformationStatus,
+  loadWishlist,
+  loadWallet,
+  loadReferral
 };

@@ -39,12 +39,12 @@
       <p><strong>Date:</strong> <%= new Date(orderDetails.orderDate).toLocaleDateString() %></p>
       <p><strong>Shipping Address:</strong></p>
       <p>
-        <%= orderDetails.billingAddress.fname %> <%= orderDetails.billingAddress.lname %><br>
-        <%= orderDetails.billingAddress.houseName %><br>
-        <%= orderDetails.billingAddress.city %>, <%= orderDetails.billingAddress.state %> <%= orderDetails.billingAddress.zipCode %><br>
-        <%= orderDetails.billingAddress.country %><br>
-        <%= orderDetails.billingAddress.phone %><br>
-        <%= orderDetails.billingAddress.email %>
+        <%= orderDetails.deliveryAddress.fname %> <%= orderDetails.deliveryAddress.lname %><br>
+        <%= orderDetails.deliveryAddress.houseName %><br>
+        <%= orderDetails.deliveryAddress.city %>, <%= orderDetails.deliveryAddress.state %> <%= orderDetails.deliveryAddress.zipCode %><br>
+        <%= orderDetails.deliveryAddress.country %><br>
+        <%= orderDetails.deliveryAddress.phone %><br>
+        <%= orderDetails.deliveryAddress.email %>
       </p>
     </div>
 
@@ -63,7 +63,7 @@
       <tbody>
         <% orderDetails.products.forEach(product => { %>
           <tr>
-            <td><%= product.productId.name %></td> 
+            <td><%= product.productName %></td> 
             <td><%= product.quantity %></td>
             <td>₹<%= product.price.toLocaleString('en-IN') %></td>
           </tr>

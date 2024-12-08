@@ -33,6 +33,9 @@ router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,userController
 router.get('/check-email',userMiddleWare.isLoggedIn,userController.checkEmail);
 router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getCheckoutSummery);
 router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditAddress);
+router.get('/wishlist',userController.loadWishlist);
+router.get('/wallet',userController.loadWallet);
+router.get('/referral',userController.loadReferral);
 
 
 
@@ -60,7 +63,7 @@ router.post('/editAddress',userMiddleWare.isLoggedIn,userController.editAddress)
 router.post('/updateAddress/:addressId',userMiddleWare.isLoggedIn,userController.saveUpdatedAddress)
 router.post('/orderSubmit',userMiddleWare.isLoggedIn,userController.submitOrder);
 router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.cancelOreder);
-router.post('/expireOrder/:orderId',userController.chnageOrderConformationStatus);
+router.post('/expireOrder/:orderId',userController.changeOrderConformationStatus);
 
 
 router.delete('/deleteAddress/:id',userMiddleWare.isLoggedIn,userController.deleteAddress);

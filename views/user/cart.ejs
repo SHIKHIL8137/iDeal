@@ -129,10 +129,10 @@
               </button>
             </div>
           </form>
+          <button id="toggleSidebarBtn" class="animate">
+            Show Coupons
+          </button>
         </div>
-
-
-
       </div>
     </div>
 
@@ -176,6 +176,29 @@
       </div>
     </div>
 
+
+    <div id="couponSidebar">
+      <!-- Close Button -->
+      <button id="closeSidebarBtn" class="">&times;</button>
+      <div class="p-3">
+          <h5 class="mb-3">Applied Coupons</h5>
+          <ul class="list-group">
+              <!-- Coupon 1 -->
+              <li class="list-group-item position-relative">
+                  <div class="discription">
+                      10% off on your total purchase
+                  </div>
+                  <div class="coupon-code-container mt-2">
+                      <input type="text" value="COUPON10" readonly id="couponCode1">
+                      <button class="btn btn-sm" onclick="copyCouponCode('couponCode1')">
+                          <i class="bi bi-clipboard"></i>
+                      </button>
+                  </div>
+                  <span class="copy-badge">Copied!</span>
+              </li>
+          </ul>
+      </div>
+  </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

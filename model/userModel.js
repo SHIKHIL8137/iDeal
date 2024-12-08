@@ -240,7 +240,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
      type: String, 
-     enum: ['Processing', 'Confirmed','Delivered', 'Cancelled'], 
+     enum: ['Processing','Delivered', 'Cancelled'], 
      default: 'Pending' },
   paymentStatus: { 
     type: String, 
@@ -253,9 +253,45 @@ const orderSchema = new mongoose.Schema({
   }, 
 
   deliveryAddress: { 
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Address', 
-    required: true 
+    fname: { 
+      type: String,
+      required: true 
+    }, 
+    lname: { 
+      type: String, 
+      required: true 
+    },
+    companyName: {
+       type: String 
+      },
+    houseName: {
+       type: String 
+      },
+    country: {
+       type: String, 
+       required: true 
+      },
+    state: { 
+      type: String, 
+      required: true 
+    },
+    city: {
+       type: String, 
+       required: true 
+      },
+    zipCode: { 
+      type: String, 
+      required: true 
+    },
+    email: {
+       type: String, 
+       required: true, 
+       match: /\S+@\S+\.\S+/ 
+      }, 
+    phone: { 
+      type: String, 
+      required: true, 
+    }, 
   },
 
   billingAddress: {
@@ -307,6 +343,22 @@ const orderSchema = new mongoose.Schema({
         ref: 'Product', 
         required: true 
       },
+      productName: {
+        type : String,
+        required : true,
+      },
+      firstImage: {
+        type : String,
+        required : true
+      },
+      productColor:{
+        type : String,
+        required :true
+      },
+      productStorage :{
+        type : Number,
+        required : true
+      },
       quantity: { 
         type: Number, 
         required: true 
@@ -334,14 +386,39 @@ const orderSchema = new mongoose.Schema({
     type: Number, 
     required: true 
   },
-    orderConformStatus:{
+  orderConformStatus:{
       type:String
-    }
+  },
+  appliedCoupon :{
+    type : String
+  }
 });
 
 
 
-
+const wishlistSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    items: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        addedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+)
 
 
 
@@ -365,4 +442,5 @@ module.exports = {
   Cart:mongoose.model('Cart',cartSchema),
   CheckOut : mongoose.model('CheckOut',checkoutSchema),
   Orders : mongoose.model('Orders',orderSchema),
+  WishList : mongoose.model('WishList',wishlistSchema),
 };

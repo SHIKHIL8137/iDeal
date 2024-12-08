@@ -1,0 +1,154 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+ input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+    body {
+      background-color: #121212;
+      color: white;
+    }
+    .sidebar {
+      height: 308px;
+      background-color: #121212;
+      color: white;
+      width: 300px;
+      padding:0;
+      margin-top: 100px;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #b8b8b8;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #001569;
+    }
+    .sidebar a i {
+      margin-right: 15px;
+    }
+    .sidebar a.active {
+      background-color: #001569;
+    }
+    .content {
+      margin-top: 100px;
+      padding-left: 100px;
+      margin-bottom: 140px;
+    }
+
+
+    .footer {
+      background-color: #121212;
+      color: #fff;
+      padding: 20px 0;
+      /* margin-top: 130px; */
+    }
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.9rem;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer .footer-logo img {
+      width: 70px;
+      margin-right: 8px;
+      margin-bottom: 6px;
+    }
+    .footer .social-icons a {
+      color: #fff;
+      margin: 0 8px;
+      font-size: 1.2rem;
+    }
+    .footer hr {
+      border-color: #444;
+      margin: 10px 0;
+    }
+    .footerSpan{
+      font-size: .8em;
+      font-weight: 200;
+    }
+  #alertBox{
+    position: fixed;
+    top: 20px;
+    right: -100%;
+    transition: all 0.7s ease-in-out;
+    z-index: 9999;
+  }
+  
+  #alertBox.show {
+    right: 20px;
+  }
+  
+  #alertBox.hide {
+    right: -100%;
+  }
+  .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  .card{
+    background-color: transparent;
+    color: white;
+  }
+  .table{
+    --bs-table-bg: transparent;
+    --bs-table-color: white;
+    --bs-table-border-color : rgba(255, 255, 255, 0.308);
+    border: none;
+  }tbody tr {
+    opacity: .7;
+  }
+  thead tr th {
+    font-size: 17px;
+  }
+  .form-control {
+    background-color: #1c1c1c;
+    color: white;
+    border:none
+  }
+  .form-control:focus {
+    background-color: #1c1c1c;
+    color: rgb(255, 255, 255);
+    outline: none;
+    box-shadow: none;
+  }
+  .copy-badge {
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    background-color: #28a745;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(0);
+  }
+  

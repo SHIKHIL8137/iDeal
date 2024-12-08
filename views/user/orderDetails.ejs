@@ -46,16 +46,16 @@
                   <div class="card-body">
                     <div class="row">
                       <div class="col-md-2">
-                        <img src="<%= product.productId.images[0] %>" class="img-fluid" alt="<%= product.productId.name %>" style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px;">
+                        <img src="<%= product.firstImage %>" class="img-fluid" alt="<%= product.productName %>" style="width: 60px; height: 60px; object-fit: contain; border-radius: 10px;">
                       </div>
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="mb-0" style="color: #fff;"><%= product.productId.name %></p>
+                        <p class="mb-0" style="color: #fff;"><%= product.productName %></p>
                       </div>
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="mb-0 small" style="color: #bbb;"><%= product.productId.color %></p>
+                        <p class="mb-0 small" style="color: #bbb;"><%= product.productColor %></p>
                       </div>
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
-                        <p class="mb-0 small" style="color: #bbb;">Capacity: <%= product.productId.storage %>GB</p>
+                        <p class="mb-0 small" style="color: #bbb;">Capacity: <%= product.productStorage %>GB</p>
                       </div>
                       <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
                         <p class="mb-0 small" style="color: #bbb;">Qty: <%= product.quantity %></p>

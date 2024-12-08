@@ -27,8 +27,11 @@ router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
 router.get('/orders',adminAuth.isLoggedIn,adminController.loadOrder)
 router.get('/orderDetails/:orderId',adminAuth.isLoggedIn ,adminController.loadDetails);
-
-
+router.get('/offer',adminController.loadOffer);
+router.get('/coupon',adminController.loadCoupon);
+router.get('/addCoupon' ,adminController.loadAddCoupon);
+router.get('/editCoupon' ,adminController.loadEditCoupon);
+router.get('/sales',adminController.loadSales);
 
 
 

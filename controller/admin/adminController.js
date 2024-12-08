@@ -853,6 +853,16 @@ const updateOrderStatus = async (req, res) => {
           await product.save(); 
         }
       }
+      if (order.appliedCoupon) {
+        const coupon = await Coupon.findOne({ code: order.appliedCoupon });
+        if (coupon) {
+          if (coupon.usageCount > 0) {
+            coupon.usageCount -= 1;
+          }
+          coupon.usersUsed = coupon.usersUsed.filter((userId) => userId.toString() !== order.userId.toString());
+          await coupon.save();
+        }
+      }
     }
 
     order.status = status;
@@ -866,14 +876,68 @@ const updateOrderStatus = async (req, res) => {
 };
 
 
+// load offer
+
+const loadOffer =  async (req,res)=>{
+try {
+  const username=req.session.username;
+ res.status(200).render('admin/offer',{title :"Offer",username}) ;
+} catch (error) {
+  req.status(500).send('Internal Server Error');
+}
+};
+
+
+// Load Coupon 
+
+const loadCoupon = async(req,res)=>{
+  try {
+    const username=req.session.username;
+    res.status(200).render('admin/coupon',{title:"Coupon",username});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+// add coupon
 
 
 
+const loadAddCoupon = async(req,res)=>{
+
+  try {
+    const username=req.session.username;
+    res.status(200).render('admin/addCoupon',{title:"Add Coupon",username});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
+//Edit coupon
+
+const loadEditCoupon = async(req,res)=>{
+
+  try {
+    const username=req.session.username;
+    res.status(200).render('admin/editCoupon',{title:"Edit Coupon",username});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
+// load Sales report page 
 
+const loadSales = async(req,res)=>{
+  try {
+    const username=req.session.username;
+    res.status(200).render('admin/sales',{username,title:"Sales"});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
 
@@ -911,4 +975,9 @@ module.exports={
  loadDetails,
  addCoupon,
  updateOrderStatus,
+ loadOffer,
+ loadCoupon,
+ loadAddCoupon,
+ loadEditCoupon,
+ loadSales,
 }

@@ -1,5 +1,34 @@
+const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+const couponSidebar = document.getElementById('couponSidebar');
 
+// Toggle sidebar visibility
+toggleSidebarBtn.addEventListener('click', () => {
+    couponSidebar.classList.add('active');
+});
 
+closeSidebarBtn.addEventListener('click', () => {
+    couponSidebar.classList.remove('active');
+});
+
+// Copy coupon code functionality
+function copyCouponCode(id) {
+    const couponCodeInput = document.getElementById(id);
+    const badge = couponCodeInput.closest('li').querySelector('.copy-badge');
+
+    // Select and copy the text
+    couponCodeInput.select();
+    couponCodeInput.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(couponCodeInput.value).then(() => {
+        // Show the badge
+        badge.classList.add('show');
+      console.log('clicked')
+        // Hide the badge after 2 seconds
+        setTimeout(() => {
+            badge.classList.remove('show');
+        }, 2000);
+    });
+}
 
 async function updateQuantity(productId, action) {
   try {
