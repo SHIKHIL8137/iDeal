@@ -64,9 +64,13 @@ router.post('/updateAddress/:addressId',userMiddleWare.isLoggedIn,userController
 router.post('/orderSubmit',userMiddleWare.isLoggedIn,userController.submitOrder);
 router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.cancelOreder);
 router.post('/expireOrder/:orderId',userController.changeOrderConformationStatus);
+router.post('/addToWishlist/:id',userController.addtoWishlist);
+router.post('/addToWallet',userController.addMoneyToWallet);
 
 
 router.delete('/deleteAddress/:id',userMiddleWare.isLoggedIn,userController.deleteAddress);
+router.delete('/deleteFromWishlist/:id',userController.deleteFromWishlist);
+
 
 
 module.exports=router

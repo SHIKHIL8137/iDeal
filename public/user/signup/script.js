@@ -19,6 +19,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
   const confirmPassword = document.getElementById('conformPassword').value.trim();
   const username = document.getElementById('username').value.trim();
   const email = document.getElementById('email').value.trim();
+  const referralCodeInput = document.getElementById('referral').value.trim();
 
   const errMsg = document.getElementById('errorMsg');
   const checkBox = document.getElementById('agreeCheckBox');
@@ -42,7 +43,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
   if (!emailRegex.test(email)) return showError('Enter a valid email address');
   if (password.length < 8) return showError('The password should be at least 8 characters');
   if (password !== confirmPassword) return showError('The password and confirm password do not match');
-
+  if (referralCodeInput && referralCodeInput.length !==10) return showError('The refferal code shoud be length of 10');
   if (!checkBox.checked) {
     e.preventDefault();
     agreeText.classList.add('shake');

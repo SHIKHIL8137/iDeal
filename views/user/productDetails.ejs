@@ -144,7 +144,7 @@
               <button class="btn btn-outline-primary  addTocartProductDetails" id="addTocartProduct" <% if (product.stock === 0) { %> disabled <% } %>>Add To Cart</button>
           </div>
           <div>
-            <button class="btn btn-outline-danger whishProductDetails"><i class="bi bi-heart" style="font-size: 10px;"></i></button>
+            <button onclick="addToWishlist('<%= product._id %>')" class="btn btn-outline-danger whishProductDetails"><i class="bi bi-heart" style="font-size: 10px;"></i></button>
           </div>
             
 

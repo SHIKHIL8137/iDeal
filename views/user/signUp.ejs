@@ -16,23 +16,28 @@
           <%}%>
         <form action="/user/register" id="signupForm" method="post">
           <div class="mb-3 mt-4 inputField">
-            <input type="text" class="form-control border-0 inpField" id="username" placeholder="username" name="username">
+            <input type="text" class="form-control border-0 inpField" id="username" placeholder="Username" name="username">
           </div>
           <div class="mb-3 mt-4 inputField">
-            <input type="email" class="form-control border-0 inpField" id="email" name="email" placeholder="email">
+            <input type="email" class="form-control border-0 inpField" id="email" name="email" placeholder="Email">
           </div>
           <div class="mb-4 mt-4">
             <div class="input-group">
-              <input type="password" class="form-control border-0 inpField" id="password" placeholder="password" name="password">
+              <input type="password" class="form-control border-0 inpField" id="password" placeholder="Password" name="password">
               <button class="btn border-0" type="button" id="togglePassword">
                 <i class="fa fa-eye" aria-hidden="true"></i>
               </button>
             </div>
             <div class="input-group mb-4 mt-4">
-              <input type="password" class="form-control border-0 inpField" id="conformPassword" placeholder="conform password" name="cPassowrd">
+              <input type="password" class="form-control border-0 inpField" id="conformPassword" placeholder="Conform password" name="cPassowrd">
               <button class="btn border-0" type="button" id="toggleCPassword">
                 <i class="fa fa-eye" aria-hidden="true"></i>
               </button>
+            </div>
+            <div class="input-group mb-4 mt-4">
+              <input pattern="[A-Z0-9]*" 
+              oninput="this.value = this.value.toUpperCase();" 
+              maxlength="10" type="text" class="form-control border-0 inpField" id="referral" placeholder="Referral Code(Optional)" name="referral">
             </div>
           </div>
           <div class="d-flex justify-content-between align-items-center mb-4 mt-4">

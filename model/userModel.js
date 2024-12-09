@@ -421,13 +421,106 @@ const wishlistSchema = new mongoose.Schema(
 )
 
 
+const walletSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true,
+  },
+  balance: {
+    type: Number,
+    default: 0, 
+    min: 0,
+  },
+  transactions: [{
+    transactionId: {
+      type: String,
+      unique: true, 
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ['credit', 'debit'], 
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 
 
 
+const reasonSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    required: true,
+    enum: ['cancellation', 'return'],
+  },
+  reason: {
+    type: String,
+    required: true, 
+    trim: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true,
+  },
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order', 
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, 
+  },
+});
 
-
-
+const referralSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true,
+  },
+  referredUserIds: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+  }],
+  referralCode: {
+    type: String,
+    required: true,
+    unique: true, 
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,  
+  },
+  rewardAmount: {
+    type: Number,
+    default: 0,  
+  },
+});
 
 
 
@@ -443,4 +536,7 @@ module.exports = {
   CheckOut : mongoose.model('CheckOut',checkoutSchema),
   Orders : mongoose.model('Orders',orderSchema),
   WishList : mongoose.model('WishList',wishlistSchema),
+  Wallet : mongoose.model('Wallet',walletSchema),
+  Reason : mongoose.model('Reason',reasonSchema),
+  Referral : mongoose.model('Referral',referralSchema),
 };

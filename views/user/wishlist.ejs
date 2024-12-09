@@ -62,32 +62,47 @@
       <!-- Content -->
       <div class="col-md-9 content">
         <h2 class="mb-4">Wishlist</h2>
-      <table class="table align-middle">
-          <thead>
-          </thead>
-          <tbody>
-              <tr>
+        <% if (wishlist && wishlist.length > 0) { %>
+          <table class="table align-middle">
+            <thead>
+            </thead>
+            <tbody>
+              <% wishlist.forEach(item => { %>
+                <tr>
                   <td>
-                      <div class="d-flex align-items-center">
-                          <img src="https://via.placeholder.com/50" alt="iPhone 11 Pro" class="me-3">
-                          <div>
-                              <strong>iPhone 11 Pro (256 GB) - Gray</strong>
-                          </div>
+                    <div class="d-flex align-items-center">
+                      <!-- Display product image -->
+                      <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="me-3" width="50" height="50" style="object-fit: contain;">
+                      <div class="d-flex flex-column">
+                        <strong><%= item.productId.name %></strong>
+                        <small><%= item.productId.storage %>GB(<%= item.productId.color %>)</small>
                       </div>
-                  </td>
-                  <td>
-                      <del>₹68990</del> <span class="text-success">₹32999</span>
-                  </td>
-                  <td><span class="in-stock">In Stock</span></td>
-                  <td><div class="tableAddToCartDiv">
-                      <button class="btn btn-primary btn-sm">Add to Cart</button>
-                      <button class="btn-remove">&times;</button>
                     </div>
                   </td>
-              </tr>
-          </tbody>
-      </table>
+                  <td>
+                      <span class="text-white"><del style="font-size: 13px;">₹<%= item.productId.price.toLocaleString() %></del> ₹<%= item.productId.Dprice.toLocaleString() %></span>
+                  </td>
+                  <td><%= item.productId.condition %></td>
+                  <td>
+                    <span class="<%= item.productId.stock > 0 ? 'in-stock' : 'out-of-stock' %>">
+                      <%= item.productId.stock > 0 ? 'In Stock' : 'Out of Stock' %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="tableAddToCartDiv">
+                        <button id="addTocartProduct" onclick="addtoCart('<%= item.productId._id %>','<%= item.productId.Dprice %>')" class="btn btn-primary btn-sm" <%= item.productId.stock > 0 ? '' : 'disabled' %>>Add to Cart</button>
+                        <button class="btn-remove" onclick="deleteFromWishlist('<%= item.productId._id %>')">&times;</button>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <p>Your wishlist is empty. Start adding products to your wishlist!</p>
+        <% } %>
       </div>
+      
     </div>
   </div>
   <div class="footer">

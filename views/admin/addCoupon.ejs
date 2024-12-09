@@ -47,12 +47,12 @@
                   </a>
                 </li>
                 <li>
-                  <a href="/admin/transaction" class="nav-link text-dark">
+                  <a href="/admin/offer" class="nav-link text-dark">
                     <i class="fas fa-tag"></i> Offer
                   </a>
                 </li>
                 <li>
-                  <a href="/admin/transaction"  class="nav-link text-dark">
+                  <a href="/admin/sales"  class="nav-link text-dark">
                     <i class="fas fa-money-bill-wave"></i> Sales
                   </a>
                 </li>
@@ -79,10 +79,6 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Add New Coupon</h2>
                 <div class="d-flex align-items-center">
-                  <!-- Search Bar -->
-                  <input type="text" class="form-control me-3 w-50" placeholder="Search...">
-
-                  <!-- Admin Profile -->
                   <div class="dropdown">
                     <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown"
                       data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,54 +108,62 @@
               <div class="container mt-5">
                 <div class="card">
                   <div class="card-body">
-                    <form>
+                    <form action="/admin/addCoupon" method="post" id="couponForm">
                       <div class="row g-3">
                           <!-- Coupon Code -->
                           <div class="col-md-6">
                               <label for="couponCode" class="form-label">Coupon Code</label>
-                              <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code" required>
+                              <input name="code" type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
+                              <small class="text-danger d-none" id="couponCodeError">Coupon code is required.</small>
                           </div>
                   
                           <!-- Coupon Description -->
                           <div class="col-md-6">
                               <label for="description" class="form-label">Description</label>
-                              <textarea class="form-control" id="description" placeholder="Enter coupon description" required></textarea>
+                              <textarea name="description" class="form-control" id="description" placeholder="Enter coupon description" ></textarea>
+                              <small class="text-danger d-none" id="descriptionError">Description is required.</small>
                           </div>
                   
                           <!-- Discount Percentage -->
                           <div class="col-md-6">
                               <label for="discountPercentage" class="form-label">Discount (%)</label>
-                              <input type="number" class="form-control" id="discountPercentage" placeholder="Enter discount percentage" min="1" max="100" required>
+                              <input name="discountPercentage" type="number" class="form-control" id="discountPercentage" placeholder="Enter discount percentage" min="1" max="100">
+                              <small class="text-danger d-none" id="discountPercentageError">Enter a valid discount percentage (1-100).</small>
                           </div>
                   
                           <!-- Maximum Discount -->
                           <div class="col-md-6">
                               <label for="maximumDiscount" class="form-label">Maximum Discount (₹)</label>
-                              <input type="number" class="form-control" id="maximumDiscount" placeholder="Enter maximum discount amount" required>
+                              <input name="maxDiscountAmount" type="number" class="form-control" id="maximumDiscount" placeholder="Enter maximum discount amount">
+                              <small class="text-danger d-none" id="maximumDiscountError">Maximum discount is required and must be positive.</small>
                           </div>
                   
                           <!-- Minimum Purchase -->
                           <div class="col-md-6">
                               <label for="minimumPurchase" class="form-label">Minimum Purchase (₹)</label>
-                              <input type="number" class="form-control" id="minimumPurchase" placeholder="Enter minimum purchase amount" required>
+                              <input name="minOrderAmount" type="number" class="form-control" id="minimumPurchase" placeholder="Enter minimum purchase amount" >
+                              <small class="text-danger d-none" id="minimumPurchaseError">Minimum purchase amount is required and must be positive.</small>
                           </div>
                   
                           <!-- Start Date -->
                           <div class="col-md-6">
                               <label for="startDate" class="form-label">Start Date</label>
-                              <input type="date" class="form-control" id="startDate" required>
+                              <input name="validFrom" type="date" class="form-control" id="startDate">
+                              <small class="text-danger d-none" id="startDateError">Start date is required.</small>
                           </div>
                   
                           <!-- End Date -->
                           <div class="col-md-6">
                               <label for="endDate" class="form-label">End Date</label>
-                              <input type="date" class="form-control" id="endDate" required>
+                              <input name="validTill" type="date" class="form-control" id="endDate">
+                              <small class="text-danger d-none" id="endDateError">End date is required and must be after the start date.</small>
                           </div>
                   
                           <!-- Usage Limit -->
                           <div class="col-md-6">
                               <label for="usageLimit" class="form-label">Maximum Usage Limit</label>
-                              <input type="number" class="form-control" id="usageLimit" placeholder="Enter maximum usage limit" required>
+                              <input name="usageLimit" type="number" class="form-control" id="usageLimit" placeholder="Enter maximum usage limit">
+                              <small class="text-danger d-none" id="usageLimitError">Usage limit is required and must be positive.</small>
                           </div>
                 
                       </div>

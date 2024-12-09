@@ -19,12 +19,13 @@ nav{
       color: white;
     }
     .sidebar {
-      height: 308px;
+      height: 410px;
       background-color: #121212;
       color: white;
       width: 300px;
       padding:0;
       margin-top: 100px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.493);
     }
     .sidebar a {
       display: flex;

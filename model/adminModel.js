@@ -64,6 +64,10 @@ const productSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  offer:{
+    type : Boolean,
+    default : false,
+  }
 });
 
 
@@ -144,53 +148,57 @@ const couponSchema = new mongoose.Schema({
     required: true,
     unique: true,
     trim: true,
-    uppercase: true, // Ensure coupon code is stored in uppercase
+    uppercase: true, 
   },
   description: {
     type: String,
-    required: true, // Adding description as mandatory
+    required: true, 
     trim: true,
   },
   discountPercentage: {
     type: Number,
     required: true,
     min: 1,
-    max: 100, // Ensures valid percentage range
+    max: 100, 
   },
   maxDiscountAmount: {
     type: Number,
-    default: null, // Maximum discount amount
+    default: null,
   },
   minOrderAmount: {
     type: Number,
-    default: 0, // Minimum order amount to apply the coupon
+    default: 0, 
   },
   validFrom: {
     type: Date,
-    required: true, // Start date for coupon validity
+    required: true, 
   },
   validTill: {
     type: Date,
-    required: true, // End date for coupon validity
+    required: true,
   },
   isActive: {
     type: Boolean,
-    default: true, // Indicates if the coupon is currently active
+    default: true, 
   },
   usageLimit: {
     type: Number,
-    default: null, // Maximum times the coupon can be used
+    default: null, 
   },
   usageCount: {
     type: Number,
-    default: 0, // Tracks the number of times the coupon has been used
+    default: 0,
   },
   usersUsed: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Reference to users who used this coupon
+      ref: 'User',
     },
   ],
+  createdAt:{
+    type : Date,
+    default : Date.now
+  }
 });
 
 

@@ -30,12 +30,14 @@ router.get('/orderDetails/:orderId',adminAuth.isLoggedIn ,adminController.loadDe
 router.get('/offer',adminController.loadOffer);
 router.get('/coupon',adminController.loadCoupon);
 router.get('/addCoupon' ,adminController.loadAddCoupon);
-router.get('/editCoupon' ,adminController.loadEditCoupon);
+router.get('/editCoupon/:couponId' ,adminController.loadEditCoupon);
 router.get('/sales',adminController.loadSales);
+router.get('/coupon-data',adminController.getCoupons);
+router.get('/search-coupons',adminController.searchCoupon);
 
 
 
-
+router.post('/editCoupon',adminController.editCoupon);
 router.post('/addProduct',uploads.array("images",4),adminController.addProducts);
 router.post('/editProduct/:id', uploads.array("images", 4), adminController.editProduct);
 router.post('/updateCategory/:id',adminController.updateCategory)
@@ -51,4 +53,5 @@ router.post('/updateStatusOrder/:orderId',adminAuth.isLoggedIn ,adminController.
 
 
 router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
+router.delete('/deleteCoupon/:couponId',adminController.deleteCoupon);
 module.exports=router

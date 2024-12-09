@@ -1,4 +1,4 @@
-const {User,Address,OTP,Cart,CheckOut,Orders}=require('../../model/userModel');
+const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,Reason}=require('../../model/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
@@ -258,7 +258,7 @@ const transporter = nodeMailer.createTransport({
 
 // function for senting the otp to the varified mail
 
-async function sendOTPEmail(email, username, password, req, res) {
+async function sendOTPEmail(email, username, password, referral ,req, res) {
   const otp = generateOtp();
   console.log(otp)
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
@@ -285,6 +285,7 @@ async function sendOTPEmail(email, username, password, req, res) {
     req.session.username = username;
     req.session.email = email;
     req.session.password = password;
+    req.session.referralCode = referral;
     req.session.otpPending=true;
       res.status(200).render('user/otp',{message:"OTP Send successfuly",email,title:"OTP Varification"});
     return otp;
@@ -299,16 +300,21 @@ async function sendOTPEmail(email, username, password, req, res) {
 
 const registerUserNormal = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-
+    const { username, email, password, referral } = req.body;
+    
     const user = await User.findOne({ email });
     if (user) {
       req.session.message = 'User already exists.';
       return res.redirect('/user/signUp');
     }
-
-
-    await sendOTPEmail(email, username, password, req, res);
+    if(referral){
+      const referralCodeValid = await Referral.findOne({referralCode:referral});
+      if(!referralCodeValid) {
+        req.session.message = 'Invalid Referral Code';
+        return res.redirect('/user/signUp');
+      }
+    }
+    await sendOTPEmail(email, username, password, referral ,req, res);
   } catch (error) {
     console.error('Error during registration:', error);
     res.status(500).send('Internal Server Error. Please try again later.');
@@ -346,6 +352,7 @@ const otpVerification = async (req, res) => {
 
     const password = req.session.password;
     const username = req.session.username;
+    const newUserReferredCode = req.session.referralCode
 
     if (!password || !username) {
       return res.status(400).send('Incomplete session data. Please start the registration process again.');
@@ -357,8 +364,25 @@ const otpVerification = async (req, res) => {
       email,
       password: hashedPassword,
     });
-
     await newUser.save();
+
+    const rNewUser = await User.findOne({email});
+    const rNewUserId = rNewUser._id;
+    const referralCode = await generateUniqueReferralCode();
+    const newRefferal = new Referral({
+       userId : rNewUserId,
+       referralCode,
+    });
+    await newRefferal.save();
+
+    await Referral.findOneAndUpdate(
+      { referralCode: newUserReferredCode },
+      {
+        $push: { referredUserIds: rNewUserId },
+        $inc: { rewardAmount: 100 }, 
+      },
+      { new: true } 
+    );
 
 
     await OTP.deleteMany({ email });
@@ -375,6 +399,33 @@ const otpVerification = async (req, res) => {
     res.status(500).send('Internal Server Error. Please try again later.');
   }
 };
+
+// generate refferal code
+
+function generateReferralCode() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let referralCode = '';
+  
+  for (let i = 0; i < 10; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    referralCode += characters[randomIndex];
+  }
+
+  return referralCode;
+}
+
+async function generateUniqueReferralCode() {
+  let referralCode = generateReferralCode();
+
+  let existingReferral = await Referral.findOne({ referralCode });
+
+  while (existingReferral) {
+    referralCode = generateReferralCode();
+    existingReferral = await Referral.findOne({ referralCode });
+  }
+
+  return referralCode; 
+}
 
 
 
@@ -1875,28 +1926,65 @@ const changeOrderConformationStatus = async(req,res)=>{
 
 // load whish list
 
-const loadWishlist = async(req,res)=>{
-try {
-  res.status(200).render('user/wishlist',{title : "Wish List"});
-  
-} catch (error) {
-  res.status(500).send('Internal Server Error');
-}
+const loadWishlist = async (req, res) => {
+  try {
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({ email });
 
-}
+    if (!user) {
+      return res.status(404).json({ status: "false", message: "User not found" });
+    }
+
+    const userId = user._id;
+
+    // Fetch wishlist by userId and populate product details
+    const wishlist = await WishList.findOne({ userId }).populate('items.productId');
+
+    res.status(200).render('user/wishlist', {
+      title: "Wish List",
+      wishlist: wishlist ? wishlist.items : [], // Pass the wishlist items
+    });
+  } catch (error) {
+    console.error("Error loading wishlist:", error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 // load wallet 
 
 
-const loadWallet = async(req,res)=>{
-try {
-  res.status(200).render('user/wallet',{title : "Wallet"})
-} catch (error) {
-  res.status(500).send('Internal Server Error');
-}
+const loadWallet = async (req, res) => {
+  try {
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({ email });
 
-}
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    const wallet = await Wallet.findOne({ userId: user._id });
+    const transactions = wallet ? wallet.transactions : [];
+
+    const formattedTransactions = transactions.map((transaction) => ({
+      id: transaction.transactionId,
+      date: new Date(transaction.date).toLocaleDateString(),
+      withdrawal: transaction.type === 'debit' ? `₹${transaction.amount}` : '-',
+      deposit: transaction.type === 'credit' ? `₹${transaction.amount}` : '-',
+    }));
+    console.log(formattedTransactions)
+    res.status(200).render('user/wallet', {
+      title: 'Wallet',
+      balance: wallet ? wallet.balance : 0,
+      transactions: formattedTransactions,
+    });
+  } catch (error) {
+    console.error('Error loading wallet:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 // load referral 
@@ -1908,6 +1996,156 @@ const loadReferral = async(req,res)=>{
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
+}
+ 
+
+// add to wishList
+
+
+const addtoWishlist = async (req, res) => {
+  try {
+    const productId = req.params.id; 
+    const email = req.session.isLoggedEmail || "shikhilks02@gmail.com";
+    console.log(email);
+    const user = await User.findOne({ email });
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const userId = user._id;
+    let wishlist = await WishList.findOne({ userId });
+
+    if (!wishlist) {
+      wishlist = new WishList({
+        userId,
+        items: [{ productId }],
+      });
+      await wishlist.save();
+      return res.status(201).json({ status: true, message: "Product added to wishlist" });
+    }
+    if (wishlist.items.length >= 20) {
+      return res.status(400).json({ status: false, message: "Wishlist is full. You can only have 20 items." });
+    }
+
+    const itemExists = wishlist.items.some(
+      (item) => item.productId.toString() === productId
+    );
+
+    if (itemExists) {
+      return res.status(404).json({ status: false, message: "Product already in wishlist" });
+    }
+
+    wishlist.items.push({ productId });
+    await wishlist.save();
+
+    res.status(200).json({ status: true, message: "Product added to wishlist" });
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+// Detlet item from the cart
+
+
+
+const deleteFromWishlist = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const email = req.session.isLoggedEmail; 
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const updatedWishlist = await WishList.findOneAndUpdate(
+      { userId: user._id },
+      { $pull: { items: { productId } } },
+      { new: true }
+    );
+
+    if (updatedWishlist) {
+      res.status(200).json({ status: true, message: "Item removed from wishlist" });
+    } else {
+      res.status(400).json({ status: false, message: "Wishlist not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+
+// add money to wallet 
+
+const addMoneyToWallet = async (req, res) => {
+  try {
+    const { amount } = req.body; // Get the amount from the request body
+    const email = req.session.isLoggedEmail; 
+    const parsedAmount = Number(amount);
+    if (!parsedAmount || parsedAmount <= 0) {
+      return res.status(400).json({ status: false, message: "Invalid amount" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const userId = user._id;
+
+    const trxId = generateTransactionId();
+
+    let wallet = await Wallet.findOne({ userId });
+    if (!wallet) {
+      wallet = new Wallet({
+        userId,
+        balance: parsedAmount,
+        transactions: [
+          {
+            transactionId: trxId,
+            type: "credit",
+            amount,
+            date: new Date(),
+          },
+        ],
+      });
+    } else {
+      wallet.balance += parsedAmount;
+      wallet.transactions.push({
+        transactionId: trxId,
+        type: "credit",
+        amount,
+        date: new Date(),
+      });
+    }
+    await wallet.save();
+
+    res.status(200).json({
+      status: true,
+      message: "Amount added to wallet successfully",
+      transactionId: trxId,
+      balance: wallet.balance,
+    });
+  } catch (error) {
+    console.error("Error adding money to wallet:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+//function to generate unique transaction id 12 digits
+function generateTransactionId() {
+  const timestamp = Date.now(); 
+  const randomNum = Math.floor(Math.random() * 1000); 
+  const transactionId = `${timestamp.toString().slice(-9)}${randomNum.toString().padStart(3, '0')}`;
+
+  return transactionId;
 }
 
 
@@ -1963,5 +2201,9 @@ module.exports={
   changeOrderConformationStatus,
   loadWishlist,
   loadWallet,
-  loadReferral
+  loadReferral,
+  addtoWishlist,
+  deleteFromWishlist,
+  addMoneyToWallet
+
 };

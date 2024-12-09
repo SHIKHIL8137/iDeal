@@ -19,12 +19,13 @@ nav{
       color: white;
     }
     .sidebar {
-      height: 308px;
+      height: 410px;
       background-color: #121212;
       color: white;
       width: 300px;
       padding:0;
       margin-top: 100px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.493);
     }
     .sidebar a {
       display: flex;
@@ -153,4 +154,36 @@ tbody tr {
 }
 thead tr th {
   font-size: 17px;
+}
+.modal-header{
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+}
+.modal-content{
+background-color: #000000;
+box-shadow: 0 0px 20px #ffffff2f;
+}
+.form-control{
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border: none;
+}
+.form-control:focus{
+  outline: none;
+  box-shadow: none;
+  border: none;
+  background-color: #1a1a1a;
+  color: white;
+}
+.form-control::placeholder{
+  color: #ffffff;
+}
+.modal-content .btn-close {
+  color: white !important; /* Ensures button color is white */
+}
+
+/* Targeting the SVG icon to make it white */
+.modal-content .btn-close {
+  fill: rgb(185, 70, 70) !important;
 }

@@ -223,6 +223,35 @@ const price = product.Dprice;
   }
 });
 
+
+async function addToWishlist(productId) {
+  try {
+    const response = await fetch(`/user/addToWishlist/${productId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.status)
+    if (result.status) {
+      showAlert(result.message || "Product added to wishlist",'success');
+    } else {
+      console.log('else');
+      showAlert(result.message || "Failed to add product to wishlist",'danger');
+    }
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    showAlert("An error occurred while adding the product to the wishlist.",'danger');
+  }
+}
+
+
+
+
+
+
 function showAlert(message, type) {
   const alertBox = document.getElementById('alertBox');
   if (!alertBox) {
