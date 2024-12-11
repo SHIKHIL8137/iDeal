@@ -152,4 +152,14 @@ nav{
     transition: opacity 0.3s ease, transform 0.3s ease;
     transform: translateY(0);
   }
-  
+  .table th, .table td {
+    color: #fff;
+  }
+  .showing1-10Text{
+    color: #b8b8b8;
+    font-size: 13px;
+  }
+  .page-link{
+    background-color: transparent;
+   cursor: pointer;
+  }

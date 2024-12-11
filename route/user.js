@@ -41,6 +41,7 @@ router.get('/referral',userController.loadReferral);
 
 
 
+
 router.post('/productReview/:id',userController.productReview);
 router.post('/filterProducts',userController.filterProduct);
 router.post('/categoryShopFilter',userController.categoryShopFilter);
@@ -66,6 +67,7 @@ router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.ca
 router.post('/expireOrder/:orderId',userController.changeOrderConformationStatus);
 router.post('/addToWishlist/:id',userController.addtoWishlist);
 router.post('/addToWallet',userController.addMoneyToWallet);
+router.post('/return-order/:orderId',userController.returnOrder);
 
 
 router.delete('/deleteAddress/:id',userMiddleWare.isLoggedIn,userController.deleteAddress);

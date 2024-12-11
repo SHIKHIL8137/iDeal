@@ -34,6 +34,8 @@ router.get('/editCoupon/:couponId' ,adminController.loadEditCoupon);
 router.get('/sales',adminController.loadSales);
 router.get('/coupon-data',adminController.getCoupons);
 router.get('/search-coupons',adminController.searchCoupon);
+router.get('/return',adminController.loadReturn);
+router.get('/return-requests',adminController.getReturnData);
 
 
 

@@ -67,77 +67,97 @@
         <h3>Referrals</h3>
         <div class="container mt-5">
           <div class="row">
-              <!-- Referral Summary -->
-              <div class="col-md-12 mb-5">
-                <h4>Referral Summary</h4>
-                  <div class="card">
-                      <div class="card-body">
-                          <p>Total Rewards Earned: <span class="text-success"><strong>₹1200</strong></span></p>
-                          <p>Total Referred Users: <strong>15</strong></p>
-                      </div>
-                  </div>
+            <!-- Referral Summary -->
+            <div class="col-md-12 mb-5">
+              <h4>Referral Summary</h4>
+              <div class="card">
+                <div class="card-body">
+                  <p>Total Rewards Earned: <span class="text-success"><strong>₹<%= referral.rewardAmount || 0 %></strong></span></p>
+                  <p>Total Referred Users: <strong><%= referral.referredUserIds ? referral.referredUserIds.length : 0 %></strong></p>
+                </div>
               </div>
-  
-              <!-- Referral Code and Link -->
-              <div class="col-md-12 mb-5">
-                <h4>Your Referral Information</h4>
-                <div class="card">
-                  <div class="card-body">
-                    <!-- Referral Code -->
-                    <div class="mb-3 position-relative">
-                      <label for="referralCode" class="form-label">Referral Code</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="referralCode" value="ABC123XYZ" readonly>
-                        <button class="btn btn-secondary" onclick="copyToClipboard('referralCode', 'codeBadge')">
-                          <i class="fas fa-copy"></i> Copy
-                        </button>
-                      </div>
-                      <span id="codeBadge" class="copy-badge">Copied Code!</span>
+            </div>
+      
+            <!-- Referral Code and Link -->
+            <div class="col-md-12 mb-5">
+              <h4>Your Referral Information</h4>
+              <div class="card">
+                <div class="card-body">
+                  <!-- Referral Code -->
+                  <div class="mb-3 position-relative">
+                    <label for="referralCode" class="form-label">Referral Code</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="referralCode" value="<%= referral.referralCode %>" readonly>
+                      <button class="btn btn-secondary" onclick="copyToClipboard('referralCode', 'codeBadge')">
+                        <i class="fas fa-copy"></i> Copy
+                      </button>
                     </div>
-                
-                    <!-- Referral Link -->
-                    <div class="position-relative">
-                      <label for="referralLink" class="form-label">Referral Link</label>
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="referralLink" value="https://www.example.com/signup?ref=ABC123XYZ" readonly>
-                        <button class="btn btn-secondary" onclick="copyToClipboard('referralLink', 'linkBadge')">
-                          <i class="fas fa-copy"></i> Copy Link
-                        </button>
-                      </div>
-                      <span id="linkBadge" class="copy-badge">Copied Link!</span>
+                    <span id="codeBadge" class="copy-badge">Copied Code!</span>
+                  </div>
+      
+                  <!-- Referral Link -->
+                  <div class="position-relative">
+                    <label for="referralLink" class="form-label">Referral Link</label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="referralLink" value="http://localhost:3000/user/signUp?ref=<%= referral.referralCode %>" readonly>
+                      <button class="btn btn-secondary" onclick="copyToClipboard('referralLink', 'linkBadge')">
+                        <i class="fas fa-copy"></i> Copy Link
+                      </button>
                     </div>
+                    <span id="linkBadge" class="copy-badge">Copied Link!</span>
                   </div>
                 </div>
-                
-                
               </div>
-              <div class="col-md-12">
+            </div>
+      
+            <!-- Referred Users -->
+            <div class="col-md-12">
               <h4>Referred Users</h4>
-              <div class="card ">
-                  <div class="card-body">
-                      <table class="table">
-                          <thead>
-                              <tr>
-                                  <th>Name</th>
-                                  <th>Referral Amount (₹)</th>
-                                  <th>Date Referred</th>
-                              </tr>
-                          </thead>
-                          <tbody>
-                              <tr>
-                                  <td>John Doe</td>
-                                  <td><span class="text-success">₹100</span></td>
-                                  <td>2024-12-01</td>
-                              </tr>
-                          </tbody>
-                      </table>
+              <div class="card">
+                <div class="card-body">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Date Referred</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (referral.referredUserIds && referral.referredUserIds.length > 0) { %>
+                        <% referral.referredUserIds.forEach(user => { %>
+                          <tr>
+                            <td><%= user.username %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.createdAt.toDateString() %></td>
+                          </tr>
+                        <% }); %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="3" class="text-center">No users referred yet.</td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span id="showingText" class="showing1-10Text"></span>
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item">
+                        <button class="page-link" id="prevPage" disabled>&laquo;</button>
+                      </li>
+                      <li class="page-item">
+                        <button class="page-link" id="nextPage">&raquo;</button>
+                      </li>
+                    </ul>
                   </div>
+                </div>
               </div>
-              </div>
+            </div>
           </div>
+        </div>
       </div>
-
-      </div>
+      
+      
     </div>
   </div>
   <div class="footer">

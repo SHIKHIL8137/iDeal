@@ -56,6 +56,18 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
 });
 
 
+// if the referral is in the query params it will show in the input field
+const queryParams = new URLSearchParams(window.location.search);
+const referralCode = queryParams.get('ref');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const referralInput = document.getElementById('referral');
+  if (referralCode) {
+    referralInput.value = referralCode; 
+  }
+});
+
+
 // show ing the error message
 const serverMsgError=document.getElementById('serverMsg');
 if(serverMsgError){

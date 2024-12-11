@@ -254,3 +254,13 @@ nav{
   transform: scale(1);
 }
 
+#closeBtnCoupon{
+  top: 0;
+  right: 0;
+  color: rgba(255, 0, 0, 0.651);
+}
+#closeBtnCoupon:hover{
+background-color: none;
+color: red;
+border: none;
+}

@@ -17,3 +17,51 @@ function copyToClipboard(inputId, badgeId) {
     }, 2000);
   });
 }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const rows = Array.from(document.querySelectorAll('table tbody tr')); // Get all rows
+    const rowsPerPage = 5;
+    let currentPage = 1;
+
+    const showingText = document.getElementById('showingText');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+
+    // Function to update the visible rows
+    const updateTable = () => {
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+
+      rows.forEach((row, index) => {
+        row.style.display = index >= start && index < end ? '' : 'none';
+      });
+
+      // Update navigation
+      prevPageButton.disabled = currentPage === 1;
+      nextPageButton.disabled = end >= rows.length;
+
+      // Update showing text
+      const showingStart = start + 1;
+      const showingEnd = Math.min(end, rows.length);
+      showingText.textContent = `Showing ${showingStart}-${showingEnd} of ${rows.length} entries`;
+    };
+
+    // Event listeners for navigation buttons
+    prevPageButton.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+      if (currentPage * rowsPerPage < rows.length) {
+        currentPage++;
+        updateTable();
+      }
+    });
+
+    // Initialize table display
+    updateTable();
+  });
+

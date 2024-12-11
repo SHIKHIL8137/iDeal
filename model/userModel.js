@@ -240,15 +240,16 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
      type: String, 
-     enum: ['Processing','Delivered', 'Cancelled'], 
+     enum: ['Processing','Delivered', 'Cancelled','Returned'], 
      default: 'Pending' },
   paymentStatus: { 
     type: String, 
-    enum: ['Paid', 'Unpaid', 'Refund Initiated'], 
+    enum: ['Paid', 'Unpaid'], 
     required: true 
   },
   paymentMethod: { 
     type: String, 
+    enum: ['COD','Online', 'Wallet'], 
     required: true 
   }, 
 
@@ -464,39 +465,6 @@ const walletSchema = new mongoose.Schema({
 
 
 
-
-const reasonSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    required: true,
-    enum: ['cancellation', 'return'],
-  },
-  reason: {
-    type: String,
-    required: true, 
-    trim: true,
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
-    required: true,
-  },
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    required: true,
-  },
-  orderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order', 
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now, 
-  },
-});
-
 const referralSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -526,6 +494,105 @@ const referralSchema = new mongoose.Schema({
 
 
 
+const returnCancelSchema = new mongoose.Schema({
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Orders',
+    required: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', 
+    required: true,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['Online', 'COD', 'Wallet'],
+    required: true,
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['Paid', 'Unpaid'],
+    required: true,
+  },
+  reason: {
+    type: String,
+    required: true,
+    maxlength: 500, 
+  },
+  isReturn: {
+    type: Boolean,
+    required: true, 
+  },
+  adminStatus: {
+    type: String,
+    enum: ['Pending', 'Approved', 'Rejected'],
+    default : 'Pending',
+    required: function () {
+      return this.isReturn; 
+    },
+  },
+  pickupStatus: {
+    type: String,
+    enum: ['Not Scheduled', 'Scheduled', 'In Transit', 'Completed'],
+
+    required: function () {
+      return this.isReturn; 
+    },
+  },
+  refundStatus: {
+    type: String,
+    enum: ['In Process', 'Completed'],
+    default : 'In Process',
+    required: function () {
+      return this.isReturn; 
+    },
+  },
+  refundAmount: {
+    type: Number,
+    required: function () {
+      return this.paymentMethod === 'Online' && this.paymentStatus === 'Paid'; 
+    },
+  },
+  pickupAddress: {
+    type: {
+      fname: { type: String, required: true },
+      lname: { type: String, required: true },
+      companyName: { type: String },
+      houseName: { type: String },
+      country: { type: String, required: true },
+      state: { type: String, required: true },
+      city: { type: String, required: true },
+      zipCode: { type: String, required: true },
+      email: { type: String, required: true, match: /\S+@\S+\.\S+/ },
+      phone: { type: String, required: true },
+    },
+    required: function () {
+      return this.isReturn === true;
+    },
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, 
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now, 
+  },
+});
+
+
+
+
+
+
+
+
+
+returnCancelSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
 
 module.exports = {
@@ -537,6 +604,6 @@ module.exports = {
   Orders : mongoose.model('Orders',orderSchema),
   WishList : mongoose.model('WishList',wishlistSchema),
   Wallet : mongoose.model('Wallet',walletSchema),
-  Reason : mongoose.model('Reason',reasonSchema),
+  ReturnCancel : mongoose.model('ReturnCancel',returnCancelSchema),
   Referral : mongoose.model('Referral',referralSchema),
 };

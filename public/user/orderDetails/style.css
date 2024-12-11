@@ -83,3 +83,27 @@ nav{
 #alertBox.hide {
   right: -100%;
 }
+.modal-content{
+  background-color: black;
+}
+.modal-header{
+  border: none;
+}
+.form-control{
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border: none;
+}
+.form-control:focus{
+  outline: none;
+  box-shadow: none;
+  border: none;
+  background-color: #1a1a1a;
+  color: white;
+}
+.form-control::placeholder{
+  color: #ffffff;
+}
+.modal-footer{
+  border: none;
+}

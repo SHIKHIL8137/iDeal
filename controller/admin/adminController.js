@@ -1,5 +1,5 @@
 const {Product,Category,Admin,Coupon} = require('../../model/adminModel');
-const {User,Address,OTP,Orders}=require('../../model/userModel');
+const {User,Address,OTP,Orders,ReturnCancel}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
 const sharp=require('sharp');
@@ -1060,6 +1060,50 @@ const deleteCoupon = async(req,res)=>{
 }
 
 
+// load return page
+
+
+const loadReturn = async(req,res)=>{
+  try {
+    const username=req.session.username;
+    res.status(200).render('admin/return',{title : "Returns",username});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+
+// load return table 
+
+const getReturnData = async (req, res) => {
+  try {
+    const returnData = await ReturnCancel.find({ isReturn: true })
+      .populate('userId', 'email') 
+      .populate('orderId', 'orderId totalAmount'); 
+
+    if (!returnData.length) {
+      return res.status(404).json({
+        status: false,
+        message: 'No return requests found.',
+      });
+    }
+console.log(returnData);
+
+    res.status(200).json({
+      status: true,
+      data: returnData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: false,
+      message: 'Internal Server Error',
+    });
+  }
+};
+
+
 
 
 module.exports={
@@ -1104,5 +1148,7 @@ module.exports={
  getCoupons,
  editCoupon,
  searchCoupon,
- deleteCoupon
+ deleteCoupon,
+ loadReturn,
+ getReturnData
 }

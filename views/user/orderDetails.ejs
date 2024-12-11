@@ -22,7 +22,6 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/user-circle.svg" alt=""></a></li>
           <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
-          <li class="nav-item text-white">2</li>
         </ul>
       </div>
     </div>
@@ -97,11 +96,13 @@
               <!-- Cancel and Return Buttons -->
               <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
                 <% if (order.status === 'Delivered') { %>
-                  <button type="button" class="btn btn-outline-success">Return Order</button>
+                  <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#returnModal">Return Order</button>
+                  <% } else if (order.status === 'Returned') { %>
+                    <p class="text-success">Return Request <%= returnCancel.adminStatus %></p>
                 <% } else if (order.status !== 'Cancelled') { %>
-                  <button type="button" class="btn btn-outline-danger cancel-order-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+                  <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel Order</button>
                 <% } else if (order.status === 'Cancelled') { %>
-                  <p class="text-danger">Order Has been Cancelled</p>
+                  <p class="text-danger">Order has been cencelled</p>
                 <% } %>
               </div>
             </div>
@@ -207,6 +208,126 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Order Cancellation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="cancelForm">
+          <div class="mb-3">
+            <label for="cancelReason" class="form-label">Cancellation Reason</label>
+            <textarea class="form-control" id="cancelReason" rows="4" placeholder="Enter reason for cancellation"></textarea>
+            <div id="reasonError" class="text-danger d-none"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-danger cancel-order-btn" id="confirmCancelBtn" data-order-id="<%= order._id %>">Confirm Cancellation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnModalLabel">Order Return</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="returnForm">
+          <!-- Return Reason -->
+          <div class="mb-3">
+            <label for="returnReason" class="form-label">Return Reason</label>
+            <textarea class="form-control" id="returnReason" rows="4" placeholder="Enter reason for return"></textarea>
+            <div id="returnReasonError" class="text-danger d-none"></div>
+          </div>
+
+          <h6 class="mb-3">Pickup Address</h6>
+
+          <!-- Pickup Address Fields -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="firstName" placeholder="First name" name="fname">
+              <div id="fnameError" class="text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" class="form-control" id="lastName" placeholder="Last name" name="lname">
+              <div id="lnameError" class="text-danger d-none"></div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="companyName" class="form-label">Company Name (Optional)</label>
+            <input type="text" class="form-control" id="companyName" placeholder="Company name" name="companyName">
+          </div>
+
+          <div class="mb-3">
+            <label for="houseName" class="form-label">House Name</label>
+            <input type="text" class="form-control" id="houseName" placeholder="House Name" name="houseName">
+            <div id="houseNameError" class="text-danger d-none"></div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="country" class="form-label">Country</label>
+              <select class="form-control" id="country" name="country">
+                <option selected>Select...</option>
+                <option value="India">India</option>
+              </select>
+              <div id="countryError" class="text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="state" class="form-label">Region/State</label>
+              <input type="text" class="form-control" id="state" placeholder="State" name="state">
+              <div id="stateError" class="text-danger d-none"></div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" placeholder="City" name="city">
+              <div id="cityError" class="text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="zipCode" class="form-label">Zip Code</label>
+              <input type="text" class="form-control" id="zipCode" placeholder="Zip Code" name="zipCode">
+              <div id="zipCodeError" class="text-danger d-none"></div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="Email" name="email">
+              <div id="emailError" class="text-danger d-none"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="phone" placeholder="Phone Number" name="phone">
+              <div id="phoneError" class="text-danger d-none"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-success return-order-btn" id="confirmReturnBtn" data-order-id="<%= order._id %>">Confirm Return</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
   

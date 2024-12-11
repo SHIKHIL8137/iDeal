@@ -1,4 +1,4 @@
-const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,Reason}=require('../../model/userModel');
+const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCancel}=require('../../model/userModel');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
@@ -1052,7 +1052,15 @@ const loadOrderDetails = async (req, res) => {
     if (!order) {
       return res.status(404).send('Order not found');
     }
-    res.status(200).render('user/orderDetails', { order , title : "Oreder Details"});
+    let returnCancel = null;
+    console.log(order.status);
+    if (order.status === 'Returned') {
+      returnCancel = await ReturnCancel.findOne({ orderId: order._id });
+      if (!returnCancel) {
+        return res.status(404).send('Order status not found');
+      }
+    }
+    res.status(200).render('user/orderDetails', { returnCancel ,order , title : "Oreder Details"});
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -1730,15 +1738,19 @@ const submitOrder = async (req, res) => {
     if (!deliveryAddress || !deliveryAddress._id) {
       return res.status(400).json({ message: 'Invalid delivery address' });
     }
+
     const deliveryAddressData = await Address.findById(deliveryAddress._id);
     if (!deliveryAddressData) {
       return res.status(400).json({ message: 'Delivery address not found' });
     }
+
    const email = req.session.isLoggedEmail;
     const user = await User.findOne({email:email});
+    console.log('user valid')
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     const userId = user._id;
     const checkout = await CheckOut.findOne({ userId :user._id });
     if (!checkout) {
@@ -1749,7 +1761,9 @@ const submitOrder = async (req, res) => {
     if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
-    if (checkout.appliedCoupon) {
+
+
+    if (checkout.appliedCoupon !== 'N/A') {
       const coupon = await Coupon.findOne({ code: checkout.appliedCoupon });
       if (coupon && coupon.isActive) {
           coupon.usersUsed.push(user._id);
@@ -1768,7 +1782,7 @@ const submitOrder = async (req, res) => {
       return map;
     }, {});
 
-    // Build products array with product details
+
     const products = cart.items.map((item) => {
       const product = productMap[item.productId.toString()];
       if (!product) {
@@ -1858,6 +1872,8 @@ const submitOrder = async (req, res) => {
 const cancelOreder = async(req,res)=>{
   try {
     const orderId = req.params.orderId;
+    const {reason} = req.body;
+    console.log(orderId,reason)
     const order = await Orders.findById(orderId);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -1879,7 +1895,18 @@ const cancelOreder = async(req,res)=>{
         await coupon.save();
       }
     }
+    
+    const newUserReason = new ReturnCancel({
+      reason : reason.trim(),
+      userId : order.userId,
+      orderId : order._id,
+      paymentMethod : order.paymentMethod,
+      paymentStatus : order.paymentStatus,
+      isReturn : false,
 
+    })
+
+    await newUserReason.save();
     order.status = 'Cancelled';
     await order.save(); 
     res.json({ message: 'Order canceled successfully', order });
@@ -1992,7 +2019,11 @@ const loadWallet = async (req, res) => {
 
 const loadReferral = async(req,res)=>{
   try {
-    res.status(200).render('user/referral',{title : "referral"})
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({email});
+    if(!user) return res.status(400).send('User not Found');
+    const referral = await Referral.findOne({userId : user._id}).populate('referredUserIds', 'username email createdAt');
+    res.status(200).render('user/referral',{title : "referral",referral});
   } catch (error) {
     res.status(500).send('Internal Server Error');
   }
@@ -2149,6 +2180,54 @@ function generateTransactionId() {
 }
 
 
+
+// return the order
+
+
+const returnOrder = async(req,res)=>{
+  try {
+    const {reason,address} = req.body;
+    const orderId = req.params.orderId;
+    if (!reason || !address || !orderId) {
+      return res.status(400).json({
+        status: false,
+        message: 'All fields are required (reason, address, orderId, userId)',
+      });
+    }
+    const order = await Orders.findById(orderId);
+
+    if(!order) return res.status(400).json({status:false,message:'Order Not Find'})
+
+    const returnOrderData = new ReturnCancel({
+      orderId:order._id,
+      userId : order.userId,
+      reason,
+      paymentMethod : order.paymentMethod,
+      paymentStatus : order.paymentStatus,
+      isReturn: true, 
+      pickupStatus: 'Not Scheduled', 
+      refundAmount : order.totalAmount,
+      pickupAddress: address, 
+      adminStatus : 'Pending',
+    });
+    await returnOrderData.save();
+    order.status = 'Returned';
+    await order.save();
+    res.status(201).json({
+      status: true,
+      message: 'Return order initiated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({status:false,message:"Internal Server Error"});
+  }
+}
+
+
+
+
+
+
 module.exports={
   loadlogin ,
   loadsignUp,
@@ -2204,6 +2283,7 @@ module.exports={
   loadReferral,
   addtoWishlist,
   deleteFromWishlist,
-  addMoneyToWallet
+  addMoneyToWallet,
+  returnOrder
 
 };
