@@ -12,23 +12,25 @@ closeSidebarBtn.addEventListener('click', () => {
 });
 
 // Copy coupon code functionality
-function copyCouponCode(id) {
-    const couponCodeInput = document.getElementById(id);
-    const badge = couponCodeInput.closest('li').querySelector('.copy-badge');
+function copyCouponCode(couponId) {
+  // Get the coupon code input and the badge
+  const couponCodeInput = document.getElementById('couponCode' + couponId);
+  const badge = document.getElementById('badge' + couponId);
 
-    // Select and copy the text
-    couponCodeInput.select();
-    couponCodeInput.setSelectionRange(0, 99999);
-    navigator.clipboard.writeText(couponCodeInput.value).then(() => {
-        // Show the badge
-        badge.classList.add('show');
-      console.log('clicked')
-        // Hide the badge after 2 seconds
-        setTimeout(() => {
-            badge.classList.remove('show');
-        }, 2000);
-    });
+  // Copy the coupon code
+  navigator.clipboard.writeText(couponCodeInput.value).then(() => {
+      // Show the "Copied!" badge
+      badge.classList.add('show');
+
+      // Hide the badge after 2 seconds
+      setTimeout(() => {
+          badge.classList.remove('show');
+      }, 2000);
+  }).catch(err => {
+      console.error('Failed to copy coupon code: ', err);
+  });
 }
+
 
 async function updateQuantity(productId, action) {
   try {

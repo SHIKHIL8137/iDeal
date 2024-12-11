@@ -161,15 +161,8 @@ td div {
 td div::-webkit-scrollbar {
   display: none;
 }
-.reason-cell {
-  max-width: 150px; /* Adjust the width as needed */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer; /* Indicate it's interactive */
-}
-
-.tooltip-inner {
-  max-width: 300px; /* Adjust to control tooltip width */
-  white-space: normal; /* Allow text wrapping in the tooltip */
+.error {
+  color: red;
+  font-size: 0.875rem;
+  display: none; /* Initially hidden */
 }

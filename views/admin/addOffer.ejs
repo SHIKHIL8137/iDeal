@@ -1,0 +1,259 @@
+
+
+<%- include('partials/header.ejs') -%>
+  <link rel="stylesheet" href="/admin/addOffer/style.css">
+  </head>
+
+  <body>
+    <div id="alertBox">
+    </div>
+        <div class="container-fluid">
+          <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
+              <ul class="nav nav-pills flex-column ">
+                <li>
+                  <a href="#" class="nav-link text-dark">
+                    <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
+                  </a>
+                </li>
+              </ul>
+              <p class="text-uppercase text-primary navMainHeading mt-3">Menu</p>
+              <ul class="nav nav-pills flex-column ">
+                <li class="nav-item">
+                  <a href="/admin/dashboard" class="nav-link text-dark">
+                    <i class="fas fa-th-large"></i> Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/product" class="nav-link text-dark">
+                    <i class="fas fa-box"></i> Products
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/orders" class="nav-link text-dark" >
+                    <i class="fas fa-shopping-cart"></i> Orders
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/return"  class="nav-link text-dark">
+                    <i class="fas fa-undo"></i> Returns
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/coupon" class="nav-link text-dark">
+                    <i class="fas fa-ticket-alt"></i> Coupon
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/banner" class="nav-link text-dark">
+                    <i class="fas fa-image"></i> Banner
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/transaction" class="nav-link text-dark">
+                    <i class="fas fa-exchange-alt"></i> Transaction
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/offer" class="nav-link active">
+                    <i class="fas fa-tag"></i> Offer
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/sales"  class="nav-link text-dark">
+                    <i class="fas fa-money-bill-wave"></i> Sales
+                  </a>
+                </li>
+              </ul>
+
+              <p class="text-uppercase text-primary mt-4 mb-2 navMainHeading">User Management</p>
+              <ul class="nav nav-pills flex-column ">
+                <li>
+                  <a href="/admin/manageAdmin" class="nav-link text-dark">
+                    <i class="fas fa-user-cog"></i> Manage Admins
+                  </a>
+                </li>
+                <li>
+                  <a href="/admin/customers" class="nav-link text-dark">
+                    <i class="fas fa-users"></i> Customers
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+              <!-- Top Navbar -->
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Orders</h2>
+                <div class="d-flex align-items-center">
+                  <!-- Search Bar -->
+                  <input type="text" id="searchBar" class="form-control me-3 w-50" placeholder="Search...">
+              
+                  <!-- Admin Profile -->
+                  <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      <%= username %>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                      <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Breadcrumb and Actions -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard"
+                        class="breadcrumb-item-style-atag">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Offer List</li>
+                  </ol>
+                </nav>
+              </div>
+
+              <form id="offerForm" method="POST" action="/admin/addOffer">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="applicableTo" class="form-label">Select Offer Type</label>
+                      <select class="form-select" id="applicableTo" name="applicableTo"  onchange="toggleOfferFields()">
+                        <option value="">Choose Offer Type</option>
+                        <option value="product">Product</option>
+                        <option value="category">Category</option>
+                      </select>
+                      <div class="error" id="applicableToError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Product Fields -->
+                  <div id="productFields" class="col-md-6" style="display:none;">
+                    <div class="mb-3">
+                      <label for="productSelect" class="form-label">Select Product</label>
+                      <select class="form-select" id="productSelect" name="product" >
+                        <option value="">Choose a product</option>
+                        <% availableProducts.forEach(product => { %>
+                          <option value="<%= product._id %>">
+                            <%= product.name %> (Status: <%= product.status %>, Storage: <%= product.storage %>, Color: <%= product.color %>)
+                          </option>
+                        <% }); %>
+                      </select>
+                      <div class="error" id="productSelectError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Category Fields -->
+                  <div id="categoryFields" class="col-md-6" style="display:none;">
+                    <div class="mb-3">
+                      <label for="categorySelect" class="form-label">Select Category</label>
+                      <select class="form-select" id="categorySelect" name="category" >
+                        <option value="">Choose a category</option>
+                        <% category.forEach(category => { %>
+                          <option value="<%= category._id %>"><%= category.name %></option>
+                        <% }); %>
+                      </select>
+                      <div class="error" id="categorySelectError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Offer Title -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="title" class="form-label">Offer Title</label>
+                      <input type="text" class="form-control" id="title" name="title" >
+                      <div class="error" id="titleError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Offer Description -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Offer Description</label>
+                      <input type="text" class="form-control" id="description" name="description" >
+                      <div class="error" id="descriptionError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Discount Value -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="discountValue" class="form-label">Discount Value (%)</label>
+                      <input type="number" class="form-control" id="discountValue" name="discountValue"  min="0">
+                      <div class="error" id="discountValueError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Minimum Order Amount -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="minOrderAmount" class="form-label">Minimum Order Amount</label>
+                      <input type="number" class="form-control" id="minOrderAmount" name="minOrderAmount"  min="0" >
+                      <div class="error" id="minOrderAmountError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Valid From -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="validFrom" class="form-label">Valid From</label>
+                      <input type="date" class="form-control" id="validFrom" name="validFrom" >
+                      <div class="error" id="validFromError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Valid Till -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="validTill" class="form-label">Valid Till</label>
+                      <input type="date" class="form-control" id="validTill" name="validTill" >
+                      <div class="error" id="validTillError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Usage Limit -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="usageLimit" class="form-label">Usage Limit</label>
+                      <input type="number" class="form-control" id="usageLimit" name="usageLimit" min="1" placeholder="Enter usage limit" value="">
+                      <div class="error" id="usageLimitError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Offer Active -->
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="isActive" class="form-label">Is Offer Active?</label>
+                      <select class="form-select" id="isActive" name="isActive" >
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                      </select>
+                      <div class="error" id="isActiveError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+              
+                  <!-- Submit Button -->
+                  <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary w-100">Assign Offer</button>
+                  </div>
+                </div>
+              </form>
+              
+              
+              
+              
+             
+              
+              
+            
+            </div>
+          </div>
+        </div>
+
+  
+      
+      
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/admin/addOffer/script.js"></script>
+        <%- include('partials/footer.ejs') -%>

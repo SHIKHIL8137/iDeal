@@ -204,6 +204,63 @@ const couponSchema = new mongoose.Schema({
 
 
 
+const offerSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  discountValue: {
+    type: Number,
+    required: true,
+    min: 0, 
+  },
+  minOrderAmount: {
+    type: Number,
+    required: true,
+    default: 0, 
+  },
+  validFrom: {
+    type: Date,
+    required: true,
+  },
+  validTill: {
+    type: Date,
+    required: true,
+  },
+  applicableTo: {
+    type: String,
+    enum: ['Product', 'Category'], 
+    required: true,
+  },
+  usageLimit: {
+    type: Number,
+    default: null, 
+  },
+  isActive: {
+    type: Boolean,
+    default: true, 
+  },
+
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: function() { return this.applicableTo === 'product'; },
+  },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: function() { return this.applicableTo === 'category'; },
+  },
+}, {
+  timestamps: true, 
+});
+
 
 
 
@@ -215,4 +272,5 @@ module.exports = {
   Admin:mongoose.model('Admin',adminSchema),
   Review:mongoose.model('Review',reviewSchema),
   Coupon:mongoose.model('Coupon',couponSchema),
+  Offer:mongoose.model('Offer',offerSchema),
 };

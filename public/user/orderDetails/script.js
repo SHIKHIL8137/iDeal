@@ -134,9 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
   
       let valid = true;
   
-      if (!returnReason) {
-       showErrorMessage(returnReasonError,'Return reason is required.')
+      if (!returnReason || returnReason.trim() === '') {
+        showErrorMessage(returnReasonError, 'Return reason is required.');
         valid = false;
+      } else if (returnReason.length > 300) {
+        showErrorMessage(returnReasonError, 'Return reason must not exceed 300 characters.');
+        valid = false
       }
   
       if (!firstName) {

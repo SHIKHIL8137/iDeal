@@ -183,19 +183,22 @@
       <div class="p-3">
           <h5 class="mb-3">Applied Coupons</h5>
           <ul class="list-group">
-              <!-- Coupon 1 -->
-              <li class="list-group-item position-relative">
-                  <div class="discription">
-                      10% off on your total purchase
-                  </div>
-                  <div class="coupon-code-container mt-2">
-                      <input type="text" value="COUPON10" readonly id="couponCode1">
-                      <button class="btn btn-sm" onclick="copyCouponCode('couponCode1')">
-                          <i class="bi bi-clipboard"></i>
-                      </button>
-                  </div>
-                  <span class="copy-badge">Copied!</span>
-              </li>
+              <!-- Loop through the coupons -->
+              <% coupons.forEach(function(coupon) { %>
+                  <li class="list-group-item position-relative">
+                      <div class="description">
+                          <%= coupon.description %> <br>
+                          <small>Discount: <%= coupon.discountPercentage %>%</small>
+                      </div>
+                      <div class="coupon-code-container mt-2">
+                          <input type="text" value="<%= coupon.code %>" readonly id="couponCode<%= coupon._id %>">
+                          <button class="btn btn-sm" onclick="copyCouponCode('<%= coupon._id %>')">
+                              <i class="bi bi-clipboard"></i>
+                          </button>
+                      </div>
+                      <span class="copy-badge" id="badge<%= coupon._id %>">Copied!</span>
+                  </li>
+              <% }); %>
           </ul>
       </div>
   </div>

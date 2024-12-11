@@ -1084,9 +1084,11 @@ const loadCart = async (req, res) => {
 
     const userId = user._id;
 
+    const coupons = await Coupon.find();
+
 
     const userCart = await Cart.findOne({ userId }).populate('items.productId');
-    res.status(200).render('user/cart', { userCart ,title:"Cart"});
+    res.status(200).render('user/cart', { userCart ,title:"Cart",coupons});
   } catch (error) {
     console.error('Error loading cart:', error);
     res.status(500).send('Internal Server Error');
@@ -2285,5 +2287,4 @@ module.exports={
   deleteFromWishlist,
   addMoneyToWallet,
   returnOrder
-
 };

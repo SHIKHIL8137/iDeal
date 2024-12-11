@@ -1,0 +1,208 @@
+<%- include('partials/header.ejs') -%>
+<link rel="stylesheet" href="/admin/returnOrderDetails/style.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <!-- Sidebar -->
+      <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
+        <ul class="nav nav-pills flex-column ">
+          <li>
+            <a href="#" class="nav-link text-dark">
+              <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
+            </a>
+          </li>
+        </ul>
+        <p class="text-uppercase text-primary navMainHeading mt-3">Menu</p>
+        <ul class="nav nav-pills flex-column ">
+          <li class="nav-item">
+            <a href="/admin/dashboard" class="nav-link text-dark">
+              <i class="fas fa-th-large"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="/admin/product" class="nav-link text-dark">
+              <i class="fas fa-box"></i> Products
+            </a>
+          </li>
+          <li>
+            <a href="/admin/orders" class="nav-link text-dark">
+              <i class="fas fa-shopping-cart"></i> Orders
+            </a>
+          </li>
+          <li>
+            <a href="/admin/return"  class="nav-link active">
+              <i class="fas fa-undo"></i> Returns
+            </a>
+          </li>
+          <li>
+            <a href="/admin/coupon" class="nav-link text-dark">
+              <i class="fas fa-ticket-alt"></i> Coupon
+            </a>
+          </li>
+          <li>
+            <a href="/admin/banner" class="nav-link text-dark">
+              <i class="fas fa-image"></i> Banner
+            </a>
+          </li>
+          <li>
+            <a href="/admin/transaction" class="nav-link text-dark">
+              <i class="fas fa-exchange-alt"></i> Transaction
+            </a>
+          </li>
+          <li>
+            <a href="/admin/offer" class="nav-link text-dark">
+              <i class="fas fa-tag"></i> Offer
+            </a>
+          </li>
+          <li>
+            <a href="/admin/sales"  class="nav-link text-dark">
+              <i class="fas fa-money-bill-wave"></i> Sales
+            </a>
+          </li>
+        </ul>
+
+        <p class="text-uppercase text-primary mt-4 mb-2 navMainHeading">User Management</p>
+        <ul class="nav nav-pills flex-column ">
+          <li>
+            <a href="/admin/manageAdmin" class="nav-link text-dark">
+              <i class="fas fa-user-cog"></i> Manage Admins
+            </a>
+          </li>
+          <li>
+            <a href="/admin/customers" class="nav-link text-dark">
+              <i class="fas fa-users"></i> Customers
+            </a>
+          </li>
+        </ul>
+      </div>
+
+    <div class="col-md-10 p-4">
+      <!-- Top Navbar -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Return Order Details</h2>
+        <div class="d-flex align-items-center">
+          <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= username || 'Na' %>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+              <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breadcrumb and Actions -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/admin/returns" class="breadcrumb-item-style-atag">Returns</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Return Order Details</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- Return Order Details -->
+      <div class="row g-3">
+        <!-- Return Overview -->
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Return Request</h3>
+              <span class="badge <%= returnOrder.adminStatus === 'Pending' ? 'bg-warning text-dark' : 
+                     returnOrder.adminStatus === 'Approved' ? 'bg-success text-white' : 
+                     returnOrder.adminStatus === 'Rejected' ? 'bg-danger text-white' : '' %>">
+                <%= returnOrder.adminStatus %>
+              </span>
+
+              <ul class="list-unstyled mt-3">
+                <li><strong>Reason:</strong> <%= returnOrder.reason %></li>
+                <li><strong>Payment Method:</strong> <%= returnOrder.paymentMethod %></li>
+                <li><strong>Refund Amount:</strong> ₹<%= returnOrder.refundAmount %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Details -->
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Customer</h5>
+              <ul class="list-unstyled mt-3">
+                <li><strong>Name:</strong> <%= returnOrder.userId.fname %> <%= returnOrder.userId.lname %></li>
+                <li><strong>Email:</strong> <%= returnOrder.userId.email %></li>
+                <li><strong>Phone:</strong> <%= returnOrder.userId.phone %></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pickup Address -->
+        <% if (returnOrder.isReturn) { %>
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Pickup Address</h5>
+              <p><strong>Address:</strong> <br> <%= returnOrder.pickupAddress.houseName %><br> <%= returnOrder.pickupAddress.city %>, <%= returnOrder.pickupAddress.state %> <br> <%= returnOrder.pickupAddress.zipCode %>,<br> <%= returnOrder.pickupAddress.country %></p>
+              <p><strong>Contact:</strong> <br><%= returnOrder.pickupAddress.phone %> <br> <%= returnOrder.pickupAddress.email %></p>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Status Details -->
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-header">Status Updates</div>
+            <div class="card-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Admin Status</th>
+                    <th>Pickup Status</th>
+                    <th>Refund Status</th>
+                    <th>Updated At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><%= returnOrder.adminStatus %></td>
+                    <td>
+                      <%= returnOrder.adminStatus === 'Approved' ? returnOrder.pickupStatus : '-' %>
+                    </td>
+                    <td>
+                      <%= returnOrder.adminStatus === 'Approved' ? returnOrder.refundStatus : '-' %>
+                    </td>
+                    <td><%= returnOrder.updatedAt.toLocaleString() %></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+      </div>
+    </div>
+
+    </div>
+  </div>
+
+
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/admin/returnOrderDetails/script.js"></script>
+  <%- include('partials/footer.ejs') -%>
+
+
+
+
+
+
+

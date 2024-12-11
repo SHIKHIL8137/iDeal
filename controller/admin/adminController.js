@@ -1,5 +1,5 @@
-const {Product,Category,Admin,Coupon} = require('../../model/adminModel');
-const {User,Address,OTP,Orders,ReturnCancel}=require('../../model/userModel');
+const {Product,Category,Admin,Coupon, Offer} = require('../../model/adminModel');
+const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
 const sharp=require('sharp');
@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodeMailer=require('nodemailer');
-const { title } = require('process');
+
 
 
 // admin login validation
@@ -356,7 +356,7 @@ const editProduct = async (req, res) => {
   try {
     const productId = req.params.id; 
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
-
+console.log(req.files)
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).send('Invalid Product ID');
     }
@@ -876,17 +876,14 @@ const updateOrderStatus = async (req, res) => {
 const loadOffer = async (req, res) => {
   try {
     const username = req.session.username;
-    const category = await Category.find();
-    const allProducts = await Product.find();
-    const productsWithOffers = await Product.find({ offer: { $exists: true } });
-    const availableProducts = allProducts.filter(product =>
-      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
-    );
+    const message = req.query.message;
+    const err=req.query.err
+    const errBoolean = err === 'true';
     res.status(200).render('admin/offer', {
       title: "Offer",
       username,
-      category,
-      availableProducts, 
+      message,
+      errBoolean,
     });
   } catch (error) {
     res.status(500).send('Internal Server Error');
@@ -1079,8 +1076,9 @@ const loadReturn = async(req,res)=>{
 const getReturnData = async (req, res) => {
   try {
     const returnData = await ReturnCancel.find({ isReturn: true })
-      .populate('userId', 'email') 
-      .populate('orderId', 'orderId totalAmount'); 
+  .populate('userId', 'email') 
+  .populate('orderId', 'orderId totalAmount')
+  .sort({ createdAt: -1 }); 
 
     if (!returnData.length) {
       return res.status(404).json({
@@ -1100,6 +1098,310 @@ console.log(returnData);
       status: false,
       message: 'Internal Server Error',
     });
+  }
+};
+
+
+// approve Return 
+const approveReturn = async (req, res) => {
+  try {
+    const { returnCancelId } = req.body; 
+    if (!returnCancelId) {
+      return res.status(400).json({ status: false, message: "returnCancelId is required" });
+    }
+
+    const returnCancel = await ReturnCancel.findByIdAndUpdate(
+      returnCancelId, 
+      { $set: { adminStatus: 'Approved' } }, 
+      { new: true } 
+    );
+
+    if (!returnCancel) {
+      return res.status(404).json({ status: false, message: "Return request not found" });
+    }
+
+    const user = await User.findById(returnCancel.userId);
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const trxId = generateTransactionId();
+    let userWallet = await Wallet.findOne({ userId : returnCancel.userId });
+    console.log('userWallet',userWallet)
+    if(!userWallet) return res.status(404).json({ status: false, message: "Wallet not found" });
+
+
+    userWallet.balance += returnCancel.refundAmount;
+    userWallet.transactions.push({
+      transactionId: trxId,
+      type: "credit",
+      amount : returnCancel.refundAmount,
+      date: new Date(),
+    });
+
+    await userWallet.save();
+
+
+    res.status(200).json({ status: true, message: "Return request approved", data: returnCancel });
+  } catch (error) {
+    console.error("Error approving return:", error);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+
+
+// retrun rejsect
+
+
+const rejectReturn = async (req,res)=>{
+  try {
+    const { returnCancelId, reason } = req.body;
+    if (!returnCancelId) {
+      return res.status(400).json({
+        status: false,
+        message: 'ReturnCancel ID is required.',
+      });
+    }
+
+    const updatedRequest = await ReturnCancel.findByIdAndUpdate(
+      returnCancelId,
+      {
+        $set: {
+          adminStatus: 'Rejected',
+          reasonForRejection: reason || 'No reason provided.',
+        },
+      },
+      { new: true } 
+    );
+
+    if (!updatedRequest) {
+      return res.status(404).json({
+        status: false,
+        message: 'ReturnCancel request not found.',
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: 'The return request has been successfully rejected.',
+      data: updatedRequest,
+    });
+  } catch (error) {
+    console.error('Error rejecting return request:', error);
+    res.status(500).json({
+      status: false,
+      message: 'Internal Server Error',
+    });
+  }
+}
+
+//function to generate unique transaction id 12 digits
+function generateTransactionId() {
+  const timestamp = Date.now(); 
+  const randomNum = Math.floor(Math.random() * 1000); 
+  const transactionId = `${timestamp.toString().slice(-9)}${randomNum.toString().padStart(3, '0')}`;
+
+  return transactionId;
+}
+
+
+
+
+// get return order details
+
+
+const getreturnOrderDetails = async (req, res) => {
+  try {
+      const returnid = req.params.returnId;
+      console.log(returnid);
+      const returnOrder = await ReturnCancel.findById(returnid).populate('userId', 'firstName lastName email phone');
+
+      if (!returnOrder) {
+          return res.status(404).send('Return Order Not Found');
+      }
+
+      res.status(200).render('admin/returnOrderDetails', { returnOrder,title:"Return Order Details",username:'shikhil'});
+  } catch (error) {
+      console.error('Error fetching return order details:', error);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+// load add Offer
+
+
+const loadAddOffer = async(req,res)=>{
+  try {
+
+   
+    const category = await Category.find();
+    const allProducts = await Product.find();
+    const productsWithOffers = await Product.find({ offer: { $exists: true } });
+    const availableProducts = allProducts.filter(product =>
+      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
+    );
+    res.status(200).render('admin/addOffer',{title:"Add Offer",username:'shikhil',category,availableProducts});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+// load Edit Offer
+
+const loadEditOffer = async(req,res)=>{
+  try {
+    const offerId = req.params.offerId ;
+    const category = await Category.find();
+    const allProducts = await Product.find();
+    const productsWithOffers = await Product.find({ offer: { $exists: true } });
+
+    // Products without an offer
+    const availableProducts = allProducts.filter(product =>
+      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
+    );
+
+    // Fetching the specific offer to edit
+    const offerProduct = await Offer.findById(offerId);
+
+    if (!offerProduct) {
+      return res.status(404).send("Offer not found");
+    }
+
+    // Render the edit page with all required data
+    res.status(200).render('admin/editOffer', {
+      username: 'shikhil',
+      title: "Edit Offer",
+      category,
+      availableProducts,
+      offerProduct,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
+
+// add Offer 
+
+const addOffer = async(req,res)=>{
+  try {
+const{product,category,title, description,discountValue,minOrderAmount,validFrom,validTill,usageLimit,isActive}=req.body
+
+    if(product!==''){
+      const newOffer = new Offer({
+        product,
+        applicableTo : 'Product',
+        title, 
+        description,
+        discountValue,
+        minOrderAmount,
+        validFrom,
+        validTill,
+        usageLimit,
+        isActive
+      })
+      await newOffer.save();
+    }
+    if(category!==''){
+      const newOffer = new Offer({
+        category,
+        applicableTo : 'Category',
+        title, 
+        description,
+        discountValue,
+        minOrderAmount,
+        validFrom,
+        validTill,
+        usageLimit,
+        isActive
+      })
+      await newOffer.save();
+    }
+    res.status(200).redirect('/admin/offer?message=Offer Added SuccessFully&err=true');
+  } catch (error) {
+
+    console.log(error)
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
+
+
+// get the offer table
+
+
+const getOfferTable = async (req, res) => {
+  try {
+    const offers = await Offer.find()
+      .populate('product', 'name')
+      .populate('category', 'name');
+
+    const sanitizedOffers = offers.map((offer) => ({
+      ...offer.toObject(),
+      product: offer.product || null,
+      category: offer.category || null,
+    }));
+
+    res.status(200).json({ status: true, data: sanitizedOffers });
+  } catch (error) {
+    console.error('Error fetching offers:', error);
+    res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+};
+
+
+
+
+//delete offer
+
+const deleteOffer =async(req,res)=>{
+  try {
+    const { offerId } = req.params;
+    await Offer.findByIdAndDelete(offerId);
+    res.status(200).json({status:true,message:"Offer deleted successfully"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({status:false,message:"Error deleting offer"});
+  }
+}
+
+
+// edit offer
+
+
+const editOffer = async (req, res) => {
+  try {
+    const { offerId } = req.params;
+    const { title, description,discountValue , minOrderAmount,applicableTo, category, product, validFrom, validTill, isActive } = req.body;
+
+    const updateData = {
+      minOrderAmount,
+      discountValue,
+      title,
+      description,
+      applicableTo,
+      validFrom,
+      validTill,
+      isActive: isActive === 'true',
+    };
+
+    if (applicableTo === 'Category') updateData.category = category;
+    if (applicableTo === 'Product') updateData.product = product;
+
+    await Offer.findByIdAndUpdate(offerId, updateData);
+    res.redirect('/admin/offer?message=Offer Updated SuccessFully&err=true');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -1150,5 +1452,14 @@ module.exports={
  searchCoupon,
  deleteCoupon,
  loadReturn,
- getReturnData
+ getReturnData,
+ approveReturn,
+ rejectReturn,
+ getreturnOrderDetails,
+ loadAddOffer,
+ loadEditOffer,
+ addOffer,
+ getOfferTable,
+ deleteOffer,
+ editOffer
 }

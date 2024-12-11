@@ -120,8 +120,8 @@ ol li{
   }
   
   .modal-header {
-    background-color: #4d4d4d;
-    color: #ffffff;
+    background-color: #f8d7da;
+    color: #721c24;
   }
   
   .modal-footer .btn-danger {
@@ -152,24 +152,48 @@ ol li{
   #ProductImage{
     object-fit: contain;
   }
- 
-td div {
-  scrollbar-width: none; 
-  -ms-overflow-style: none;
-}
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  }
+  .card-header {
+    font-weight: bold;
+    background-color: #f5f5f5;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+  }
+  .text-orange {
+    color: #ff8800;
+  }
+  .table tbody tr td {
+    vertical-align: middle;
+  }
+  .small-text {
+    font-size: 0.9rem;
+    color: gray;
+  }
 
-td div::-webkit-scrollbar {
-  display: none;
-}
-.reason-cell {
-  max-width: 150px; /* Adjust the width as needed */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer; /* Indicate it's interactive */
-}
 
-.tooltip-inner {
-  max-width: 300px; /* Adjust to control tooltip width */
-  white-space: normal; /* Allow text wrapping in the tooltip */
-}
+
+
+  
+  .modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .modal-footer .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  .modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }

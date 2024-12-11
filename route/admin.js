@@ -36,6 +36,10 @@ router.get('/coupon-data',adminController.getCoupons);
 router.get('/search-coupons',adminController.searchCoupon);
 router.get('/return',adminController.loadReturn);
 router.get('/return-requests',adminController.getReturnData);
+router.get('/returnOrderDetails/:returnId',adminController.getreturnOrderDetails);
+router.get('/addOffer',adminController.loadAddOffer);
+router.get('/editOffer/:offerId',adminController.loadEditOffer);
+router.get('/getOfferTable',adminController.getOfferTable);
 
 
 
@@ -52,8 +56,14 @@ router.post('/forgotPassword',adminController.forgotPassword)
 router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 router.post('/addCoupon',adminController.addCoupon);
 router.post('/updateStatusOrder/:orderId',adminAuth.isLoggedIn ,adminController.updateOrderStatus);
+router.post('/returnApprove',adminController.approveReturn);
+router.post('/returnReject',adminController.rejectReturn);
+router.post('/addOffer',adminController.addOffer);
+router.post('/editOffer/:offerId',adminController.editOffer);
+
 
 
 router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
 router.delete('/deleteCoupon/:couponId',adminController.deleteCoupon);
+router.delete('/offerDelete/:offerId',adminController.deleteOffer);
 module.exports=router

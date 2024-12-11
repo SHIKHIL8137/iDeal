@@ -548,6 +548,11 @@ const returnCancelSchema = new mongoose.Schema({
       return this.isReturn; 
     },
   },
+  reasonForRejection: { 
+    type: String, 
+    default: '' ,
+  }
+  ,
   refundAmount: {
     type: Number,
     required: function () {
@@ -556,16 +561,45 @@ const returnCancelSchema = new mongoose.Schema({
   },
   pickupAddress: {
     type: {
-      fname: { type: String, required: true },
-      lname: { type: String, required: true },
-      companyName: { type: String },
-      houseName: { type: String },
-      country: { type: String, required: true },
-      state: { type: String, required: true },
-      city: { type: String, required: true },
-      zipCode: { type: String, required: true },
-      email: { type: String, required: true, match: /\S+@\S+\.\S+/ },
-      phone: { type: String, required: true },
+      fname: { 
+        type: String, 
+        required: true 
+      },
+      lname: { 
+        type: String, 
+        required: true 
+      },
+      companyName: { 
+        type: String 
+      },
+      houseName: { 
+        type: String 
+      },
+      country: { 
+        type: String, 
+        required: true 
+      },
+      state: { 
+        type: String, 
+        required: true 
+      },
+      city: { 
+        type: String, 
+        required: true 
+      },
+      zipCode: { 
+        type: String, 
+        required: true 
+      },
+      email: { 
+        type: String, 
+        required: true, 
+        match: /\S+@\S+\.\S+/ 
+      },
+      phone: { 
+        type: String, 
+        required: true 
+      },
     },
     required: function () {
       return this.isReturn === true;
