@@ -61,15 +61,14 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
   }
 
 
-  if (document.getElementById('usageLimit').value === "" || document.getElementById('usageLimit').value < 1) {
-    formIsValid = false;
-    showError('usageLimit', 'Usage limit must be greater than 0.');
-  }
-
-
   if (document.getElementById('isActive').value === "") {
     formIsValid = false;
     showError('isActive', 'Please select whether the offer is active or not.');
+  }
+
+  if (document.getElementById('discountCap').value === "" || document.getElementById('discountCap').value < 0) {
+    formIsValid = false;
+    showError('discountCap', 'Please Enter the Maximum Discount');
   }
 
   if (formIsValid) {
@@ -97,10 +96,10 @@ function toggleOfferFields() {
   const productFields = document.getElementById('productFields');
   const categoryFields = document.getElementById('categoryFields');
   
-  if (offerType === 'product') {
+  if (offerType === 'Product') {
     productFields.style.display = 'block';
     categoryFields.style.display = 'none';
-  } else if (offerType === 'category') {
+  } else if (offerType === 'Category') {
     productFields.style.display = 'none';
     categoryFields.style.display = 'block';
   } else {

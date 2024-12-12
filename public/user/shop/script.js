@@ -25,17 +25,6 @@ function updatePriceLabel() {
 
 
 
-// wishlist heart icon
-function toggleHeart(element) {
-  if (element.classList.contains("bi-heart")) {
-    element.classList.remove("bi-heart");
-    element.classList.add("bi-heart-fill", "filled");
-  } else {
-    element.classList.remove("bi-heart-fill", "filled");
-    element.classList.add("bi-heart");
-  }
-}
-
 
 // Initialize all tooltips
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -65,13 +54,80 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-function toggleHeart(element) {
+
+function toggleHeart(element, productId) {
+  // Toggling heart state
   if (element.classList.contains("bi-heart")) {
     element.classList.remove("bi-heart");
     element.classList.add("bi-heart-fill", "filled");
+
+    // Add to wishlist
+    addToWishlist(productId, element); // Pass element to handle UI revert in case of failure
   } else {
     element.classList.remove("bi-heart-fill", "filled");
     element.classList.add("bi-heart");
+
+    // Optionally, handle removing from wishlist if required
+    removeFromWishlist(productId, element); // Implement remove logic if needed
+  }
+}
+
+async function addToWishlist(productId, element) {
+  try {
+    const response = await fetch(`/user/addToWishlist/${productId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+    if (result.status) {
+      showAlert(result.message || "Product added to wishlist", "success");
+    } else {
+      showAlert(result.message || "Failed to add product to wishlist", "danger");
+
+      // Revert heart state if failed
+      element.classList.remove("bi-heart-fill", "filled");
+      element.classList.add("bi-heart");
+    }
+  } catch (error) {
+    console.error("Error adding to wishlist:", error);
+    showAlert("An error occurred while adding the product to the wishlist.", "danger");
+
+    // Revert heart state if error
+    element.classList.remove("bi-heart-fill", "filled");
+    element.classList.add("bi-heart");
+  }
+}
+
+// Optional: Remove from wishlist (if needed)
+async function removeFromWishlist(productId, element) {
+  try {
+    const response = await fetch(`/user/deleteFromWishlist/${productId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+    if (result.status) {
+      showAlert(result.message || "Product removed from wishlist", "success");
+    } else {
+      showAlert(result.message || "Failed to remove product from wishlist", "danger");
+
+      // Revert heart state if failed
+      element.classList.remove("bi-heart");
+      element.classList.add("bi-heart-fill", "filled");
+    }
+  } catch (error) {
+    console.error("Error removing from wishlist:", error);
+    showAlert("An error occurred while removing the product from the wishlist.", "danger");
+
+    // Revert heart state if error
+    element.classList.remove("bi-heart");
+    element.classList.add("bi-heart-fill", "filled");
   }
 }
 
@@ -119,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
             productCard.innerHTML = `
               <div class="image-container position-relative m-4">
                 <img src="${product.images[0]}" class="card-img-top img-fluid" alt="${product.name}">
-                <i class="bi bi-heart heart-icon" onclick="toggleHeart(this)"></i>
+                <i class="bi bi-heart heart-icon" onclick="toggleHeart(this,'${product._id}')"></i>
               </div>
               <div class="card-body text-start product-card" data-product-id="${product._id}">
                 <h6 class="card-title mb-1">${product.name}</h6>
@@ -196,7 +252,7 @@ async function sortProduct(order) {
       productCard.innerHTML = `
         <div class="image-container position-relative m-4">
           <img src="${product.images[0]}" class="card-img-top img-fluid" alt="${product.name}">
-          <i class="bi bi-heart heart-icon" onclick="toggleHeart(this)"></i>
+          <i class="bi bi-heart heart-icon" onclick="toggleHeart(this,'${product._id}"></i>
         </div>
         <div class="card-body text-start product-card" data-product-id="${product._id}">
           <h6 class="card-title mb-1">${product.name}</h6>
@@ -292,7 +348,7 @@ async function applyFilters() {
       <div class="image-container position-relative m-4">
         <img src="${product.images && product.images[0] ? product.images[0] : 'fallback-image-url.jpg'}"
              class="card-img-top img-fluid" alt="${product.name || 'Product'}">
-        <i class="bi bi-heart heart-icon" onclick="toggleHeart(this)"></i>
+        <i class="bi bi-heart heart-icon" onclick="toggleHeart(this,'${product._id}"></i>
       </div>
       <div class="card-body text-start product-card" data-product-id="${product._id}">
         <h6 class="card-title mb-1">${product.name || 'Unnamed Product'}</h6>

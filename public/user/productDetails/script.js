@@ -1,6 +1,6 @@
 
 const product = JSON.parse(document.getElementById('productData').textContent);
-
+const offer = JSON.parse(document.getElementById('offerData').textContent);
 
   const productScrollContainer = document.getElementById("scroll-container");
   const productScrollBack = document.getElementById("scroll-back");
@@ -186,7 +186,16 @@ function redirectToLogin() {
 
 document.getElementById('addTocartProduct').addEventListener('click', async () => {
 const productId = product._id;
-const price = product.Dprice;
+let price;
+console.log(product.offer)
+if(product.offer) {
+ price = (product.price - (product.price * (offer.discountValue / 100)));
+ console.log('special')
+}else{
+ price = product.Dprice;
+ console.log('offer')
+}
+
   if (!productId) {
     showAlert('Product ID is missing. Unable to add to cart.', 'danger');
     return;

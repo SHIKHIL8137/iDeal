@@ -119,13 +119,12 @@
                 <div class="mb-3">
                   <label for="applicableTo" class="form-label">Select Offer Type</label>
                   <select class="form-select" id="applicableTo" name="applicableTo" onchange="toggleOfferFields()">
-                    <option value="">Choose Offer Type</option>
-                    <option value="product" <%=offerProduct?.applicableTo==='Product' ? 'selected' : '' %>>Product
+                    <option value="Product" <%=offerProduct?.applicableTo==='Product' ? 'selected' : '' %>>Product
                     </option>
-                    <option value="category" <%=offerProduct?.applicableTo==='Category' ? 'selected' : '' %>>Category
+                    <option value="Category" <%=offerProduct?.applicableTo==='Category' ? 'selected' : '' %>>Category
                     </option>
                   </select>
-                  <div class="error" id="applicableToError"></div> <!-- Error Message -->
+                  <div class="error" id="applicableToError"></div> 
                 </div>
               </div>
 
@@ -138,7 +137,7 @@
                     <% availableProducts.forEach(product=> { %>
                       <option value="<%= product._id %>" <%=offerProduct?.product?.equals(product._id) ? 'selected' : ''
                         %>>
-                        <%= product.name %> (Status: <%= product.status %>, Storage: <%= product.storage %>, Color: <%=
+                        <%= product.name %> (Status: <%= product.condition %>, Storage: <%= product.storage %>, Color: <%=
                                 product.color %>)
                       </option>
                       <% }); %>
@@ -219,19 +218,10 @@
                   <label for="validTill" class="form-label">Valid Till</label>
                   <input type="date" class="form-control" id="validTill" name="validTill"
                     value="<%= offerProduct?.validTill ? offerProduct.validTill.toISOString().slice(0, 10) : '' %>">
-                  <div class="error" id="validTillError"></div> <!-- Error Message -->
+                  <div class="error" id="validTillError"></div> 
                 </div>
               </div>
 
-              <!-- Usage Limit -->
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="usageLimit" class="form-label">Usage Limit</label>
-                  <input type="number" class="form-control" id="usageLimit" name="usageLimit" min="1"
-                    placeholder="Enter usage limit" value="<%= offerProduct?.usageLimit || '' %>">
-                  <div class="error" id="usageLimitError"></div> <!-- Error Message -->
-                </div>
-              </div>
 
               <!-- Offer Active -->
               <div class="col-md-6">
@@ -241,7 +231,15 @@
                     <option value="true" <%=offerProduct?.isActive ? 'selected' : '' %>>Active</option>
                     <option value="false" <%=!offerProduct?.isActive ? 'selected' : '' %>>Inactive</option>
                   </select>
-                  <div class="error" id="isActiveError"></div> <!-- Error Message -->
+                  <div class="error" id="isActiveError"></div> 
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="discountCap" class="form-label">Maximum discount</label>
+                  <input type="number" class="form-control" id="discountCap" name="discountCap" value="<%= offerProduct?.discountCap || '' %>" >
+                  <div class="error" id="discountCapError"></div>
                 </div>
               </div>
 

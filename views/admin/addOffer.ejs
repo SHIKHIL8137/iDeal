@@ -86,7 +86,7 @@
             <div class="col-md-10 p-4">
               <!-- Top Navbar -->
               <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Orders</h2>
+                <h2>Add Offer</h2>
                 <div class="d-flex align-items-center">
                   <!-- Search Bar -->
                   <input type="text" id="searchBar" class="form-control me-3 w-50" placeholder="Search...">
@@ -121,8 +121,8 @@
                       <label for="applicableTo" class="form-label">Select Offer Type</label>
                       <select class="form-select" id="applicableTo" name="applicableTo"  onchange="toggleOfferFields()">
                         <option value="">Choose Offer Type</option>
-                        <option value="product">Product</option>
-                        <option value="category">Category</option>
+                        <option value="Product">Product</option>
+                        <option value="Category">Category</option>
                       </select>
                       <div class="error" id="applicableToError"></div> <!-- Error Message -->
                     </div>
@@ -136,7 +136,7 @@
                         <option value="">Choose a product</option>
                         <% availableProducts.forEach(product => { %>
                           <option value="<%= product._id %>">
-                            <%= product.name %> (Status: <%= product.status %>, Storage: <%= product.storage %>, Color: <%= product.color %>)
+                            <%= product.name %> (Status: <%= product.condition %>, Storage: <%= product.storage %>, Color: <%= product.color %>)
                           </option>
                         <% }); %>
                       </select>
@@ -150,7 +150,7 @@
                       <label for="categorySelect" class="form-label">Select Category</label>
                       <select class="form-select" id="categorySelect" name="category" >
                         <option value="">Choose a category</option>
-                        <% category.forEach(category => { %>
+                        <% availableCategories.forEach(category => { %>
                           <option value="<%= category._id %>"><%= category.name %></option>
                         <% }); %>
                       </select>
@@ -212,14 +212,7 @@
                     </div>
                   </div>
               
-                  <!-- Usage Limit -->
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label for="usageLimit" class="form-label">Usage Limit</label>
-                      <input type="number" class="form-control" id="usageLimit" name="usageLimit" min="1" placeholder="Enter usage limit" value="">
-                      <div class="error" id="usageLimitError"></div> <!-- Error Message -->
-                    </div>
-                  </div>
+    
               
                   <!-- Offer Active -->
                   <div class="col-md-6">
@@ -232,6 +225,17 @@
                       <div class="error" id="isActiveError"></div> <!-- Error Message -->
                     </div>
                   </div>
+
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="discountCap" class="form-label">Maximum discount</label>
+                      <input type="number" class="form-control" id="discountCap" name="discountCap"  >
+                      <div class="error" id="discountCapError"></div> <!-- Error Message -->
+                    </div>
+                  </div>
+
+
               
                   <!-- Submit Button -->
                   <div class="col-md-12">

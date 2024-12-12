@@ -87,6 +87,10 @@ const categorySchema = new mongoose.Schema({
   createdAt:{
     type:Date,
     default:Date.now
+  },
+  offer:{
+    type : Boolean,
+    default : false,
   }
 });
 
@@ -219,6 +223,9 @@ const offerSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0, 
+  }, discountCap: {
+    type: Number, 
+    required: false, 
   },
   minOrderAmount: {
     type: Number,
@@ -237,10 +244,6 @@ const offerSchema = new mongoose.Schema({
     type: String,
     enum: ['Product', 'Category'], 
     required: true,
-  },
-  usageLimit: {
-    type: Number,
-    default: null, 
   },
   isActive: {
     type: Boolean,

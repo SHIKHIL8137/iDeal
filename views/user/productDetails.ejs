@@ -4,6 +4,7 @@
 <body>
   <div id="alertBox">
   </div>
+
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
@@ -58,7 +59,7 @@
       
         
         <!-- Product Information -->
-        <div class="col-md-6 mt-5 productDetails">
+        <div class="col-md-6 mt-5 productDetails">    
             <h1><%= product.name %></h1>
             <div class="stock-banner">
               <% if (product.stock === 0) { %>
@@ -104,18 +105,32 @@
           </div>
           
           <p class="text-decoration-line-through">₹<%= product.price.toLocaleString() %></p>
-               
-          <div class="d-flex align-items-center mt-2 mb-2">
-            <div> <h3>₹<%= product.Dprice.toLocaleString() %></h3></div>         
-            <% if (product.price > product.Dprice) { 
-                const discountPercentage = ((product.price - product.Dprice) / product.price) * 100; %>
-                <div class="offer-box">
-                    <span class="offer-percentage text-white">
-                        <%= discountPercentage.toFixed(0) %>% Off
-                    </span>
-                </div>
-            <% } %>
-        </div>
+
+<div class="d-flex align-items-center mt-2 mb-2">
+  <% if (productOffer) { %>
+    <div> 
+      <h3>₹<%= (product.price - (product.price * (productOffer.discountValue / 100))).toLocaleString() %></h3>
+    </div>
+    <div class="offer-box">
+      <span class="offer-percentage text-white">
+        Special Offer:  <%= productOffer.discountValue.toLocaleString() %>% Off
+      </span>
+    </div>
+  <% } else { %>
+    <div> 
+      <h3>₹<%= product.Dprice.toLocaleString() %></h3>
+    </div>
+    <% if (product.price > product.Dprice) { 
+      const discountPercentage = ((product.price - product.Dprice) / product.price) * 100; %>
+      <div class="offer-box">
+        <span class="offer-percentage text-white">
+          <%= discountPercentage.toFixed(0) %>% Off
+        </span>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
 
             <p><strong>12-month warranty</strong></p>
             
@@ -146,8 +161,12 @@
           <div>
             <button onclick="addToWishlist('<%= product._id %>')" class="btn btn-outline-danger whishProductDetails"><i class="bi bi-heart" style="font-size: 10px;"></i></button>
           </div>
-            
-
+            <% if (categoryOffer) { %>
+              <div id="toggleSidebarBtn" class="animate">
+               <%= categoryOffer.title %> for Category<br>
+               <%= categoryOffer.discountValue %>% Off <br>
+              </div>
+            <% } %>         
             </div>
         </div>
     </div>
@@ -343,6 +362,7 @@
 
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script type="application/json" id="offerData"><%- JSON.stringify(productOffer) %></script>
   <script type="application/json" id="productData"><%- JSON.stringify(product) %></script>
 <script src="/user/productDetails/script.js"></script>
 

@@ -108,6 +108,7 @@ try {
       <p>Sub-total: <span class="float-end">₹${checkOutData.totalAmount.toLocaleString()}</span></p>
       <p>Shipping Fees: <span class="float-end text-success">${checkOutData.deliveryFee === 0 ? 'Free' : `₹${checkOutData.deliveryFee.toLocaleString()}`}</span></p>
       <p>Coupon Discount: <span class="float-end text-danger">₹${checkOutData.discount.toLocaleString()}</span></p>
+      <p>Category Discount: <span class="float-end text-danger">-₹${checkOutData.categoryDiscound.toLocaleString()}</span></p>
       <hr>
       <p>Total: <span class="float-end">₹${checkOutData.finalTotal.toLocaleString()}</span></p>
       <button class="btn btn-primary btn-block mt-4 w-100" id="placeOrder">Place Order</button>

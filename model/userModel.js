@@ -219,6 +219,10 @@ const checkoutSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  categoryDiscound:{
+    type:Number,
+    default : 0
+  }
 });
 
 

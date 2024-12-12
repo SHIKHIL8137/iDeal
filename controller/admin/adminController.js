@@ -1233,51 +1233,37 @@ const getreturnOrderDetails = async (req, res) => {
 // load add Offer
 
 
-const loadAddOffer = async(req,res)=>{
+
+
+const loadAddOffer = async (req, res) => {
   try {
 
-   
-    const category = await Category.find();
+    const allCategories = await Category.find();
     const allProducts = await Product.find();
-    const productsWithOffers = await Product.find({ offer: { $exists: true } });
-    const availableProducts = allProducts.filter(product =>
-      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
+
+
+    const activeOffers = await Offer.find({ isActive: true });
+
+
+    const offeredCategories = activeOffers
+      .filter(offer => offer.applicableTo === 'Category')
+      .map(offer => offer.category?.toString());
+    const offeredProducts = activeOffers
+      .filter(offer => offer.applicableTo === 'Product')
+      .map(offer => offer.product?.toString());
+
+    const availableCategories = allCategories.filter(
+      category => !offeredCategories.includes(category._id.toString())
     );
-    res.status(200).render('admin/addOffer',{title:"Add Offer",username:'shikhil',category,availableProducts});
-  } catch (error) {
-    res.status(500).send('Internal Server Error');
-  }
-}
-
-
-// load Edit Offer
-
-const loadEditOffer = async(req,res)=>{
-  try {
-    const offerId = req.params.offerId ;
-    const category = await Category.find();
-    const allProducts = await Product.find();
-    const productsWithOffers = await Product.find({ offer: { $exists: true } });
-
-    // Products without an offer
-    const availableProducts = allProducts.filter(product =>
-      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
+    const availableProducts = allProducts.filter(
+      product => !offeredProducts.includes(product._id.toString())
     );
 
-    // Fetching the specific offer to edit
-    const offerProduct = await Offer.findById(offerId);
-
-    if (!offerProduct) {
-      return res.status(404).send("Offer not found");
-    }
-
-    // Render the edit page with all required data
-    res.status(200).render('admin/editOffer', {
+    res.status(200).render('admin/addOffer', {
+      title: "Add Offer",
       username: 'shikhil',
-      title: "Edit Offer",
-      category,
-      availableProducts,
-      offerProduct,
+      availableCategories,
+      availableProducts
     });
   } catch (error) {
     console.error(error);
@@ -1289,12 +1275,68 @@ const loadEditOffer = async(req,res)=>{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// load Edit Offer
+
+const loadEditOffer = async (req, res) => {
+  try {
+    const offerId = req.params.offerId;
+    const category = await Category.find();
+    const allProducts = await Product.find();
+
+    // Fetch the current offer details
+    const offerProduct = await Offer.findById(offerId)
+      .populate('product')
+      .populate('category');
+
+    if (!offerProduct) {
+      return res.status(404).send("Offer not found");
+    }
+
+    const productsWithOffers = await Product.find({ 
+      offer: { $exists: true },
+      _id: { $ne: offerProduct.product?._id }, 
+    });
+
+    const availableProducts = allProducts.filter(product =>
+      !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
+    );
+
+    res.status(200).render('admin/editOffer', {
+      username: 'shikhil',
+      title: "Edit Offer",
+      category,
+      availableProducts,
+      offerProduct,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
+
+
+
 // add Offer 
 
 const addOffer = async(req,res)=>{
   try {
-const{product,category,title, description,discountValue,minOrderAmount,validFrom,validTill,usageLimit,isActive}=req.body
-
+const{product,category,title, description,discountValue,discountCap,minOrderAmount,validFrom,validTill,isActive}=req.body
+ console.log(req.body);
     if(product!==''){
       const newOffer = new Offer({
         product,
@@ -1305,10 +1347,11 @@ const{product,category,title, description,discountValue,minOrderAmount,validFrom
         minOrderAmount,
         validFrom,
         validTill,
-        usageLimit,
-        isActive
+        isActive,
+        discountCap
       })
       await newOffer.save();
+      await Product.findByIdAndUpdate(product,{$set:{offer : true}});
     }
     if(category!==''){
       const newOffer = new Offer({
@@ -1320,10 +1363,11 @@ const{product,category,title, description,discountValue,minOrderAmount,validFrom
         minOrderAmount,
         validFrom,
         validTill,
-        usageLimit,
-        isActive
+        isActive,
+        discountCap
       })
       await newOffer.save();
+      await Category.findByIdAndUpdate(category,{$set:{offer : true}});
     }
     res.status(200).redirect('/admin/offer?message=Offer Added SuccessFully&err=true');
   } catch (error) {
@@ -1343,7 +1387,7 @@ const getOfferTable = async (req, res) => {
   try {
     const offers = await Offer.find()
       .populate('product', 'name')
-      .populate('category', 'name');
+      .populate('category', 'name').sort({createdAt : -1});
 
     const sanitizedOffers = offers.map((offer) => ({
       ...offer.toObject(),
@@ -1381,7 +1425,9 @@ const deleteOffer =async(req,res)=>{
 const editOffer = async (req, res) => {
   try {
     const { offerId } = req.params;
-    const { title, description,discountValue , minOrderAmount,applicableTo, category, product, validFrom, validTill, isActive } = req.body;
+    const { title, description,discountValue ,discountCap ,minOrderAmount,applicableTo, category, product, validFrom, validTill, isActive } = req.body;
+
+    const isActiveFlag = isActive === 'true';
 
     const updateData = {
       minOrderAmount,
@@ -1391,11 +1437,22 @@ const editOffer = async (req, res) => {
       applicableTo,
       validFrom,
       validTill,
-      isActive: isActive === 'true',
+      isActive: isActiveFlag,
+      discountCap
     };
 
-    if (applicableTo === 'Category') updateData.category = category;
-    if (applicableTo === 'Product') updateData.product = product;
+    if (applicableTo === 'Category') {
+      updateData.applicableTo = 'Category';
+      updateData.category = category
+      updateData.product = null;
+      await Category.findByIdAndUpdate(category, { $set: { offer: isActiveFlag } });
+    };
+    if (applicableTo === 'Product') {
+      updateData.applicableTo = 'Product';
+      updateData.product = product;
+      updateData.category = null; 
+      await Product.findByIdAndUpdate(product, { $set: { offer: isActiveFlag } });
+    };
 
     await Offer.findByIdAndUpdate(offerId, updateData);
     res.redirect('/admin/offer?message=Offer Updated SuccessFully&err=true');

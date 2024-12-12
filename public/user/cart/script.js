@@ -72,8 +72,10 @@ async function removeFromCart(productId) {
 }
 
 function applyCoupon() {
+  const currentTotal = parseInt(document.getElementById('finalTotal').textContent.replace(/[₹,]/g, '').trim());
   const couponInput = document.getElementById('coupon');
   const couponCode = couponInput.value.trim();
+
 console.log('clicked')
   if (!couponCode) {
     alert('Please enter a coupon code.');
@@ -89,7 +91,7 @@ console.log('clicked')
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ couponCode: couponCode }),
+    body: JSON.stringify({ couponCode: couponCode ,currentTotal : currentTotal}),
   })
     .then(response => response.json())
     .then(result => {
@@ -100,7 +102,7 @@ console.log('clicked')
         console.log('response');
         console.log(result.newTotalAmount)
         showAlert(result.message,'success');
-        document.getElementById('discountAmount').textContent = `-₹${result.discount}`;
+        document.getElementById('discountAmount').textContent = `₹${result.discount}`;
         document.getElementById('finalTotal').textContent = `₹${result.newTotalAmount}`;
 
         // Hide coupon input and show applied coupon
@@ -162,13 +164,14 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
   const discount = document.getElementById('discountAmount').textContent.trim().replace('₹', '');
   const finalTotal = document.getElementById('finalTotal').textContent.trim().replace('₹', '');
   const appliedCoupon = document.getElementById('appliedCouponCode').textContent.trim();
-
+  const categoryDiscound =  document.getElementById('categoryDiscound').textContent.trim().replace('₹', '');
   const checkOutData = {
     totalAmount: parseInt(totalAmount.replace(/,/g, ''), 10) || 0,
     deliveryFee: deliveryFee === 'Free' ? 0 : parseFloat(deliveryFee) || 0,
     discount: parseFloat(discount) || 0,
     finalTotal: parseInt(finalTotal.replace(/,/g, ''), 10) || 0,
     appliedCoupon: appliedCoupon || 'N/A',
+    categoryDiscound: parseFloat(categoryDiscound.replace(/,/g, ''), 10) || 0,
     cartId
   };
   console.log(checkOutData)
