@@ -138,10 +138,10 @@ function selectDeliveryAddress(addressId) {
 document.getElementById('placeOrder').addEventListener('click', async (e) => {
   e.preventDefault();
 
-  if (!validateForm()) return; 
+  if (!validateForm()) return;
 
   try {
-    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id || "default";
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id || "COD";
     const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
     const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
     const selectedDeliveryAddress = addresses[selectedIndex];
@@ -176,18 +176,47 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
     });
 
     const result = await response.json();
-
+    console.log(result.orderId);
     if (response.ok) {
-      window.open(`/user/loadOrderConformation/${result.orderId}`, '_blank');
-      window.location.href = '/user/cart';
+      if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
+        const rzp = new Razorpay({
+          key: 'rzp_test_MJ6J1WvPqqk5wn',
+          amount: result.totalAmount * 100,
+          currency: 'INR',
+          order_id: result.razorPayOrderId,
+          handler: async (razorpayResponse) => {
+            const verifyResponse = await fetch(`/user/verify-payment/${result.orderId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(razorpayResponse),
+            });
+
+            const verificationResult = await verifyResponse.json();
+
+            console.log('fetchresponse :',verificationResult.orderId)
+            if (verificationResult.success) {
+              window.location.href = `/user/loadOrderConformation/${verificationResult.orderId}`;
+            } else {
+              alert('Payment Verification Failed!');
+            }
+          },
+        });
+        rzp.open();
+      } else if (paymentMethod === 'COD') {
+        window.open(`/user/loadOrderConformation/${result.orderId}`, '_blank');
+        window.location.href = '/user/cart';
+      }
     } else {
-      alert(`Failed to place order: ${result.message}`);
+      console.log(`Failed to place order: ${result.message}`);
     }
   } catch (error) {
     console.error("Error placing order:", error);
     alert("An error occurred while placing the order. Please try again.");
   }
 });
+
+
+
 
 function validateForm() {
   const firstName = document.getElementById('billingFirstName').value.trim();

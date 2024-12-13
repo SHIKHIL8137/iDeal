@@ -10,6 +10,7 @@ const nodeMailer=require('nodemailer');
 
 
 
+
 // admin login validation
 
 const adminValidation=async(req,res)=>{
@@ -1463,6 +1464,47 @@ const editOffer = async (req, res) => {
 };
 
 
+// get the sales table
+
+const getSalesTable = async(req,res)=>{
+  try {
+    const orderData = await Orders.find();
+    res.status(200).json({
+      status: true,
+      data: orderData,
+    });
+  } catch (error) {
+    console.error('Error fetching sales table data:', error);
+    res.status(500).json({
+      status: false,
+      message: 'Internal Server Error',
+    });
+  }
+}
+
+// get the filtered table
+
+
+const getFillterdSalesTable = async (req, res) => {
+  try {
+      const { startDate, endDate } = req.query;
+
+      if (!startDate || !endDate) {
+          return res.status(400).json({ status: false, message: 'Invalid date range.' });
+      }
+
+      const orderData = await Orders.find({
+          orderDate: { $gte: new Date(startDate), $lte: new Date(endDate) }
+      });
+
+      res.status(200).json({ status: true, orderData });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+};
+
+
 
 
 module.exports={
@@ -1518,5 +1560,7 @@ module.exports={
  addOffer,
  getOfferTable,
  deleteOffer,
- editOffer
+ editOffer,
+ getSalesTable,
+ getFillterdSalesTable
 }

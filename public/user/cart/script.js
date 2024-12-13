@@ -157,24 +157,31 @@ function removeCoupon() {
 const cart = JSON.parse(document.getElementById('cartData').textContent);
 const cartId = cart._id;
 
-document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
+document.getElementById('btnCheckout').addEventListener('click', async (e) => {
   e.preventDefault();
+
   const totalAmount = document.getElementById('totalAmount').textContent.trim().replace('₹', '');
   const deliveryFee = document.getElementById('shippingFee').textContent.trim().replace('₹', '');
   const discount = document.getElementById('discountAmount').textContent.trim().replace('₹', '');
   const finalTotal = document.getElementById('finalTotal').textContent.trim().replace('₹', '');
   const appliedCoupon = document.getElementById('appliedCouponCode').textContent.trim();
-  const categoryDiscound =  document.getElementById('categoryDiscound').textContent.trim().replace('₹', '');
+
+  const categoryDiscoundElement = document.getElementById('categoryDiscound');
+  const categoryDiscound = categoryDiscoundElement 
+    ? parseFloat(categoryDiscoundElement.textContent.trim().replace(/,/g, ''), 10) || 0
+    : 0; 
+
   const checkOutData = {
     totalAmount: parseInt(totalAmount.replace(/,/g, ''), 10) || 0,
     deliveryFee: deliveryFee === 'Free' ? 0 : parseFloat(deliveryFee) || 0,
     discount: parseFloat(discount) || 0,
     finalTotal: parseInt(finalTotal.replace(/,/g, ''), 10) || 0,
     appliedCoupon: appliedCoupon || 'N/A',
-    categoryDiscound: parseFloat(categoryDiscound.replace(/,/g, ''), 10) || 0,
+    categoryDiscound, 
     cartId
   };
-  console.log(checkOutData)
+
+  console.log(checkOutData);
 
   try {
     const response = await fetch('/user/checkout', {
@@ -189,7 +196,7 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
 
     if (response.ok) {
       console.log('Order saved successfully:', result);
-      window.location.href=`/user/checkOut`;
+      window.location.href = `/user/checkOut`;
     } else {
       console.error('Error saving order:', result);
       alert('Failed to save the order. Please try again.');
@@ -198,8 +205,8 @@ document.getElementById('btnCheckout').addEventListener('click', async(e)=>{
     console.error('Error:', error);
     alert('An error occurred while sending the order data.');
   }
-  
-})
+});
+
 
 
 

@@ -155,6 +155,10 @@ const cartSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      actualPrice: {
+        type: Number,
+        required: true,
+      },
       totalPrice: {
         type: Number,
         required: true,
@@ -162,9 +166,21 @@ const cartSchema = new mongoose.Schema({
           return this.quantity * this.price;
         },
       },
+      totalActualPrice : {
+        type: Number,
+        required: true,
+        default: function () {
+          return this.quantity * this.actualPrice;
+        },
+      }
     },
   ],
   totalAmount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  totalActualAmount: {
     type: Number,
     required: true,
     default: 0,
@@ -253,7 +269,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: { 
     type: String, 
-    enum: ['COD','Online', 'Wallet'], 
+    enum: ['COD','razorPay', 'Wallet'], 
     required: true 
   }, 
 
@@ -396,7 +412,11 @@ const orderSchema = new mongoose.Schema({
   },
   appliedCoupon :{
     type : String
-  }
+  },
+  total_Amt_WOT_Discount :{
+    type:Number,
+    default : 0
+  },
 });
 
 
@@ -621,6 +641,175 @@ const returnCancelSchema = new mongoose.Schema({
 
 
 
+const pendingOrderSchema = new mongoose.Schema({
+  orderId: { 
+    type: String, 
+    required: true, 
+    unique: true 
+  }, 
+  userId: {
+     type: mongoose.Schema.Types.ObjectId,
+     ref: 'User', 
+     required: true 
+    },
+  pendingStatus:{
+    type : String,
+    default : 'Pending Payment'
+  },
+  paymentStatus: { 
+    type: String, 
+    enum: ['Paid', 'Unpaid'], 
+    required: true 
+  },
+  paymentMethod: { 
+    type: String, 
+    enum: ['COD','razorPay', 'Wallet'], 
+    required: true 
+  }, 
+
+  deliveryAddress: { 
+    fname: { 
+      type: String,
+      required: true 
+    }, 
+    lname: { 
+      type: String, 
+      required: true 
+    },
+    companyName: {
+       type: String 
+      },
+    houseName: {
+       type: String 
+      },
+    country: {
+       type: String, 
+       required: true 
+      },
+    state: { 
+      type: String, 
+      required: true 
+    },
+    city: {
+       type: String, 
+       required: true 
+      },
+    zipCode: { 
+      type: String, 
+      required: true 
+    },
+    email: {
+       type: String, 
+       required: true, 
+       match: /\S+@\S+\.\S+/ 
+      }, 
+    phone: { 
+      type: String, 
+      required: true, 
+    }, 
+  },
+
+  billingAddress: {
+    fname: { 
+      type: String,
+      required: true 
+    }, 
+    lname: { 
+      type: String, 
+      required: true 
+    },
+    companyName: {
+       type: String 
+      },
+    houseName: {
+       type: String 
+      },
+    country: {
+       type: String, 
+       required: true 
+      },
+    state: { 
+      type: String, 
+      required: true 
+    },
+    city: {
+       type: String, 
+       required: true 
+      },
+    zipCode: { 
+      type: String, 
+      required: true 
+    },
+    email: {
+       type: String, 
+       required: true, 
+       match: /\S+@\S+\.\S+/ 
+      }, 
+    phone: { 
+      type: String, 
+      required: true, 
+    }
+  },
+
+  products: [
+    {
+      productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Product', 
+        required: true 
+      },
+      productName: {
+        type : String,
+        required : true,
+      },
+      firstImage: {
+        type : String,
+        required : true
+      },
+      productColor:{
+        type : String,
+        required :true
+      },
+      productStorage :{
+        type : Number,
+        required : true
+      },
+      quantity: { 
+        type: Number, 
+        required: true 
+      }, 
+      price: { 
+        type: Number, 
+        required: true 
+      }, 
+      total: { 
+        type: Number, 
+        required: true 
+      } 
+    }
+  ],
+
+  subtotal: { 
+    type: Number, 
+    required: true 
+  }, 
+  discount: { 
+    type: Number, 
+    default: 0 
+  }, 
+  totalAmount: { 
+    type: Number, 
+    required: true 
+  },
+  appliedCoupon :{
+    type : String
+  },
+  total_Amt_WOT_Discount :{
+    type:Number,
+    default : 0
+  }
+});
+
 
 
 
@@ -644,4 +833,5 @@ module.exports = {
   Wallet : mongoose.model('Wallet',walletSchema),
   ReturnCancel : mongoose.model('ReturnCancel',returnCancelSchema),
   Referral : mongoose.model('Referral',referralSchema),
+  PendingOrder : mongoose.model('PendingOrder',pendingOrderSchema),
 };

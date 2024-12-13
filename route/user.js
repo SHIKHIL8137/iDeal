@@ -36,6 +36,8 @@ router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditA
 router.get('/wishlist',userController.loadWishlist);
 router.get('/wallet',userController.loadWallet);
 router.get('/referral',userController.loadReferral);
+router.get('/success',userController.loadSuccess);
+router.get('/faild',userController.loadFaild);
 
 
 
@@ -60,7 +62,6 @@ router.post('/applyCoupon',userMiddleWare.isLoggedIn,userController.couponValida
 router.post('/removeCoupon',userMiddleWare.isLoggedIn,userController.removeCoupon);
 router.post('/saveAddress',userMiddleWare.isLoggedIn,userController.addAddress);
 router.post('/checkout',userMiddleWare.isLoggedIn,userController.checkoutDataStore);
-router.post('/editAddress',userMiddleWare.isLoggedIn,userController.editAddress);
 router.post('/updateAddress/:addressId',userMiddleWare.isLoggedIn,userController.saveUpdatedAddress)
 router.post('/orderSubmit',userMiddleWare.isLoggedIn,userController.submitOrder);
 router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.cancelOreder);
@@ -68,6 +69,7 @@ router.post('/expireOrder/:orderId',userController.changeOrderConformationStatus
 router.post('/addToWishlist/:id',userController.addtoWishlist);
 router.post('/addToWallet',userController.addMoneyToWallet);
 router.post('/return-order/:orderId',userController.returnOrder);
+router.post('/verify-payment/:orderId',userController.verifyPayment);
 
 
 router.delete('/deleteAddress/:id',userMiddleWare.isLoggedIn,userController.deleteAddress);

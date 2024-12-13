@@ -40,6 +40,8 @@ router.get('/returnOrderDetails/:returnId',adminController.getreturnOrderDetails
 router.get('/addOffer',adminController.loadAddOffer);
 router.get('/editOffer/:offerId',adminController.loadEditOffer);
 router.get('/getOfferTable',adminController.getOfferTable);
+router.get('/getSalesTable',adminController.getSalesTable);
+router.get('/getFillterdSalesTable',adminController.getFillterdSalesTable);
 
 
 
