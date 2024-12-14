@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="btn btn-sm btn-outline-success editOrderStatusBtn"
                 data-bs-toggle="modal" data-bs-target="#editOrderStatusModal"
                 data-order-id="${order.orderId}" data-current-status="${order.status}" data-order-dbid="${order._id}"
-                 ${['Cancelled', 'Delivered'].includes(order.status) ? 'disabled' : ''}>
+                 ${['Cancelled', 'Delivered' , 'Returned'].includes(order.status) ? 'disabled' : ''}>
           Edit
         </button>
           </td>

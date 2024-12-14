@@ -98,7 +98,16 @@
                 <% if (order.status === 'Delivered') { %>
                   <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#returnModal">Return Order</button>
                   <% } else if (order.status === 'Returned') { %>
-                    <p class="text-success">Return Request <%= returnCancel.adminStatus %></p>
+                    <div>
+                    <p class="<%= returnCancel.adminStatus === 'Rejected' ? 'text-danger' : 'text-success' %>">
+                      Return Request <%= returnCancel.adminStatus %>
+                    </p>
+                    <% if (returnCancel.adminStatus === 'Rejected') { %>
+                      <p class="text-danger">
+                        Reason for Rejection: <%= returnCancel.reasonForRejection %>
+                      </p>
+                    </div>
+                    <% } %>                    
                 <% } else if (order.status !== 'Cancelled') { %>
                   <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel Order</button>
                 <% } else if (order.status === 'Cancelled') { %>

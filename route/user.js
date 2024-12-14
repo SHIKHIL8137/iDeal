@@ -26,18 +26,18 @@ router.get('/sortCategoryProduct',userController.sortCategoryProduct);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
 router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
-router.get('/cart',userController.loadCart)
+router.get('/cart',userMiddleWare.isLoggedIn,userController.loadCart)
 router.get('/checkOut',userMiddleWare.isLoggedIn,userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
 router.get('/address',userMiddleWare.isLoggedIn,userController.loadAddress);
 router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,userController.loadOrderConformation);
 router.get('/check-email',userMiddleWare.isLoggedIn,userController.checkEmail);
 router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getCheckoutSummery);
 router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditAddress);
-router.get('/wishlist',userController.loadWishlist);
-router.get('/wallet',userController.loadWallet);
-router.get('/referral',userController.loadReferral);
-router.get('/success',userController.loadSuccess);
-router.get('/faild',userController.loadFaild);
+router.get('/wishlist',userMiddleWare.isLoggedIn,userController.loadWishlist);
+router.get('/wallet',userMiddleWare.isLoggedIn,userController.loadWallet);
+router.get('/referral',userMiddleWare.isLoggedIn,userController.loadReferral);
+router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
+router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 
 
 
@@ -65,11 +65,11 @@ router.post('/checkout',userMiddleWare.isLoggedIn,userController.checkoutDataSto
 router.post('/updateAddress/:addressId',userMiddleWare.isLoggedIn,userController.saveUpdatedAddress)
 router.post('/orderSubmit',userMiddleWare.isLoggedIn,userController.submitOrder);
 router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.cancelOreder);
-router.post('/expireOrder/:orderId',userController.changeOrderConformationStatus);
-router.post('/addToWishlist/:id',userController.addtoWishlist);
-router.post('/addToWallet',userController.addMoneyToWallet);
-router.post('/return-order/:orderId',userController.returnOrder);
-router.post('/verify-payment/:orderId',userController.verifyPayment);
+router.post('/expireOrder/:orderId',userMiddleWare.isLoggedIn,userController.changeOrderConformationStatus);
+router.post('/addToWishlist/:id',userMiddleWare.isLoggedIn,userController.addtoWishlist);
+router.post('/addToWallet',userMiddleWare.isLoggedIn,userController.addMoneyToWallet);
+router.post('/return-order/:orderId',userMiddleWare.isLoggedIn,userController.returnOrder);
+router.post('/verify-payment/:orderId',userMiddleWare.isLoggedIn,userController.verifyPayment);
 
 
 router.delete('/deleteAddress/:id',userMiddleWare.isLoggedIn,userController.deleteAddress);

@@ -27,21 +27,23 @@ router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
 router.get('/orders',adminAuth.isLoggedIn,adminController.loadOrder)
 router.get('/orderDetails/:orderId',adminAuth.isLoggedIn ,adminController.loadDetails);
-router.get('/offer',adminController.loadOffer);
-router.get('/coupon',adminController.loadCoupon);
-router.get('/addCoupon' ,adminController.loadAddCoupon);
-router.get('/editCoupon/:couponId' ,adminController.loadEditCoupon);
-router.get('/sales',adminController.loadSales);
-router.get('/coupon-data',adminController.getCoupons);
-router.get('/search-coupons',adminController.searchCoupon);
+router.get('/offer',adminAuth.isLoggedIn ,adminController.loadOffer);
+router.get('/coupon',adminAuth.isLoggedIn ,adminController.loadCoupon);
+router.get('/addCoupon' ,adminAuth.isLoggedIn ,adminController.loadAddCoupon);
+router.get('/editCoupon/:couponId' ,adminAuth.isLoggedIn ,adminController.loadEditCoupon);
+router.get('/sales',adminAuth.isLoggedIn ,adminController.loadSales);
+router.get('/coupon-data',adminAuth.isLoggedIn ,adminController.getCoupons);
+router.get('/search-coupons',adminAuth.isLoggedIn ,adminController.searchCoupon);
 router.get('/return',adminController.loadReturn);
-router.get('/return-requests',adminController.getReturnData);
-router.get('/returnOrderDetails/:returnId',adminController.getreturnOrderDetails);
-router.get('/addOffer',adminController.loadAddOffer);
-router.get('/editOffer/:offerId',adminController.loadEditOffer);
-router.get('/getOfferTable',adminController.getOfferTable);
-router.get('/getSalesTable',adminController.getSalesTable);
-router.get('/getFillterdSalesTable',adminController.getFillterdSalesTable);
+router.get('/return-requests' ,adminController.getReturnData);
+router.get('/returnOrderDetails/:returnId',adminAuth.isLoggedIn ,adminController.getreturnOrderDetails);
+router.get('/addOffer',adminAuth.isLoggedIn ,adminController.loadAddOffer);
+router.get('/editOffer/:offerId',adminAuth.isLoggedIn ,adminController.loadEditOffer);
+router.get('/getOfferTable',adminAuth.isLoggedIn ,adminController.getOfferTable);
+router.get('/getSalesTable',adminAuth.isLoggedIn ,adminController.getSalesTable);
+router.get('/getFillterdSalesTable',adminAuth.isLoggedIn ,adminController.getFilteredSalesTable);
+router.get('/downloadSalesPDF',adminAuth.isLoggedIn ,adminController.reportPDF);
+router.get('/downloadSalesEXCEl',adminAuth.isLoggedIn ,adminController.reportExcel);
 
 
 

@@ -1080,35 +1080,9 @@ const loadOrderDetails = async (req, res) => {
 // load cart page
 
 
-// const loadCart = async (req, res) => {
-//   try {
-//     const email = req.session.isLoggedEmail || 'shikhilkalarikkal813704@gmail.com';
-
-//     const user = await User.findOne({ email });
-
-//     if (!user) {
-//       return res.status(404).send('User not found');
-//     }
-
-//     const userId = user._id;
-
-//     const coupons = await Coupon.find();
-
-//     const userCart = await Cart.findOne({ userId }).populate('items.productId');
-//     res.status(200).render('user/cart', { userCart ,title:"Cart",coupons});
-//   } catch (error) {
-//     console.error('Error loading cart:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// };
-
-
-
-
-
   const loadCart = async (req, res) => {
     try {
-      const email = req.session.isLoggedEmail || 'shikhilkalarikkal813704@gmail.com';
+      const email = req.session.isLoggedEmail;
 
       const user = await User.findOne({ email });
 
@@ -2202,7 +2176,7 @@ const loadReferral = async(req,res)=>{
 const addtoWishlist = async (req, res) => {
   try {
     const productId = req.params.id; 
-    const email = req.session.isLoggedEmail || "shikhilks02@gmail.com";
+    const email = req.session.isLoggedEmail;
     console.log(email);
     const user = await User.findOne({ email });
     console.log(user);

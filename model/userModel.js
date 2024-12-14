@@ -531,7 +531,7 @@ const returnCancelSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['Online', 'COD', 'Wallet'],
+    enum: ['razorPay', 'COD', 'Wallet'],
     required: true,
   },
   paymentStatus: {

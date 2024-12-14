@@ -1,4 +1,5 @@
 
+
 document.addEventListener('DOMContentLoaded', toggleDateFields);
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -144,29 +145,200 @@ function toggleDateFields() {
         endDateField.value = endDate ? formatDateForInput(endDate) : '';
         startDateField.disabled = true;
         endDateField.disabled = true;
-
-        fetchSalesData(startDate, endDate); // Fetch data automatically if not custom
     }
 }
 
 // Format date for input fields (yyyy-MM-dd)
 function formatDateForInput(date) {
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); 
-    const year = date.getFullYear();
-    return `${year}-${month}-${day}`; 
-}
-
-// Format date for display (dd/MM/yyyy)
-function formatDateForDisplay(date) {
-    const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
+}
+// Fetch and render sales data
+async function fetchSalesData(startDate, endDate) {
+    try {
+        const response = await fetch(`/admin/getFillterdSalesTable?startDate=${formatDateForInput(startDate)}&endDate=${formatDateForInput(endDate)}`, {
+            method: "GET",
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const result = await response.json();
+        if (result.status) {
+            console.log(result.orderData)
+            renderTable(result.orderData || []);
+        } else {
+            displayNoDataMessage(result.message || "No data available.");
+        }
+    } catch (error) {
+        console.error("Error fetching sales data:", error);
+        displayNoDataMessage("Failed to load data.");
+    }
+}
+
+// Render sales table with pagination
+function renderTable(orders) {
+    const tableBody = document.getElementById('productTableBody');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+    const showingText = document.querySelector('.showing1-10Text');
+
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function render() {
+        tableBody.innerHTML = '';
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedOrders = orders.slice(start, end);
+
+        if (paginatedOrders.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5">No data available</td></tr>';
+        } else {
+            paginatedOrders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(order.orderDate).toLocaleString('en-IN')}</td>
+                    <td>${order.orderId}</td>
+                    <td>₹${order.total_Amt_WOT_Discount.toFixed(2)}</td>
+                    <td>₹${order.discount.toFixed(2)}</td>
+                    <td>₹${order.totalAmount.toFixed(2)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        const totalPages = Math.ceil(orders.length / rowsPerPage);
+        showingText.textContent = `Showing ${start + 1}-${Math.min(end, orders.length)} from ${orders.length}`;
+
+        prevPageButton.disabled = currentPage === 1;
+        nextPageButton.disabled = currentPage === totalPages;
+    }
+
+    prevPageButton.onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            render();
+        }
+    };
+
+    nextPageButton.onclick = () => {
+        const totalPages = Math.ceil(orders.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            render();
+        }
+    };
+
+    render();
+}
+
+function displayNoDataMessage(message) {
+    document.getElementById('productTableBody').innerHTML = `<tr><td colspan="5">${message}</td></tr>`;
+}
+
+// Generate report 
+async function generateReport() {
+    const startDateField = document.getElementById('startDate');
+    const endDateField = document.getElementById('endDate');
+
+
+    if(startDateField.value === "" || endDateField.value === ""){
+        return showAlert('Please Enter the valid date','danger');
+    }
+    const startDate = new Date(startDateField.value);
+    const endDate = new Date(endDateField.value);
+    await fetchSalesData(startDate, endDate);
+}
+
+  
+async function downloadPDFReport(startDate, endDate) {
+
+    try {
+        const response = await fetch(`/admin/downloadSalesPDF?startDate=${startDate}&endDate=${endDate}`,
+             { method: 'GET' });
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status} - ${response.statusText}`);
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Sales_Report_${startDate}_to_${endDate}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        console.log('PDF downloaded successfully');
+    } catch (error) {
+        console.error('Error downloading the PDF report:', error);
+    }
 }
 
 
-function fetchSalesData(startDate, endDate) {
-    console.log('Fetching sales data from', formatDateForDisplay(startDate), 'to', formatDateForDisplay(endDate))
+async function downloadExcelReport(startDate, endDate) {
+    try {
+        const response = await fetch(`/admin/downloadSalesEXCEl?startDate=${startDate}&endDate=${endDate}`,
+             { method: 'GET' });
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status} - ${response.statusText}`);
+        }
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Sales_Report_${startDate}_to_${endDate}.xlsx`; 
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        console.log('Excel report downloaded successfully');
+    } catch (error) {
+        console.error('Error downloading the Excel report:', error);
+    }
 }
 
+
+
+  document.getElementById('downloadReportBtn').addEventListener('click', () => {
+    const startDateField = document.getElementById('startDate');
+    const endDateField = document.getElementById('endDate');
+    const startDate = startDateField.value;
+    const endDate = endDateField.value;
+    if(startDateField.value === "" || endDateField.value === ""){
+        return showAlert('Please Enter the valid date','danger');
+    }
+  
+    downloadPDFReport(startDate, endDate);
+  });
+
+  document.getElementById('downloadReportBtnExcel').addEventListener('click', () => {
+    const startDateField = document.getElementById('startDate');
+    const endDateField = document.getElementById('endDate');
+    const startDate = startDateField.value;
+    const endDate = endDateField.value;
+    if(startDateField.value === "" || endDateField.value === ""){
+        return showAlert('Please Enter the valid date','danger');
+    }
+
+    downloadExcelReport(startDate, endDate);
+  });
+
+  function showAlert(message, type) {
+
+    const alertBox = document.createElement('div');
+    alertBox.id = 'alertBox';
+    alertBox.className = `alert alert-${type} show`;
+    alertBox.role = 'alert';
+    alertBox.innerHTML = message;
+    document.body.appendChild(alertBox);
+    setTimeout(() => {
+        alertBox.classList.remove('show');
+        alertBox.classList.add('hide');
+        setTimeout(() => alertBox.remove(), 700); 
+    }, 3000);
+  }
