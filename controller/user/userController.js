@@ -1889,7 +1889,8 @@ const submitOrder = async (req, res) => {
         discount,
         totalAmount,
         appliedCoupon: checkout.appliedCoupon,
-        total_Amt_WOT_Discount : cart.totalActualAmount
+        total_Amt_WOT_Discount : cart.totalActualAmount,
+        deliveryFee :checkout.deliveryFee
       });
 
       await pendingOrder.save();
@@ -1914,7 +1915,8 @@ const submitOrder = async (req, res) => {
       discount,
       totalAmount,
       appliedCoupon: checkout.appliedCoupon,
-      total_Amt_WOT_Discount : cart.totalActualAmount
+      total_Amt_WOT_Discount : cart.totalActualAmount,
+      deliveryFee : checkout.deliveryFee
     });
 
     await order.save();

@@ -34,8 +34,8 @@ router.get('/editCoupon/:couponId' ,adminAuth.isLoggedIn ,adminController.loadEd
 router.get('/sales',adminAuth.isLoggedIn ,adminController.loadSales);
 router.get('/coupon-data',adminAuth.isLoggedIn ,adminController.getCoupons);
 router.get('/search-coupons',adminAuth.isLoggedIn ,adminController.searchCoupon);
-router.get('/return',adminController.loadReturn);
-router.get('/return-requests' ,adminController.getReturnData);
+router.get('/return',adminAuth.isLoggedIn ,adminController.loadReturn);
+router.get('/return-requests' ,adminAuth.isLoggedIn ,adminController.getReturnData);
 router.get('/returnOrderDetails/:returnId',adminAuth.isLoggedIn ,adminController.getreturnOrderDetails);
 router.get('/addOffer',adminAuth.isLoggedIn ,adminController.loadAddOffer);
 router.get('/editOffer/:offerId',adminAuth.isLoggedIn ,adminController.loadEditOffer);

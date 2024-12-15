@@ -56,19 +56,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function toggleHeart(element, productId) {
-  // Toggling heart state
   if (element.classList.contains("bi-heart")) {
     element.classList.remove("bi-heart");
     element.classList.add("bi-heart-fill", "filled");
 
-    // Add to wishlist
-    addToWishlist(productId, element); // Pass element to handle UI revert in case of failure
+    addToWishlist(productId, element); 
   } else {
     element.classList.remove("bi-heart-fill", "filled");
     element.classList.add("bi-heart");
 
-    // Optionally, handle removing from wishlist if required
-    removeFromWishlist(productId, element); // Implement remove logic if needed
+    removeFromWishlist(productId, element); 
   }
 }
 
@@ -87,7 +84,6 @@ async function addToWishlist(productId, element) {
     } else {
       showAlert(result.message || "Failed to add product to wishlist", "danger");
 
-      // Revert heart state if failed
       element.classList.remove("bi-heart-fill", "filled");
       element.classList.add("bi-heart");
     }
@@ -95,13 +91,12 @@ async function addToWishlist(productId, element) {
     console.error("Error adding to wishlist:", error);
     showAlert("An error occurred while adding the product to the wishlist.", "danger");
 
-    // Revert heart state if error
     element.classList.remove("bi-heart-fill", "filled");
     element.classList.add("bi-heart");
   }
 }
 
-// Optional: Remove from wishlist (if needed)
+//  Remove from wishlist 
 async function removeFromWishlist(productId, element) {
   try {
     const response = await fetch(`/user/deleteFromWishlist/${productId}`, {
@@ -116,8 +111,6 @@ async function removeFromWishlist(productId, element) {
       showAlert(result.message || "Product removed from wishlist", "success");
     } else {
       showAlert(result.message || "Failed to remove product from wishlist", "danger");
-
-      // Revert heart state if failed
       element.classList.remove("bi-heart");
       element.classList.add("bi-heart-fill", "filled");
     }
@@ -125,7 +118,6 @@ async function removeFromWishlist(productId, element) {
     console.error("Error removing from wishlist:", error);
     showAlert("An error occurred while removing the product from the wishlist.", "danger");
 
-    // Revert heart state if error
     element.classList.remove("bi-heart");
     element.classList.add("bi-heart-fill", "filled");
   }

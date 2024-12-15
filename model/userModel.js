@@ -417,6 +417,10 @@ const orderSchema = new mongoose.Schema({
     type:Number,
     default : 0
   },
+  deliveryFee:{
+    type : Number,
+    default : 0
+  }
 });
 
 
@@ -806,6 +810,10 @@ const pendingOrderSchema = new mongoose.Schema({
   },
   total_Amt_WOT_Discount :{
     type:Number,
+    default : 0
+  },
+  deliveryFee :{
+    type : Number,
     default : 0
   }
 });
