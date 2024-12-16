@@ -7,6 +7,7 @@ require('dotenv').config()
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const razorpayInstance = require('../../config/razorPay');
+const { checkout } = require('../../route/admin');
 
 
 const validColors = {
@@ -1082,7 +1083,24 @@ const loadOrderDetails = async (req, res) => {
 
   const loadCart = async (req, res) => {
     try {
-      const email = req.session.isLoggedEmail;
+      res.status(200).render('user/cart', {
+        title: "Cart",
+      });
+    } catch (error) {
+      console.error('Error loading cart:', error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+
+
+// get the cart items 
+
+
+
+const getCartDetails = async(req,res)=>{
+  try {
+    const email = req.session.isLoggedEmail;
 
       const user = await User.findOne({ email });
 
@@ -1092,9 +1110,28 @@ const loadOrderDetails = async (req, res) => {
 
       const userId = user._id;
 
+      const userCart = await Cart.findOne({ userId }).populate('items.productId');
+       res.status(200).json({
+        data: { userCart },status:true
+      });
+  } catch (error) {
+    console.error('Error fetching cart details:', error);
+    res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+}
+     
 
-      const coupons = await Coupon.find();
+const cartSummery = async(req,res)=>{
+  try {
+    const email = req.session.isLoggedEmail;
 
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      const userId = user._id;
 
       const userCart = await Cart.findOne({ userId }).populate('items.productId');
 
@@ -1132,24 +1169,21 @@ const loadOrderDetails = async (req, res) => {
             }
           }
         }
-      }
+      } 
 
-      res.status(200).render('user/cart', {
-        userCart,
-        title: "Cart",
-        coupons,
-        discountCategoryOffer, 
-        totalCategoryDiscount,
+      res.status(200).json({
+        status: true,
+        data: {
+          userCart,
+          discountCategoryOffer,
+          totalCategoryDiscount,
+        },
       });
-    } catch (error) {
-      console.error('Error loading cart:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-
-
-
-                                            
+  } catch (error) {
+    console.error('Error fetching cart details:', error);
+    res.status(500).json({ status: false, message: 'Internal Server Error' });
+  }
+}
 
 
 
@@ -1160,8 +1194,9 @@ try {
   const userEmail = req.session.isLoggedEmail;
   const message = req.query.message;
   const errBoolean = req.query.err;
+  const coupons = await Coupon.find();
   const user = await User.findOne({ email: userEmail }).populate('addresses');
-  res.status(200).render('user/checkOut',{user,message,errBoolean ,title:"Check Out"});
+  res.status(200).render('user/checkOut',{user,message,errBoolean ,coupons,title:"Check Out"});
 } catch (error) {
   res.status(500).send('Internal Server Error')
 }
@@ -1549,7 +1584,7 @@ const couponValidationCheckout = async (req, res) => {
     );
     const newPrice = Math.floor(currentTotal - discount) ;
     res.status(200).json({
-      success: true, // Added field
+      success: true, 
       message: 'Coupon is valid.',
       discount: discount,
       newTotalAmount: newPrice,
@@ -1569,19 +1604,15 @@ const removeCoupon = async (req, res) => {
     const user = await User.findOne({ email });
     const userId = user._id;
 
-    const cart = await Cart.findOne({ userId });
+    const checkOut = await CheckOut.findOne({ userId });
 
-    if (!cart) {
+    if (!checkOut) {
       return res.status(404).json({ success: false, message: 'Cart not found.' });
     }
 
     // Reset discount-related fields
-    const originalTotal = cart.totalAmount;
-    cart.discount = 0;
-    cart.couponCode = null;
-
-    await cart.save();
-
+    const originalTotal = checkOut.totalAmount;
+    await checkOut.save();
     res.status(200).json({
       success: true,
       message: 'Coupon removed successfully.',
@@ -1646,6 +1677,9 @@ const checkoutDataStore = async (req, res) => {
     const userId = new mongoose.Types.ObjectId(user._id);
 
     const existUser = await CheckOut.findOne({ userId });
+    const cart = await Cart.findOne({userId});
+    const cartId = cart._id;
+    checkOutData.cartId = cartId;
     if (existUser) {
       const result = await CheckOut.updateOne(
         { userId },
@@ -1675,6 +1709,7 @@ const getCheckoutSummery = async(req,res)=>{
     const user = await User.findOne({email});
     const userId = user._id;
     const userSummeryDetails = await CheckOut.findOne({userId});
+    console.log(userSummeryDetails);
     res.status(200).json(userSummeryDetails);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error.' });
@@ -1794,38 +1829,40 @@ const saveUpdatedAddress = async (req, res) => {
 
 const submitOrder = async (req, res) => {
   try {
-    const { deliveryAddress, billingAddress, paymentMethod } = req.body;
+    const { deliveryAddress, billingAddress, paymentMethod, totalAmount,
+      couponDiscount ,couponCode} = req.body;
 
     if (!deliveryAddress || !deliveryAddress._id) {
       return res.status(400).json({ message: 'Invalid delivery address' });
     }
-
+console.log('1');
     const deliveryAddressData = await Address.findById(deliveryAddress._id);
     if (!deliveryAddressData) {
       return res.status(400).json({ message: 'Delivery address not found' });
     }
-
+    console.log('2');
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+    console.log('3');
     const userId = user._id;
     const checkout = await CheckOut.findOne({ userId });
     if (!checkout) {
       return res.status(400).json({ message: 'Checkout data not found' });
     }
-
+    console.log('4');
     const cart = await Cart.findOne({ userId });
     if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
+    console.log('5');
 
     // Verify applied coupon
-    if (checkout.appliedCoupon !== 'N/A') {
-      const coupon = await Coupon.findOne({ code: checkout.appliedCoupon });
+    if (couponCode !== 'N/A') {
+      const coupon = await Coupon.findOne({ code: couponCode });
       if (coupon && coupon.isActive) {
         coupon.usersUsed.push(user._id);
         coupon.usageCount += 1;
@@ -1834,14 +1871,14 @@ const submitOrder = async (req, res) => {
         return res.status(200).json({ message: 'Invalid or inactive coupon.' });
       }
     }
-
+    console.log('6');
     const productIds = cart.items.map((item) => item.productId);
     const productDetails = await Product.find({ _id: { $in: productIds } });
     const productMap = productDetails.reduce((map, product) => {
       map[product._id.toString()] = product;
       return map;
     }, {});
-
+    console.log('7');
     const products = cart.items.map((item) => {
       const product = productMap[item.productId.toString()];
       if (!product) {
@@ -1858,9 +1895,8 @@ const submitOrder = async (req, res) => {
         total: item.quantity * product.Dprice,
       };
     });
-
-    const discount = checkout.discount + checkout.categoryDiscound || 0;
-    const totalAmount = checkout.finalTotal;
+    console.log('8');
+    const discount = couponDiscount + checkout.categoryDiscount || 0;
     const orderId = `ORD${Date.now()}`;
     let razorPayOrderId;
 
@@ -1887,8 +1923,9 @@ const submitOrder = async (req, res) => {
         products,
         subtotal: checkout.totalAmount,
         discount,
+        couponDiscount,
         totalAmount,
-        appliedCoupon: checkout.appliedCoupon,
+        appliedCoupon: couponCode,
         total_Amt_WOT_Discount : cart.totalActualAmount,
         deliveryFee :checkout.deliveryFee
       });
@@ -1900,7 +1937,7 @@ const submitOrder = async (req, res) => {
         razorPayOrderId,
       });
     }
-
+    console.log('9');
     const order = new Orders({
       orderId,
       userId,
@@ -1914,14 +1951,19 @@ const submitOrder = async (req, res) => {
       subtotal: checkout.totalAmount,
       discount,
       totalAmount,
-      appliedCoupon: checkout.appliedCoupon,
+      couponDiscount,
+      appliedCoupon: couponCode,
       total_Amt_WOT_Discount : cart.totalActualAmount,
       deliveryFee : checkout.deliveryFee
     });
 
     await order.save();
-    await finalizeOrder(userId, products, checkout);
-
+    try {
+      await finalizeOrder(userId, products, checkout);
+    } catch (finalizeError) {
+      await Orders.deleteOne({ orderId });
+      return res.status(400).json({ message: finalizeError.message });
+    }
     res.status(200).json({ message: 'Order placed successfully', orderId });
   } catch (error) {
     console.error(error);
@@ -1959,9 +2001,16 @@ const verifyPayment = async (req, res) => {
       paymentStatus: 'Paid',
     });
 
-    await order.save();
 
-    await finalizeOrder(pendingOrder.userId, pendingOrder.products, { totalAmount: pendingOrder.subtotal });
+
+    try {
+      await order.save();
+      await finalizeOrder(pendingOrder.userId, pendingOrder.products, { totalAmount: pendingOrder.subtotal });
+    } catch (finalizeError) {
+
+      await Orders.deleteOne({ orderId });
+      return res.status(400).json({ success: false, message: finalizeError.message });
+    }
 
     await PendingOrder.deleteOne({ orderId });
 
@@ -1976,11 +2025,11 @@ const verifyPayment = async (req, res) => {
 
 // finalize the order
 
-const finalizeOrder = async (userId, products, checkout) => {
+const finalizeOrder = async (userId, products, checkout, res) => {
   for (const item of products) {
     const product = await Product.findById(item.productId);
     if (product.stock < item.quantity) {
-      throw new Error(`Insufficient stock for product ID ${item.productId}`);
+      throw new Error(`Insufficient stock for  ${product.name}`);
     }
     product.stock -= item.quantity;
     await product.save();
@@ -2455,5 +2504,7 @@ module.exports={
   returnOrder,
   loadSuccess,
   loadFaild,
-  verifyPayment
+  verifyPayment,
+  getCartDetails,
+  cartSummery
 };

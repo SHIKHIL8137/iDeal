@@ -2,7 +2,9 @@
     <link rel="stylesheet" href="/user/checkOut/style.css">
 </head>
 <body>
-  <% if (message && errBoolean) { %>
+  <div id="alertBox">
+  </div>
+  <!-- <% if (message && errBoolean) { %>
     <div id="alertBox" class="alert alert-success" role="alert">
       <%= message %>
     </div>
@@ -10,7 +12,7 @@
     <div id="alertBox" class="alert alert-danger" role="alert">
       <%= message %>
     </div>
-  <% } %>
+  <% } %> -->
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
@@ -130,6 +132,9 @@
     <div class="col-md-4">
       <div class="cart-summary">
       </div>
+      <button id="toggleSidebarBtn" class="animate">
+        Show Coupons
+      </button>
     </div>
   </div>
 </div>
@@ -173,6 +178,40 @@
       </div>
     </div>
   </div>
+
+
+
+  <div id="couponSidebar">
+    <!-- Close Button -->
+    <button id="closeSidebarBtn" class="">&times;</button>
+    <div class="p-3">
+        <h5 class="mb-3">Applied Coupons</h5>
+        <ul class="list-group">
+            <!-- Loop through the coupons -->
+            <% coupons.forEach(function(coupon) { %>
+                <li class="list-group-item position-relative">
+                    <div class="description">
+                        <%= coupon.description %> <br>
+                        <small>Discount: <%= coupon.discountPercentage %>%</small>
+                    </div>
+                    <div class="coupon-code-container mt-2">
+                        <input type="text" value="<%= coupon.code %>" readonly id="couponCode<%= coupon._id %>">
+                        <button class="btn btn-sm" onclick="copyCouponCode('<%= coupon._id %>')">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                    </div>
+                    <span class="copy-badge" id="badge<%= coupon._id %>">Copied!</span>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
   <script type="application/json" id="userData"><%- JSON.stringify(user) %></script>
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 

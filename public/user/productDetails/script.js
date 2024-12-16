@@ -35,9 +35,9 @@ const offer = JSON.parse(document.getElementById('offerData').textContent);
 
 // DOMContentLoaded Main Wrapper
 document.addEventListener("DOMContentLoaded", function () {
-  // ------------------------------
+
   //  Arrival Cards Click Event
-  // ------------------------------
+
   const productCards = document.querySelectorAll(".arrival-card");
 
   productCards.forEach((card) => {
@@ -188,15 +188,12 @@ document.getElementById('addTocartProduct').addEventListener('click', async () =
 const productId = product._id;
 let price;
 let actualPrice;
-console.log(product.offer)
 if(product.offer) {
  price = (product.price - (product.price * (offer.discountValue / 100)));
  actualPrice = product.Dprice
- console.log('special')
 }else{
  price = product.Dprice;
  actualPrice = product.Dprice;
- console.log('offer')
 }
 
   if (!productId) {

@@ -27,10 +27,22 @@ async function deleteFromWishlist(productId) {
 
 
 
-async function addtoCart(productId ,price){
+async function addtoCart(buttonElement){
+  const productDataJson = buttonElement.getAttribute('data-product'); 
+  const product = JSON.parse(productDataJson);
 
-
-  const datatoSet = { productId ,price};
+  const productId = product._id;
+let price;
+let actualPrice;
+if(product.offer) {
+ price = (product.price - (product.price * (offer.discountValue / 100)));
+ actualPrice = product.Dprice
+}else{
+ price = product.Dprice;
+ actualPrice = product.Dprice;
+}
+  const datatoSet = { productId ,price , actualPrice};
+  console.log(datatoSet)
   const button = document.getElementById('addTocartProduct');
     button.disabled = true; 
     button.innerText = 'Adding...';

@@ -1,6 +1,7 @@
+
 const userDetails = JSON.parse(document.getElementById('userData').textContent);
 const addresses = userDetails.addresses;
-let selectedDeliveryAddress = addresses[0];  // Initially set to the first address
+let selectedDeliveryAddress = addresses[0]; 
 
 document.addEventListener('DOMContentLoaded', async () => {
   const deliveryAddressContainer = document.getElementById('deliveryAddress');
@@ -30,11 +31,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   
 });
 
-// Handle selecting a delivery address
+
 function selectDeliveryAddress(addressId) {
   selectedDeliveryAddress = addresses.find(address => address._id === addressId);
 
-  // If "Same as delivery address" checkbox is checked, fill the billing form with the selected delivery address
+
   if (document.getElementById("sameAsDelivery").checked) {
     fillBillingAddressForm(selectedDeliveryAddress);
   }
@@ -54,14 +55,13 @@ function fillBillingAddressForm(address) {
   document.getElementById("billingPhone").value = address.phone;
 }
 
-// Handle the "Same as delivery address" checkbox change
 document.getElementById("sameAsDelivery").addEventListener('change', function() {
   if (this.checked) {
     if (selectedDeliveryAddress) {
-      fillBillingAddressForm(selectedDeliveryAddress);  // Fill form if checked
+      fillBillingAddressForm(selectedDeliveryAddress);  
     }
   } else {
-    clearBillingAddressForm();  // Clear form if unchecked
+    clearBillingAddressForm(); 
   }
 });
 
@@ -91,7 +91,7 @@ function deleteAddress(id) {
       .then(data => {
         if (data.message === 'Address deleted successfully') location.reload();
       })
-      .catch(error => console.error('Error deleting address:', error));
+      .catch(error => showAlert('Error deleting address:', 'danger'));
 }
 }
 function addAddress() {
@@ -105,25 +105,48 @@ try {
   if(checkOutData){
     document.querySelector('.cart-summary').innerHTML = `
       <h5>Summary</h5>
-      <p>Sub-total: <span class="float-end">₹${checkOutData.totalAmount.toLocaleString()}</span></p>
-      <p>Shipping Fees: <span class="float-end text-success">${checkOutData.deliveryFee === 0 ? 'Free' : `₹${checkOutData.deliveryFee.toLocaleString()}`}</span></p>
-      <p>Coupon Discount: <span class="float-end text-danger">₹${checkOutData.discount.toLocaleString()}</span></p>
-      <p>Category Discount: <span class="float-end text-danger">-₹${checkOutData.categoryDiscound.toLocaleString()}</span></p>
-      <hr>
-      <p>Total: <span class="float-end">₹${checkOutData.finalTotal.toLocaleString()}</span></p>
-      <button class="btn btn-primary btn-block mt-4 w-100" id="placeOrder">Place Order</button>
+  <p>Sub-total: <span class="float-end">₹${checkOutData.totalAmount.toLocaleString()}</span></p>
+  <p>Shipping Fees: <span class="float-end text-success">${checkOutData.deliveryFee === 0 ? 'Free' : `₹${checkOutData.deliveryFee.toLocaleString()}`}</span></p>
+  <p>Coupon Discount: <span id="couponDiscount" class="float-end text-danger">₹0</span></p>
+  <p>Category Discount: <span class="float-end text-danger">-₹${checkOutData.categoryDiscount.toLocaleString()}</span></p>
+  <hr>
+  <p>Total: <span id="finalTotal" class="float-end">₹${checkOutData.finalTotal.toLocaleString()}</span></p>
+
+  <!-- Coupon Section -->
+  <div id="couponSection" class="mt-3">
+    <div id="couponInput">
+      <label for="coupon" class="form-label">Enter a coupon code</label>
+      <div class="input-group">
+        <input type="text" id="coupon" class="form-control" placeholder="Coupon Code" aria-label="Coupon Code">
+        <button class="btn btn-primary" type="button" onclick="applyCoupon()" id="applyCouponButton" 
+          ${checkOutData.totalAmount <= 0 ? 'disabled' : ''}>Apply</button>
+      </div>
+      <small class="d-block mt-1 couponNote">Note: Only one coupon can be applied.</small>
+    </div>
+
+    <div id="appliedCoupon" class="d-none position-relative">
+      <span class="badge bg-success p-3 d-flex align-items-center">
+        <i class="bi bi-tag-fill me-2"></i>
+        Applied Coupon: <span id="appliedCouponCode"></span>
+      </span>
+      <button class="btn btn-sm position-absolute" onclick="removeCoupon()" id="closeBtnCoupon">
+        <i class="bi bi-x-circle"></i>
+      </button>
+    </div>
+  </div>
+  <button class="btn btn-primary btn-block mt-4 w-100" id="placeOrder">Place Order</button>
     `;
   }else{
     document.querySelector('.cart-summary').innerHTML = '<p>No data available. please try again</p>';
   } 
 } catch (error) {
-  alert('an error occure please try again later');
+  console.log(error);
+  showAlert('an error occure please try again later','danger');
 }
 
 
 
 
-// Handle selecting a delivery address
 function selectDeliveryAddress(addressId) {
   const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
   const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
@@ -145,7 +168,9 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
     const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
     const selectedIndex = selectedAddressRadio ? selectedAddressRadio.id.replace('address', '') : 0;
     const selectedDeliveryAddress = addresses[selectedIndex];
-
+    const totalAmount = parseInt(document.getElementById('finalTotal').textContent.replace(/[₹,]/g, '').trim());
+    const couponDiscount = parseInt(document.getElementById('couponDiscount').textContent.replace(/[₹,]/g, '').trim()) || 0;
+    const couponCode = document.getElementById('coupon').value.trim() || 'N/A';
     const billingAddress = {
       fname: document.getElementById("billingFirstName").value,
       lname: document.getElementById("billingLastName").value,
@@ -163,9 +188,11 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
       deliveryAddress: selectedDeliveryAddress,
       billingAddress,
       paymentMethod,
+      totalAmount,
+      couponDiscount,
+      couponCode
     };
 
-    console.log(orderDetails);
 
     const response = await fetch("/user/orderSubmit", {
       method: "POST",
@@ -192,12 +219,10 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
             });
 
             const verificationResult = await verifyResponse.json();
-
-            console.log('fetchresponse :',verificationResult.orderId)
             if (verificationResult.success) {
               window.location.href = `/user/loadOrderConformation/${verificationResult.orderId}`;
             } else {
-              alert('Payment Verification Failed!');
+              showAlert('Payment Verification Failed!','danger');
             }
           },
         });
@@ -207,11 +232,11 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
         window.location.href = '/user/cart';
       }
     } else {
-      console.log(`Failed to place order: ${result.message}`);
+      showAlert(`Failed to place order: ${result.message}`,'danger');
     }
   } catch (error) {
     console.error("Error placing order:", error);
-    alert("An error occurred while placing the order. Please try again.");
+    showAlert("An error occurred while placing the order. Please try again.",danger);
   }
 });
 
@@ -305,16 +330,132 @@ function displayError(fieldId, message) {
 
 
 
+const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+const couponSidebar = document.getElementById('couponSidebar');
+
+toggleSidebarBtn.addEventListener('click', () => {
+    couponSidebar.classList.add('active');
+});
+
+closeSidebarBtn.addEventListener('click', () => {
+    couponSidebar.classList.remove('active');
+});
+
+function copyCouponCode(couponId) {
+  const couponCodeInput = document.getElementById('couponCode' + couponId);
+  const badge = document.getElementById('badge' + couponId);
+
+  navigator.clipboard.writeText(couponCodeInput.value).then(() => {
+      badge.classList.add('show');
+      setTimeout(() => {
+          badge.classList.remove('show');
+      }, 2000);
+  }).catch(err => {
+    showAlert('Failed to copy coupon code: ', 'danger');
+  });
+}
 
 
 
 
 
+function applyCoupon() {
+  const currentTotal = parseInt(document.getElementById('finalTotal').textContent.replace(/[₹,]/g, '').trim());
+  const couponInput = document.getElementById('coupon');
+  const couponCode = couponInput.value.trim();
+
+console.log('clicked')
+  if (!couponCode) {
+    alert('Please enter a coupon code.');
+    return;
+  }
+
+  const applyButton = document.getElementById('applyCouponButton');
+  applyButton.disabled = true;
+  applyButton.textContent = 'Applying...';
+
+  fetch('/user/applyCoupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ couponCode: couponCode ,currentTotal : currentTotal}),
+  })
+    .then(response => response.json())
+    .then(result => {
+      applyButton.disabled = false;
+      applyButton.textContent = 'Apply';
+
+      if (result.success) {
+        console.log(result.newTotalAmount)
+        showAlert(result.message,'success');
+        document.getElementById('couponDiscount').textContent = `₹${result.discount}`;
+        document.getElementById('finalTotal').textContent = `₹${result.newTotalAmount}`;
+
+        // Hide coupon input and show applied coupon
+        document.getElementById('couponInput').classList.add('d-none');
+        const appliedCoupon = document.getElementById('appliedCoupon');
+        appliedCoupon.classList.remove('d-none');
+        document.getElementById('appliedCouponCode').textContent = couponCode;
+      } else {
+        console.log('error')
+        showAlert(result.message,'danger');
+      }
+    })
+    .catch(error => {
+      console.error('Error applying coupon:', error);
+      showAlert('Failed to apply coupon. Please try again.','danger');
+      applyButton.disabled = false;
+      applyButton.textContent = 'Apply';
+    });
+}
+
+function removeCoupon() {
+  fetch('/user/removeCoupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        showAlert(result.message , 'success');
+
+        // Revert UI
+        document.getElementById('couponInput').classList.remove('d-none');
+        document.getElementById('appliedCoupon').classList.add('d-none');
+
+        // Reset totals
+        document.getElementById('couponDiscount').textContent = '₹0';
+        document.getElementById('finalTotal').textContent = `₹${result.originalTotal}`;
+      } else {
+        showAlert(result.message, 'danger');
+      }
+    })
+    .catch(error => {
+      console.error('Error removing coupon:', error);
+      showAlert('Failed to remove coupon. Please try again.','danger');
+    });
+}
 
 
 
+function showAlert(message, type) {
 
-
+  const alertBox = document.createElement('div');
+  alertBox.id = 'alertBox';
+  alertBox.className = `alert alert-${type} show`;
+  alertBox.role = 'alert';
+  alertBox.innerHTML = message;
+  document.body.appendChild(alertBox);
+  setTimeout(() => {
+      alertBox.classList.remove('show');
+      alertBox.classList.add('hide');
+      setTimeout(() => alertBox.remove(), 700); 
+  }, 3000);
+}
 
 
 

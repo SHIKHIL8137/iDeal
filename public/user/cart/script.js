@@ -1,36 +1,28 @@
-const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
-const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-const couponSidebar = document.getElementById('couponSidebar');
+document.addEventListener('DOMContentLoaded',()=>{
+  getCartData();
+  getCartSummary();
+})
 
-// Toggle sidebar visibility
-toggleSidebarBtn.addEventListener('click', () => {
-    couponSidebar.classList.add('active');
-});
+async function removeFromCart(productId) {
+  try {
+    const response = await fetch('/user/removeFromCart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    });
 
-closeSidebarBtn.addEventListener('click', () => {
-    couponSidebar.classList.remove('active');
-});
-
-// Copy coupon code functionality
-function copyCouponCode(couponId) {
-  // Get the coupon code input and the badge
-  const couponCodeInput = document.getElementById('couponCode' + couponId);
-  const badge = document.getElementById('badge' + couponId);
-
-  // Copy the coupon code
-  navigator.clipboard.writeText(couponCodeInput.value).then(() => {
-      // Show the "Copied!" badge
-      badge.classList.add('show');
-
-      // Hide the badge after 2 seconds
-      setTimeout(() => {
-          badge.classList.remove('show');
-      }, 2000);
-  }).catch(err => {
-      console.error('Failed to copy coupon code: ', err);
-  });
+    const result = await response.json();
+    if (response.ok) {
+      getCartData();
+  getCartSummary();
+      showAlert('Product remove successFully','success')
+    } else {
+    showAlert('Errror removing item','danger')
+    }
+  } catch (error) {
+    console.error('Error removing item:', error);
+  }
 }
-
 
 async function updateQuantity(productId, action) {
   try {
@@ -43,7 +35,8 @@ async function updateQuantity(productId, action) {
     const result = await response.json();
     console.log(result);
     if (response.ok) {
-      location.reload(); 
+      getCartData();
+  getCartSummary();
     } else {
       showAlert(result.message,'danger')
     }
@@ -52,136 +45,35 @@ async function updateQuantity(productId, action) {
   }
 }
 
-async function removeFromCart(productId) {
-  try {
-    const response = await fetch('/user/removeFromCart', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId }),
-    });
 
-    const result = await response.json();
-    if (response.ok) {
-      location.reload();
-    } else {
-    showAlert('Errror removing item','danger')
-    }
-  } catch (error) {
-    console.error('Error removing item:', error);
-  }
-}
-
-function applyCoupon() {
-  const currentTotal = parseInt(document.getElementById('finalTotal').textContent.replace(/[₹,]/g, '').trim());
-  const couponInput = document.getElementById('coupon');
-  const couponCode = couponInput.value.trim();
-
-console.log('clicked')
-  if (!couponCode) {
-    alert('Please enter a coupon code.');
-    return;
-  }
-
-  const applyButton = document.getElementById('applyCouponButton');
-  applyButton.disabled = true;
-  applyButton.textContent = 'Applying...';
-
-  fetch('/user/applyCoupon', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ couponCode: couponCode ,currentTotal : currentTotal}),
-  })
-    .then(response => response.json())
-    .then(result => {
-      applyButton.disabled = false;
-      applyButton.textContent = 'Apply';
-
-      if (result.success) {
-        console.log('response');
-        console.log(result.newTotalAmount)
-        showAlert(result.message,'success');
-        document.getElementById('discountAmount').textContent = `₹${result.discount}`;
-        document.getElementById('finalTotal').textContent = `₹${result.newTotalAmount}`;
-
-        // Hide coupon input and show applied coupon
-        document.getElementById('couponInput').classList.add('d-none');
-        const appliedCoupon = document.getElementById('appliedCoupon');
-        appliedCoupon.classList.remove('d-none');
-        document.getElementById('appliedCouponCode').textContent = couponCode;
-      } else {
-        console.log('error')
-        showAlert(result.message,'danger');
-      }
-    })
-    .catch(error => {
-      console.error('Error applying coupon:', error);
-      showAlert('Failed to apply coupon. Please try again.','danger');
-      applyButton.disabled = false;
-      applyButton.textContent = 'Apply';
-    });
-}
-
-function removeCoupon() {
-  fetch('/user/removeCoupon', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(response => response.json())
-    .then(result => {
-      if (result.success) {
-        showAlert(result.message , 'success');
-
-        // Revert UI
-        document.getElementById('couponInput').classList.remove('d-none');
-        document.getElementById('appliedCoupon').classList.add('d-none');
-
-        // Reset totals
-        document.getElementById('totalAmount').textContent = `₹${result.originalTotal}`;
-        document.getElementById('discountAmount').textContent = '₹0';
-        document.getElementById('finalTotal').textContent = `₹${result.originalTotal}`;
-      } else {
-        showAlert(result.message, 'danger');
-      }
-    })
-    .catch(error => {
-      console.error('Error removing coupon:', error);
-      showAlert('Failed to remove coupon. Please try again.','danger');
-    });
-}
-
-
-const cart = JSON.parse(document.getElementById('cartData').textContent);
-const cartId = cart._id;
 
 document.getElementById('btnCheckout').addEventListener('click', async (e) => {
   e.preventDefault();
 
-  const totalAmount = document.getElementById('totalAmount').textContent.trim().replace('₹', '');
-  const deliveryFee = document.getElementById('shippingFee').textContent.trim().replace('₹', '');
-  const discount = document.getElementById('discountAmount').textContent.trim().replace('₹', '');
-  const finalTotal = document.getElementById('finalTotal').textContent.trim().replace('₹', '');
-  const appliedCoupon = document.getElementById('appliedCouponCode').textContent.trim();
-
-  const categoryDiscoundElement = document.getElementById('categoryDiscound');
-  const categoryDiscound = categoryDiscoundElement 
-    ? parseFloat(categoryDiscoundElement.textContent.trim().replace(/,/g, ''), 10) || 0
-    : 0; 
-
+  // Fetch data from the cart summary
+  const totalAmount = parseFloat(
+    document.getElementById('totalAmount').textContent.trim().replace('₹', '').replace(/,/g, '')
+  );
+  const shippingFeeText = document.getElementById('shippingFee').textContent.trim();
+  const deliveryFee = shippingFeeText === 'Free' ? 0 : parseFloat(shippingFeeText.replace('₹', '').replace(/,/g, ''));
+  const finalTotal = parseFloat(
+    document.getElementById('finalTotal').textContent.trim().replace('₹', '').replace(/,/g, '')
+  );
+  const categoryDiscountText = document.getElementById('categoryDiscound');
+  const categoryDiscount = categoryDiscountText
+    ? parseFloat(categoryDiscountText.textContent.trim().replace('₹', '').replace(/,/g, '')) || 0
+    : 0;
+ 
+  // Prepare the checkout data
   const checkOutData = {
-    totalAmount: parseInt(totalAmount.replace(/,/g, ''), 10) || 0,
-    deliveryFee: deliveryFee === 'Free' ? 0 : parseFloat(deliveryFee) || 0,
-    discount: parseFloat(discount) || 0,
-    finalTotal: parseInt(finalTotal.replace(/,/g, ''), 10) || 0,
-    appliedCoupon: appliedCoupon || 'N/A',
-    categoryDiscound, 
-    cartId
+    totalAmount,
+    deliveryFee,
+    finalTotal,
+    categoryDiscount,
   };
 
-  console.log(checkOutData);
+console.log(checkOutData);
+
 
   try {
     const response = await fetch('/user/checkout', {
@@ -206,6 +98,133 @@ document.getElementById('btnCheckout').addEventListener('click', async (e) => {
     alert('An error occurred while sending the order data.');
   }
 });
+
+
+async function getCartData() {
+  try {
+    const response = await fetch('/user/getCartDetails', {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch cart details');
+    }
+
+    const result = await response.json();
+
+    if (result.status) {
+      const userCart = result.data.userCart;
+      renderCart(userCart); 
+    } else {
+      showAlert('Error fetching cart data', 'warning');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showAlert('Internal Server Error', 'danger');
+  }
+}
+
+function renderCart(userCart) {
+  const cartContainer = document.querySelector('.col-md-8'); 
+
+  if (!userCart || userCart.items.length === 0) {
+    cartContainer.innerHTML = `<p>Your cart is empty.</p>`;
+    return;
+  }
+
+  let cartHTML = '';
+
+  userCart.items.forEach((item) => {
+    cartHTML += `
+      <div class="card mb-3">
+        <div class="card-body d-flex align-items-center justify-content-between">
+          <!-- Product Info -->
+          <div class="d-flex align-items-center" style="max-width:250px; width: 100%;">
+            <img src="${item.productId.images[0]}" alt="${item.productId.name}" class="me-3"
+              style="width: 60px; height: 60px; object-fit: contain;">
+            <div>
+              <h6 class="mb-1">${item.productId.name}</h6>
+              <small class="text-muted">Price: ₹${item.price.toLocaleString()}</small>
+            </div>
+          </div>
+          <div>
+            <small class="text-muted">₹${item.totalPrice.toLocaleString()}</small>
+          </div>
+
+          <!-- Quantity Controls -->
+          <div class="input-group input-group-sm w-auto">
+            <button class="btn btn-outline-dark" type="button"
+              onclick="updateQuantity('${item.productId._id}', 'decrement')">-</button>
+            <input type="text" class="form-control text-center no-focus" value="${item.quantity}"
+              style="max-width: 50px;" readonly>
+            <button class="btn btn-outline-dark" type="button"
+              onclick="updateQuantity('${item.productId._id}', 'increment')">+</button>
+          </div>
+
+          <!-- Remove Button -->
+          <button class="btn btn-outline-danger btn-sm"
+            onclick="removeFromCart('${item.productId._id}')">&times;</button>
+        </div>
+      </div>
+    `;
+  });
+
+  cartContainer.innerHTML = cartHTML;
+}
+
+
+// Fetch cart summary data from the server
+async function getCartSummary() {
+  try {
+    const response = await fetch('/user/cartSummary', {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch cart summary');
+    }
+
+    const result = await response.json();
+
+    if (result.status) {
+      const { userCart, discountCategoryOffer, totalCategoryDiscount } = result.data;
+      updateCartSummary(userCart, discountCategoryOffer, totalCategoryDiscount);
+    } else {
+      showAlert(result.message || 'Error fetching cart summary', 'warning');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showAlert('Internal Server Error', 'danger');
+  }
+}
+
+// Update cart summary details in the DOM
+function updateCartSummary(userCart, discountCategoryOffer, totalCategoryDiscount) {
+  const totalAmountElement = document.getElementById('totalAmount');
+  const shippingFeeElement = document.getElementById('shippingFee');
+  const categoryDiscountElement = document.getElementById('categoryDiscound');
+  const finalTotalElement = document.getElementById('finalTotal');
+  const btnCheckout = document.getElementById('btnCheckout');
+
+  // Calculate totals
+  const totalAmount = userCart.totalAmount || 0;
+  const shippingFee = totalAmount > 5000 ? 0 : 40;
+  const finalTotal = totalAmount - totalCategoryDiscount + shippingFee;
+
+  // Update DOM elements
+  totalAmountElement.textContent = `₹${totalAmount.toLocaleString()}`;
+  shippingFeeElement.textContent = shippingFee === 0 ? 'Free' : `₹${shippingFee}`;
+  categoryDiscountElement.textContent = `₹${totalCategoryDiscount.toLocaleString()}`;
+  finalTotalElement.textContent = `₹${finalTotal.toLocaleString()}`;
+
+  // Enable or disable the checkout button
+  if (totalAmount <= 0) {
+    btnCheckout.setAttribute('disabled', 'disabled');
+  } else {
+    btnCheckout.removeAttribute('disabled');
+  }
+}
+
 
 
 

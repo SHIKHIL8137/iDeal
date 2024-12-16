@@ -215,10 +215,6 @@ const checkoutSchema = new mongoose.Schema({
     ref: 'Cart', 
     required: true
   },
-  discount: {
-    type: Number,
-    default: 0,
-  },
   deliveryFee: {
     type: Number,
     required: true,
@@ -227,15 +223,11 @@ const checkoutSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  appliedCoupon: {
-    type: String,
-    default: null,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  categoryDiscound:{
+  categoryDiscount:{
     type:Number,
     default : 0
   }
@@ -412,6 +404,10 @@ const orderSchema = new mongoose.Schema({
   },
   appliedCoupon :{
     type : String
+  },
+  couponDiscount :{
+    type : Number,
+    default : 0
   },
   total_Amt_WOT_Discount :{
     type:Number,
@@ -807,6 +803,10 @@ const pendingOrderSchema = new mongoose.Schema({
   },
   appliedCoupon :{
     type : String
+  },
+  couponDiscount :{
+    type : Number,
+    default : 0
   },
   total_Amt_WOT_Discount :{
     type:Number,

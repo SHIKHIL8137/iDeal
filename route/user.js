@@ -27,18 +27,19 @@ router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
 router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
 router.get('/cart',userMiddleWare.isLoggedIn,userController.loadCart)
-router.get('/checkOut',userMiddleWare.isLoggedIn,userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
+router.get('/checkOut',userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
 router.get('/address',userMiddleWare.isLoggedIn,userController.loadAddress);
 router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,userController.loadOrderConformation);
 router.get('/check-email',userMiddleWare.isLoggedIn,userController.checkEmail);
-router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getCheckoutSummery);
+router.get('/checkoutSummery',userController.getCheckoutSummery);
 router.get('/editAddress/:id',userMiddleWare.isLoggedIn,userController.loadEditAddress);
 router.get('/wishlist',userMiddleWare.isLoggedIn,userController.loadWishlist);
 router.get('/wallet',userMiddleWare.isLoggedIn,userController.loadWallet);
 router.get('/referral',userMiddleWare.isLoggedIn,userController.loadReferral);
 router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
 router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
-
+router.get('/getCartDetails',userController.getCartDetails);
+router.get('/cartSummary',userController.cartSummery);
 
 
 

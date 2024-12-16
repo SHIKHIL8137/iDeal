@@ -109,15 +109,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const response = await fetch('/admin/return-requests');
       const result = await response.json();
       if (result.status) {
-        console.log('1')
         allData = result.data;
-        console.log('2')
         filteredData = allData; 
-        console.log('3')
         renderTable(filteredData);
-        console.log('4')
         setupPaginationControls(filteredData);
-        console.log('5');
       } else {
         tbody.innerHTML =
           '<tr><td colspan="7" class="text-center text-danger">No return orders found.</td></tr>';

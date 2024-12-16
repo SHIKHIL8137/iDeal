@@ -123,3 +123,155 @@ nav{
       font-size: 0.875em; /* Smaller font size */
     }
     
+     /* Sidebar styling */
+#couponSidebar {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100%;
+  background-color: #000;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease-in-out;
+  z-index: 1050;
+  overflow-y: auto;
+}
+
+#couponSidebar.active {
+  right: 0;
+}
+
+/* Sidebar close button */
+#closeSidebarBtn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* Toggle button styling */
+#toggleSidebarBtn {
+  position: fixed;
+  top: 20%;
+  right: 0;
+  transform: translate(50%, -50%);
+  padding: 10px 120px 10px 10px;
+  background-color: #0026ff;
+  color: #fff;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#toggleSidebarBtn:hover {
+  background-color: #0056b3;
+}
+
+#toggleSidebarBtn.animate {
+  animation: floatButton 1.5s infinite;
+}
+
+/* Animation for toggle button */
+@keyframes floatButton {
+  0%, 100% {
+    transform: translate(50%, -50%) translateX(0);
+  }
+  50% {
+    transform: translate(50%, -50%) translateX(-10px);
+  }
+}
+
+/* Coupon list and description */
+.list-group {
+  border-radius: 10px;
+
+}
+
+.list-group-item {
+  border-radius: 15px;
+ border: none;
+  background-color: #222;
+  color: #fff;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.discription {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* Coupon input and copy button */
+.coupon-code-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.coupon-code-container input {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #1c1c1c;
+  color: #fff;
+  text-align: center;
+}
+
+.coupon-code-container input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.coupon-code-container button {
+  background-color: #2b2b2b;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.coupon-code-container button:hover {
+  background-color: #424242c4;
+}
+
+/* Copy badge styling */
+.copy-badge {
+  position: absolute;
+  top: 40px;
+  right: -6px;
+  background-color: #28a745;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.copy-badge.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#closeBtnCoupon{
+  top: 0;
+  right: 0;
+  color: rgba(255, 0, 0, 0.651);
+}
+#closeBtnCoupon:hover{
+background-color: none;
+color: red;
+border: none;
+}
