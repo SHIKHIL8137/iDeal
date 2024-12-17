@@ -20,8 +20,8 @@
       </div>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/user-circle.svg" alt=""></a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/userProfile"><img src="/image/icons/user-circle.svg" alt=""></a></li>
+          <li class="nav-item"><a class="nav-link" href="/user/cart"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
         </ul>
       </div>
     </div>
@@ -63,17 +63,30 @@
                         <p class="mb-0 small" style="color: #bbb;">₹<%= product.total.toLocaleString() %></p>
                       </div>
                     </div>
-                    <!-- Review Button (Only Enabled for Delivered Products) -->
+              
                     <div class="text-center mt-2">
                       <% if (order.status === 'Delivered') { %>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn btn-outline-primary" onclick="writeReview('<%= product.productId._id %>')">Write a Review</button>
+                        <% const returnRequest = returnStatusMap[product.productId.toString()]; %>
+                        <% if (returnRequest) { %>
+                          <p class="<%= returnRequest.adminStatus === 'Rejected' ? 'text-danger' : 'text-success' %>">
+                            Return Request <%= returnRequest.adminStatus %>
+                          </p>
+                          <% if (returnRequest.adminStatus === 'Rejected') { %>
+                            <p class="text-danger">Reason for Rejection: <%= returnRequest.reasonForRejection %></p>
+                          <% } %>
+                        <% } else { %>
+                          <button type="button" data-bs-toggle="modal" data-bs-target="#reviewModal" class="btn btn-outline-primary me-2" onclick="writeReview('<%= product.productId._id %>')">Write a Review</button>
+                          <button type="button" data-bs-toggle="modal" data-bs-target="#returnModal" class="btn btn-outline-success return-btn" data-product-id="<%= product.productId._id %>">Return Order</button>
+                        <% } %>
                       <% } else { %>
                         <button type="button" class="btn btn-outline-secondary" disabled>Write a Review</button>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Return Order</button>
                       <% } %>
                     </div>
                   </div>
                 </div>
               <% }) %>
+                         
               <div class="d-flex justify-content-between pt-2">
                 <p class="fw-bold mb-0" style="color: #fff;">Order Details</p>
                 <p class="mb-0" style="color: #bbb;"><span class="fw-bold me-4">Total</span> ₹<%= order.subtotal.toLocaleString() %></p>
@@ -94,21 +107,8 @@
                 <p class="mb-0" style="color: #bbb;"><span class="fw-bold me-4">Delivery Charges</span> <%= order.deliveryFee !== 40 ? 'Free' : '₹40' %></p>
               </div>
               <!-- Cancel and Return Buttons -->
-              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">
-                <% if (order.status === 'Delivered') { %>
-                  <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#returnModal">Return Order</button>
-                  <% } else if (order.status === 'Returned') { %>
-                    <div>
-                    <p class="<%= returnCancel.adminStatus === 'Rejected' ? 'text-danger' : 'text-success' %>">
-                      Return Request <%= returnCancel.adminStatus %>
-                    </p>
-                    <% if (returnCancel.adminStatus === 'Rejected') { %>
-                      <p class="text-danger">
-                        Reason for Rejection: <%= returnCancel.reasonForRejection %>
-                      </p>
-                    </div>
-                    <% } %>                    
-                <% } else if (order.status !== 'Cancelled') { %>
+              <div class="col-md-4 text-center d-flex justify-content-center align-items-center">                  
+                <%if (order.status === 'Processing') { %>
                   <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">Cancel Order</button>
                 <% } else if (order.status === 'Cancelled') { %>
                   <p class="text-danger">Order has been cencelled</p>

@@ -383,7 +383,11 @@ const orderSchema = new mongoose.Schema({
       total: { 
         type: Number, 
         required: true 
-      } 
+      } ,
+      returnStatus:{
+        type : Boolean,
+        default : false,
+      }
     }
   ],
 
@@ -528,6 +532,13 @@ const returnCancelSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', 
     required: true,
+  },
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product', 
+    required: function () {
+      return this.isReturn; 
+    },
   },
   paymentMethod: {
     type: String,
@@ -785,6 +796,10 @@ const pendingOrderSchema = new mongoose.Schema({
       total: { 
         type: Number, 
         required: true 
+      },
+      returnStatus:{
+        type : Boolean,
+        default : false,
       } 
     }
   ],

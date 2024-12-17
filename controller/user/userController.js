@@ -1052,30 +1052,41 @@ const loadOrderHistory = async (req, res) => {
 
 // load order detailes page
 
+
 const loadOrderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const order = await Orders.findOne({ orderId })
-      .populate('userId', 'username email');
-    
+
+    if (!orderId) {
+      return res.status(400).send('Order ID is required');
+    }
+    const order = await Orders.findOne({ orderId }).populate('userId', 'username email');
+
     if (!order) {
       return res.status(404).send('Order not found');
     }
-    let returnCancel = null;
-    console.log(order.status);
-    if (order.status === 'Returned') {
-      returnCancel = await ReturnCancel.findOne({ orderId: order._id });
-      if (!returnCancel) {
-        return res.status(404).send('Order status not found');
-      }
+
+    let returnStatusMap = {};
+    if (order.status === 'Delivered') {
+      const returnRequests = await ReturnCancel.find({ orderId: order._id });
+
+ 
+      returnRequests.forEach((req) => {
+        if (req.productId) { 
+          returnStatusMap[req.productId.toString()] = req;
+        }
+      });
     }
-    res.status(200).render('user/orderDetails', { returnCancel ,order , title : "Oreder Details"});
+    res.status(200).render('user/orderDetails', {
+      order,
+      returnStatusMap,
+      title: 'Order Details',
+    });
   } catch (error) {
-    console.error(error);
+    console.error('Error loading order details:', error);
     res.status(500).send('Internal Server Error');
   }
 };
-
 
 
 // load cart page
@@ -2029,7 +2040,7 @@ const finalizeOrder = async (userId, products, checkout, res) => {
   for (const item of products) {
     const product = await Product.findById(item.productId);
     if (product.stock < item.quantity) {
-      throw new Error(`Insufficient stock for  ${product.name}`);
+      throw new Error(`Insufficient stock for${product.name}`);
     }
     product.stock -= item.quantity;
     await product.save();
@@ -2172,7 +2183,6 @@ const loadWishlist = async (req, res) => {
 
 // load wallet 
 
-
 const loadWallet = async (req, res) => {
   try {
     const email = req.session.isLoggedEmail;
@@ -2182,8 +2192,11 @@ const loadWallet = async (req, res) => {
       return res.status(404).send('User not found');
     }
 
-    const wallet = await Wallet.findOne({ userId: user._id });
-    const transactions = wallet ? wallet.transactions : [];
+    const wallet = await Wallet.findOne({ userId: user._id }).lean();
+
+    const transactions = wallet
+      ? wallet.transactions.sort((a, b) => new Date(b.date) - new Date(a.date))
+      : [];
 
     const formattedTransactions = transactions.map((transaction) => ({
       id: transaction.transactionId,
@@ -2191,7 +2204,7 @@ const loadWallet = async (req, res) => {
       withdrawal: transaction.type === 'debit' ? `₹${transaction.amount}` : '-',
       deposit: transaction.type === 'credit' ? `₹${transaction.amount}` : '-',
     }));
-    console.log(formattedTransactions)
+
     res.status(200).render('user/wallet', {
       title: 'Wallet',
       balance: wallet ? wallet.balance : 0,
@@ -2378,31 +2391,36 @@ function generateTransactionId() {
 const returnOrder = async(req,res)=>{
   try {
     const {reason,address} = req.body;
-    const orderId = req.params.orderId;
-    if (!reason || !address || !orderId) {
+    const productId = req.query.productId
+    const orderId = req.query.orderId;
+    console.log(productId,orderId);
+    if (!reason || !address || !orderId || !productId) {
       return res.status(400).json({
         status: false,
         message: 'All fields are required (reason, address, orderId, userId)',
       });
     }
     const order = await Orders.findById(orderId);
+     
+    const product = order.products.find(p => p.productId.toString() === productId);
 
     if(!order) return res.status(400).json({status:false,message:'Order Not Find'})
 
     const returnOrderData = new ReturnCancel({
       orderId:order._id,
       userId : order.userId,
+      productId : productId,
       reason,
       paymentMethod : order.paymentMethod,
       paymentStatus : order.paymentStatus,
       isReturn: true, 
       pickupStatus: 'Not Scheduled', 
-      refundAmount : order.totalAmount,
+      refundAmount : product.total,
       pickupAddress: address, 
       adminStatus : 'Pending',
     });
     await returnOrderData.save();
-    order.status = 'Returned';
+    product.returnStatus = true;
     await order.save();
     res.status(201).json({
       status: true,

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <tr>
         <td>${request.orderId.orderId}</td>
         <td>${request.userId ? request.userId.email : 'N/A'}</td>
+         <td>${request.productId ? request.productId.name : 'N/A'}</td>
         <td class="reason-cell" data-bs-toggle="tooltip" data-bs-placement="top" title="Click to view details">
           <a href="/admin/returnOrderDetails/${request._id}" class="text-decoration-none text-black">${request.reason}</a>
         </td>

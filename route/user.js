@@ -69,7 +69,7 @@ router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,userController.ca
 router.post('/expireOrder/:orderId',userMiddleWare.isLoggedIn,userController.changeOrderConformationStatus);
 router.post('/addToWishlist/:id',userMiddleWare.isLoggedIn,userController.addtoWishlist);
 router.post('/addToWallet',userMiddleWare.isLoggedIn,userController.addMoneyToWallet);
-router.post('/return-order/:orderId',userMiddleWare.isLoggedIn,userController.returnOrder);
+router.post('/return-order/',userMiddleWare.isLoggedIn,userController.returnOrder);
 router.post('/verify-payment/:orderId',userMiddleWare.isLoggedIn,userController.verifyPayment);
 
 

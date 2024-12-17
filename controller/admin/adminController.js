@@ -1080,6 +1080,7 @@ const getReturnData = async (req, res) => {
     const returnData = await ReturnCancel.find({ isReturn: true })
   .populate('userId', 'email') 
   .populate('orderId', 'orderId totalAmount')
+  .populate('productId', 'name')
   .sort({ createdAt: -1 }); 
 
     if (!returnData.length) {
@@ -1228,7 +1229,7 @@ const getreturnOrderDetails = async (req, res) => {
   try {
       const returnid = req.params.returnId;
       console.log(returnid);
-      const returnOrder = await ReturnCancel.findById(returnid).populate('userId', 'firstName lastName email phone');
+      const returnOrder = await ReturnCancel.findById(returnid).populate('userId', 'firstName lastName email phone').populate('productId','name');
 
       if (!returnOrder) {
           return res.status(404).send('Return Order Not Found');

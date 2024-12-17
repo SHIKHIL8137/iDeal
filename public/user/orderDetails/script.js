@@ -1,5 +1,4 @@
 function writeReview(productId) {
-
   window.currentProductId = productId;
 }
 
@@ -52,6 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+let productId;
+document.querySelectorAll('.return-btn').forEach(button => {
+  button.addEventListener('click', (event) => {
+     productId = event.currentTarget.getAttribute('data-product-id');
+    console.log('Product ID:', productId);
+  });
+});
+
+
 
 
   document.querySelectorAll('.cancel-order-btn').forEach(button => {
@@ -100,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
 
   document.querySelectorAll('.return-order-btn').forEach(button => {
     button.addEventListener('click', (event) => {
@@ -207,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       };
   
-      sendReturnRequest(orderId, formData);
+      sendReturnRequest(orderId, formData );
     });
   });
   
@@ -216,13 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function sendReturnRequest(orderId, formData) {
     try {
-      // Show confirmation dialog before proceeding
       const userConfirmed = confirm('Are you sure you want to submit the return request?');
       if (!userConfirmed) {
-        return; // Exit if the user cancels the action
+        return; 
       }
   
-      const response = await fetch(`/user/return-order/${orderId}`, {
+      const response = await fetch(`/user/return-order?orderId=${orderId}&productId=${productId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -233,10 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const result = await response.json();
   
       if (result.status) {
-        // Hide the return modal (Bootstrap-specific example)
         const returnModal = document.getElementById('returnModal');
         const modalInstance = bootstrap.Modal.getInstance(returnModal);
-        modalInstance.hide(); // Hide the modal
+        modalInstance.hide(); 
         
         showAlert('Return request submitted successfully.', 'success');
   
