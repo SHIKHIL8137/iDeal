@@ -320,7 +320,6 @@ async function applyFilters() {
     if (!response.ok) throw new Error("Failed to fetch filtered products");
 
     const products = await response.json();
-    console.log(products);
 
     const productList = document.getElementById("product-list");
     productList.innerHTML = ""; 

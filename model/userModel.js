@@ -252,7 +252,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
      type: String, 
-     enum: ['Processing','Delivered', 'Cancelled','Returned'], 
+     enum: ['Processing','Delivered', 'Cancelled'], 
      default: 'Pending' },
   paymentStatus: { 
     type: String, 
@@ -536,6 +536,12 @@ const returnCancelSchema = new mongoose.Schema({
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product', 
+    required: function () {
+      return this.isReturn; 
+    },
+  },
+  productQauntity : {
+    type: Number,
     required: function () {
       return this.isReturn; 
     },

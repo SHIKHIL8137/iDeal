@@ -1,4 +1,4 @@
-const {Product,Category,Admin,Coupon, Offer} = require('../../model/adminModel');
+const {Product,Category,Admin,Coupon, Offer,Transaction} = require('../../model/adminModel');
 const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
@@ -825,6 +825,15 @@ console.log(req.body);
   }
 }
 
+//function to generate unique transaction id 12 digits
+function generateTransactionId() {
+  const timestamp = Date.now(); 
+  const randomNum = Math.floor(Math.random() * 1000); 
+  const transactionId = `${timestamp.toString().slice(-9)}${randomNum.toString().padStart(3, '0')}`;
+
+  return transactionId;
+}
+
 
 //update the order status
 
@@ -837,7 +846,7 @@ const updateOrderStatus = async (req, res) => {
   console.log('Received new status:', status);
 
   try {
-    const order = await Orders.findById(orderId).populate('products.productId'); 
+    const order = await Orders.findById(orderId).populate('products.productId').populate('userId','email'); 
 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
@@ -863,8 +872,24 @@ const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
+    if(status === 'Delivered')
+    {
+      order.paymentStatus = 'Paid';
+    }
     const updatedOrder = await order.save(); 
-
+    if(status === 'Delivered'){
+      const transactionId = generateTransactionId();
+      const newTransaction = new Transaction({
+       userId : order.userId,
+       customer : order.userId.email,
+       transactionType : 'credit',
+       amount : order.totalAmount,
+       transactionId,
+       paymentMethod : order.paymentMethod,    
+      })
+  
+      await newTransaction.save();
+    }   
     res.status(200).json({ success: true, order: updatedOrder });
   } catch (error) {
     console.error('Error updating order status:', error);
@@ -1141,8 +1166,15 @@ const approveReturn = async (req, res) => {
     });
 
     await userWallet.save();
-
-
+    const newTransaction = new Transaction({
+      userId : user._id,
+      customer : user.email,
+      transactionType : 'debit',
+      amount : returnCancel.refundAmount,
+      transactionId : trxId,
+      paymentMethod : returnCancel.paymentMethod,    
+     })
+     await newTransaction.save();
     res.status(200).json({ status: true, message: "Return request approved", data: returnCancel });
   } catch (error) {
     console.error("Error approving return:", error);
@@ -1813,6 +1845,150 @@ const reportExcel = async (req,res)=>{
 
 }
 
+// load the transction page 
+
+const loadTransctions = async(req,res)=>{
+  try{
+    const username=req.session.username;
+    res.status(200).render('admin/transaction',{
+  username,
+  title:'Transaction'
+});
+
+  }catch(error){
+    res.status(500).send('Internal server Error');
+  }
+}
+
+
+// get transaction table
+
+const getTransactionDetails = async(req,res)=>{
+  try {
+    const transactions = await Transaction.find().sort({createdAt : -1}); 
+    res.status(200).json(transactions); 
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+
+
+// get the top Saling product
+
+const getTopSellingProduct = async(req,res)=>{
+  try {
+    const salesData = await Orders.aggregate([
+     {$unwind : "$products"},
+     {
+      $group: {
+      _id: "$products.productId", 
+      totalSold: { $sum: "$products.quantity" },
+      productName: { $first: "$products.productName" }, 
+    }
+  }
+    ]);
+
+
+    const returnData = await ReturnCancel.aggregate([
+      {
+        $group: {
+          _id: "$productId", 
+          totalReturned: { $sum: "$productQauntity" } 
+        }
+      }
+    ]);
+
+    const actualSales = salesData.map(sale => {
+      const returnInfo = returnData.find(returned => String(returned._id) === String(sale._id)) || { totalReturned: 0 }; // Find matching product in returnData
+      return {
+        productId: sale._id,
+        productName: sale.productName,
+        actualQuantity: sale.totalSold - returnInfo.totalReturned 
+      };
+    });
+
+    const top5Products =  actualSales.sort((a, b) => b.actualQuantity - a.actualQuantity).slice(0,5);
+    
+ res.status(200).json({message :"Data featch successFull" ,top5Products});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message : 'Internal Server Error'});
+  }
+}
+
+// get the most selling category
+
+const getMostSoldCategories = async (req, res) => {
+  try {
+    // Aggregate sold products data
+    const soldCategories = await Orders.aggregate([
+      { $unwind: "$products" }, // Deconstruct the products array
+      {
+        $lookup: {
+          from: "products", // The name of the Product collection
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
+      {
+        $lookup: {
+          from: "categories", // The name of the Category collection
+          localField: "productDetails.category",
+          foreignField: "_id",
+          as: "categoryDetails",
+        },
+      },
+      { $unwind: "$categoryDetails" }, // Deconstruct the categoryDetails array
+      {
+        $group: {
+          _id: "$categoryDetails._id", // Group by category ID
+          categoryName: { $first: "$categoryDetails.name" }, // Category name
+          totalSold: { $sum: "$products.quantity" }, // Total quantity sold
+        },
+      },
+    ]);
+
+    // Aggregate return data to get returned products
+    const returnedCategories = await ReturnCancel.aggregate([
+      {
+        $group: {
+          _id: "$productId", // Group by product ID
+          totalReturned: { $sum: "$productQauntity" }, // Total quantity returned
+        },
+      },
+    ]);
+
+    // Merge sold and returned data to calculate actual sales
+    const finalData = soldCategories.map(sale => {
+      const returnInfo = returnedCategories.find(returned => String(returned._id) === String(sale._id)) || { totalReturned: 0 };
+      return {
+        categoryId: sale._id,
+        categoryName: sale.categoryName,
+        actualSold: sale.totalSold - returnInfo.totalReturned, // Subtract returned products
+      };
+    });
+
+    // Sort by actual sold quantity
+    const sortedCategories = finalData.sort((a, b) => b.actualSold - a.actualSold).slice(0, 5); // Get top 5
+
+    console.log(sortedCategories)
+
+    res.status(200).json({
+      message: "Successfully fetched sold categories considering returns",
+      data: sortedCategories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
 
 module.exports={
   loadLogin,
@@ -1871,5 +2047,9 @@ module.exports={
  getSalesTable,
  getFilteredSalesTable,
  reportPDF,
- reportExcel
+ reportExcel,
+ loadTransctions,
+ getTransactionDetails,
+ getTopSellingProduct,
+ getMostSoldCategories
 }

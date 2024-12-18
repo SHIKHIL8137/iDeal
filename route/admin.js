@@ -21,7 +21,7 @@ router.get('/addCustomer',adminAuth.isLoggedIn,adminController.loadAddCustomer);
 router.get('/editCustomer/:id',adminAuth.isLoggedIn,adminController.loadEditCustomer)
 router.get('/deleteProduct/:id',adminAuth.isLoggedIn ,adminController.deleteProduct);
 router.get('/deleteCategory/:id',adminAuth.isLoggedIn ,adminController.deleteCategory);
-router.get('/dashboard',adminAuth.isLoggedIn,adminController.loadDashboard);
+router.get('/dashboard',adminController.loadDashboard);
 router.get('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
@@ -44,6 +44,10 @@ router.get('/getSalesTable',adminAuth.isLoggedIn ,adminController.getSalesTable)
 router.get('/getFillterdSalesTable',adminAuth.isLoggedIn ,adminController.getFilteredSalesTable);
 router.get('/downloadSalesPDF',adminAuth.isLoggedIn ,adminController.reportPDF);
 router.get('/downloadSalesEXCEl',adminAuth.isLoggedIn ,adminController.reportExcel);
+router.get('/transaction',adminController.loadTransctions);
+router.get('/transactionsTable',adminController.getTransactionDetails);
+router.get('/getTopSellingProduct',adminController.getTopSellingProduct);
+router.get('/getMostSoldCategories',adminController.getMostSoldCategories);
 
 
 

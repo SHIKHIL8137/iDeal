@@ -2,7 +2,7 @@ const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCanc
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
-const { Product, Category ,Review,Coupon, Offer} = require('../../model/adminModel');
+const { Product, Category ,Review,Coupon, Offer, Transaction} = require('../../model/adminModel');
 require('dotenv').config()
 const crypto = require('crypto');
 const mongoose = require('mongoose');
@@ -1846,30 +1846,25 @@ const submitOrder = async (req, res) => {
     if (!deliveryAddress || !deliveryAddress._id) {
       return res.status(400).json({ message: 'Invalid delivery address' });
     }
-console.log('1');
     const deliveryAddressData = await Address.findById(deliveryAddress._id);
     if (!deliveryAddressData) {
       return res.status(400).json({ message: 'Delivery address not found' });
     }
-    console.log('2');
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    console.log('3');
     const userId = user._id;
     const checkout = await CheckOut.findOne({ userId });
     if (!checkout) {
       return res.status(400).json({ message: 'Checkout data not found' });
     }
-    console.log('4');
     const cart = await Cart.findOne({ userId });
     if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
-    console.log('5');
 
     // Verify applied coupon
     if (couponCode !== 'N/A') {
@@ -1882,14 +1877,12 @@ console.log('1');
         return res.status(200).json({ message: 'Invalid or inactive coupon.' });
       }
     }
-    console.log('6');
     const productIds = cart.items.map((item) => item.productId);
     const productDetails = await Product.find({ _id: { $in: productIds } });
     const productMap = productDetails.reduce((map, product) => {
       map[product._id.toString()] = product;
       return map;
     }, {});
-    console.log('7');
     const products = cart.items.map((item) => {
       const product = productMap[item.productId.toString()];
       if (!product) {
@@ -1906,10 +1899,16 @@ console.log('1');
         total: item.quantity * product.Dprice,
       };
     });
-    console.log('8');
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
+      if (product.stock < item.quantity) {
+        return res.status(400).json({ message: `Insufficient stock for${product.name}` });
+      }
+    }
     const discount = couponDiscount + checkout.categoryDiscount || 0;
     const orderId = `ORD${Date.now()}`;
     let razorPayOrderId;
+
 
     if (paymentMethod === 'razorPay') {
       const razorPayOrder = await razorpayInstance.orders.create({
@@ -1948,7 +1947,6 @@ console.log('1');
         razorPayOrderId,
       });
     }
-    console.log('9');
     const order = new Orders({
       orderId,
       userId,
@@ -2001,7 +1999,7 @@ const verifyPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Payment verification failed!' });
     }
 
-    const pendingOrder = await PendingOrder.findOne({ orderId });
+    const pendingOrder = await PendingOrder.findOne({ orderId }).populate('userId','email');
     if (!pendingOrder) {
       return res.status(404).json({ success: false, message: 'Pending order not found!' });
     }
@@ -2013,7 +2011,6 @@ const verifyPayment = async (req, res) => {
     });
 
 
-
     try {
       await order.save();
       await finalizeOrder(pendingOrder.userId, pendingOrder.products, { totalAmount: pendingOrder.subtotal });
@@ -2022,7 +2019,16 @@ const verifyPayment = async (req, res) => {
       await Orders.deleteOne({ orderId });
       return res.status(400).json({ success: false, message: finalizeError.message });
     }
-
+    const transactionId = generateTransactionId();
+    const newTransaction = new Transaction({
+     userId : pendingOrder.userId,
+     customer : pendingOrder.userId.email,
+     transactionType : 'credit',
+     amount : pendingOrder.totalAmount,
+     transactionId,
+     paymentMethod : pendingOrder.paymentMethod,    
+    })
+    await newTransaction.save();
     await PendingOrder.deleteOne({ orderId });
 
     res.json({ success: true, message: 'Payment verified successfully!', orderId });
@@ -2410,6 +2416,7 @@ const returnOrder = async(req,res)=>{
       orderId:order._id,
       userId : order.userId,
       productId : productId,
+      productQauntity : product.quantity,
       reason,
       paymentMethod : order.paymentMethod,
       paymentStatus : order.paymentStatus,
