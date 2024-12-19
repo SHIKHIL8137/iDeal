@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${element.isActive ? 'Active' : 'Inactive'}
               </span>
             </td>
-            <td>${new Date(element.createdAt).toLocaleDateString()}</td>
+            <td>${new Date(element.validTill).toLocaleDateString()}</td>
             <td>
               <button class="btn btn-outline-success" onclick="editOffer('${element._id}')">Edit</button>
               <button class="btn btn-outline-danger" onclick="showDeleteModal('${element._id}')">Delete</button>

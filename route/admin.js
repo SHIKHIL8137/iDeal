@@ -48,6 +48,10 @@ router.get('/transaction',adminController.loadTransctions);
 router.get('/transactionsTable',adminController.getTransactionDetails);
 router.get('/getTopSellingProduct',adminController.getTopSellingProduct);
 router.get('/getMostSoldCategories',adminController.getMostSoldCategories);
+router.get('/getDailyRevenue',adminController.getDailyRevenue);
+router.get('/getUserCount',adminController.getUserCount);
+router.get('/getTodaySales',adminController.getSalesCount);
+router.get('/getChartData',adminController.getChartData);
 
 
 

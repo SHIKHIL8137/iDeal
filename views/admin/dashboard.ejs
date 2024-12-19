@@ -108,14 +108,14 @@
           <div class="col-md-4">
             <div class="card p-4">
               <div
-                class="circle"
+                class="circle circle-todaySales"
                 style="--value: 70; --color: #3b82f6"
               >
                 <span>70%</span>
               </div>
               <h5>Today's Sales</h5>
-              <h3>₹100,999</h3>
-              <p>We have sold 123 items</p>
+              <h3 id="totalAmount">₹100,999</h3>
+              <p>We have sold <span id="itemCount"></span> items</p>
             </div>
           </div>
           <!-- Today's Revenue -->
@@ -123,12 +123,13 @@
             <div class="card p-4">
               <div
                 class="circle"
-                style="--value: 40; --color: #22c55e"
+                style="--value: 0; --color: #22c55e"
+                id="revenue-circle"
               >
-                <span>40%</span>
+                <span id="revenue-percentage">0%</span>
               </div>
               <h5>Today's Revenue</h5>
-              <h3>₹30,000</h3>
+              <h3 id="revenue-amount">₹0</h3>
               <p>Profit made so far today</p>
             </div>
           </div>
@@ -136,14 +137,14 @@
           <div class="col-md-4">
             <div class="card p-4">
               <div
-                class="circle"
+                class="circle circle-userCount"
                 style="--value: 10; --color: #f59e0b"
               >
                 <span>90%</span>
               </div>
               <h5>Users Count</h5>
-              <h3>20,390</h3>
-              <p>Total users signed up to ex.iphones</p>
+              <h3 id="userCount">20,390</h3>
+              <p>Total users signed up to iDeal</p>
             </div>
           </div>
         </div>
@@ -155,7 +156,6 @@
         <div class="chart-container">
           <div class="revenue-title">
             <h3>Total Revenue</h3>
-            <span>₹50,23780 ↑ 5% than last month</span>
           </div>
           <canvas id="revenueChart"></canvas>
         </div>
@@ -167,30 +167,6 @@
           </div>
           <h4 class="mt-4">Most Sold Category</h4>
           <div class="progress-containerCategory">
-            <div class="item">
-              <span>iPhone</span><span>70%</span>
-            </div>
-            <div class="progress-bar"><span style="width: 70%;"></span></div>
-    
-            <div class="item">
-              <span>iMac</span><span>40%</span>
-            </div>
-            <div class="progress-bar"><span style="width: 40%;"></span></div>
-    
-            <div class="item">
-              <span>Macbook</span><span>60%</span>
-            </div>
-            <div class="progress-bar"><span style="width: 60%;"></span></div>
-    
-            <div class="item">
-              <span>Apple Watch</span><span>80%</span>
-            </div>
-            <div class="progress-bar"><span style="width: 80%;"></span></div>
-    
-            <div class="item">
-              <span>Airpods</span><span>20%</span>
-            </div>
-            <div class="progress-bar"><span style="width: 20%;"></span></div>
           </div>
         </div>
       </div>

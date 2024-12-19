@@ -1922,60 +1922,56 @@ const getTopSellingProduct = async(req,res)=>{
 
 const getMostSoldCategories = async (req, res) => {
   try {
-    // Aggregate sold products data
     const soldCategories = await Orders.aggregate([
-      { $unwind: "$products" }, // Deconstruct the products array
+      { $unwind: "$products" }, 
       {
         $lookup: {
-          from: "products", // The name of the Product collection
+          from: "products",
           localField: "products.productId",
           foreignField: "_id",
           as: "productDetails",
         },
       },
-      { $unwind: "$productDetails" }, // Deconstruct the productDetails array
+      { $unwind: "$productDetails" },
       {
         $lookup: {
-          from: "categories", // The name of the Category collection
+          from: "categories", 
           localField: "productDetails.category",
           foreignField: "_id",
           as: "categoryDetails",
         },
       },
-      { $unwind: "$categoryDetails" }, // Deconstruct the categoryDetails array
+      { $unwind: "$categoryDetails" }, 
       {
         $group: {
-          _id: "$categoryDetails._id", // Group by category ID
-          categoryName: { $first: "$categoryDetails.name" }, // Category name
-          totalSold: { $sum: "$products.quantity" }, // Total quantity sold
+          _id: "$categoryDetails._id",
+          categoryName: { $first: "$categoryDetails.name" }, 
+          totalSold: { $sum: "$products.quantity" }, 
         },
       },
     ]);
 
-    // Aggregate return data to get returned products
+
     const returnedCategories = await ReturnCancel.aggregate([
       {
         $group: {
-          _id: "$productId", // Group by product ID
-          totalReturned: { $sum: "$productQauntity" }, // Total quantity returned
+          _id: "$productId",
+          totalReturned: { $sum: "$productQauntity" },
         },
       },
     ]);
 
-    // Merge sold and returned data to calculate actual sales
     const finalData = soldCategories.map(sale => {
       const returnInfo = returnedCategories.find(returned => String(returned._id) === String(sale._id)) || { totalReturned: 0 };
       return {
         categoryId: sale._id,
         categoryName: sale.categoryName,
-        actualSold: sale.totalSold - returnInfo.totalReturned, // Subtract returned products
+        actualSold: sale.totalSold - returnInfo.totalReturned, 
       };
     });
 
-    // Sort by actual sold quantity
-    const sortedCategories = finalData.sort((a, b) => b.actualSold - a.actualSold).slice(0, 5); // Get top 5
 
-    console.log(sortedCategories)
+    const sortedCategories = finalData.sort((a, b) => b.actualSold - a.actualSold).slice(0, 5);
 
     res.status(200).json({
       message: "Successfully fetched sold categories considering returns",
@@ -1984,6 +1980,194 @@ const getMostSoldCategories = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// get dashboard revenu per day
+
+
+const getDailyRevenue = async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+    const todaysOrders = await Orders.find({
+      orderDate: { $gte: startOfDay, $lte: endOfDay },status: "Delivered"
+    }).populate('products.productId');
+
+
+    const totalRevenue = todaysOrders.reduce((sum, order) => {
+      const orderRevenue = order.products.reduce((productSum, product) => {
+        const revenueFromProduct = (product.price * product.quantity) * 0.1;
+        return productSum + revenueFromProduct;
+      }, 0);
+      return sum + orderRevenue;
+    }, 0);
+
+
+    res.status(200).json({
+      success: true,
+      message: "Today's revenue calculated successfully.",
+      totalRevenue: `₹${totalRevenue.toFixed(2)}`,
+    });
+  } catch (error) {
+    console.error('Error calculating today\'s revenue:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error calculating today\'s revenue.',
+      error: error.message,
+    });
+  }
+};
+
+// get the user count
+
+const getUserCount = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments(); 
+    res.status(200).json({
+      success: true,
+      message: "User count fetched successfully.",
+      userCount,
+    });
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user count.',
+      error: error.message,
+    });
+  }
+};
+
+
+// get the todays sales count
+
+const getSalesCount = async (req, res) => {
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Fetch today's orders
+    const todaysOrders = await Orders.find({
+      orderDate: { $gte: startOfDay, $lte: endOfDay },
+      status: "Delivered", // Filter by order status
+    });
+
+    console.log('Today\'s Orders:', todaysOrders);
+
+    // Calculate total sales count and total amount
+    const { totalSalesCount, totalAmount } = todaysOrders.reduce(
+      (acc, order) => {
+        if (order.products && Array.isArray(order.products)) {
+          // Calculate total sales count
+          const orderQuantity = order.products.reduce(
+            (sum, product) => sum + product.quantity,
+            0
+          );
+          acc.totalSalesCount += orderQuantity;
+        }
+
+        // Add totalAmount from the order
+        acc.totalAmount += order.totalAmount;
+
+        return acc;
+      },
+      { totalSalesCount: 0, totalAmount: 0 }
+    );
+
+    console.log('Total Sales Count:', totalSalesCount);
+    console.log('Total Amount:', totalAmount);
+
+    res.status(200).json({
+      success: true,
+      message: "Sales data fetched successfully.",
+      totalSalesCount,
+      totalAmount,
+    });
+  } catch (error) {
+    console.error('Error fetching sales data:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching sales data.',
+      error: error.message,
+    });
+  }
+};
+
+// get the chart data
+
+const getChartData = async (req, res) => {
+  try {
+    const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+    const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
+
+    // Aggregate monthly revenue
+    const revenueData = await Orders.aggregate([
+      {
+        $match: {
+          status: "Delivered", // Only consider delivered orders
+          orderDate: { $gte: startOfYear, $lte: endOfYear },
+        },
+      },
+      {
+        $unwind: "$products", // Unwind the products array
+      },
+      {
+        $addFields: {
+          // Set default values for price and quantity if missing or null
+          "products.price": { $ifNull: ["$products.price", 0] },
+          "products.quantity": { $ifNull: ["$products.quantity", 0] },
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$orderDate" }, // Group by month
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$products.price", "$products.quantity", 0.1], // 10% of product price
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          month: "$_id",
+          totalRevenue: { $round: ["$totalRevenue", 2] }, // Round to 2 decimal places
+          _id: 0,
+        },
+      },
+      {
+        $sort: { month: 1 }, // Sort by month in ascending order
+      },
+    ]);
+
+    // Initialize an array with 12 months of revenue data (default to 0)
+    const monthlyRevenue = Array(12).fill(0);
+
+    // Populate the monthlyRevenue array with the data from the aggregation
+    revenueData.forEach((item) => {
+      if (item.month >= 1 && item.month <= 12) {
+        monthlyRevenue[item.month - 1] = item.totalRevenue;
+      }
+    });
+
+    console.log("Monthly Revenue:", monthlyRevenue);
+
+    res.status(200).json({
+      success: true,
+      data: monthlyRevenue,
+    });
+  } catch (error) {
+    console.error("Error fetching revenue data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching revenue data.",
+      error: error.message,
+    });
   }
 };
 
@@ -2051,5 +2235,9 @@ module.exports={
  loadTransctions,
  getTransactionDetails,
  getTopSellingProduct,
- getMostSoldCategories
+ getMostSoldCategories,
+ getDailyRevenue,
+ getUserCount,
+ getSalesCount,
+ getChartData
 }

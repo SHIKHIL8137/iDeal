@@ -1,31 +1,4 @@
-const ctx = document.getElementById("revenueChart").getContext("2d");
-const revenueChart = new Chart(ctx, {
-  type: "bar",
-  data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
-    datasets: [
-      {
-        label: "Profit",
-        data: [100, 80, 90, 95, 85, 60, 70, 75, 85],
-        backgroundColor: "#3b82f6", // Blue color
-      },
-      {
-        label: "Loss",
-        data: [60, 50, 30, 40, 70, 30, 40, 60, 50],
-        backgroundColor: "#d1d5db", // Light gray color
-      },
-    ],
-  },
-  options: {
-    responsive: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { callback: (value) => value + "k" },
-      },
-    },
-  },
-});
+
 
 
 
@@ -46,13 +19,13 @@ async function fetchTopSellingProducts() {
 
 
 function renderProgressBars(products) {
+
   const container = document.querySelector(".progress-container");
   container.innerHTML = ""; // Clear existing content
   products.forEach(product => {
     const item = document.createElement("div");
     item.className = "item";
-    item.innerHTML = `<span>${product.productName}</span><span>${Math.min(product.actualQuantity, 100)}%</span>`;
-    
+    item.innerHTML = `<span>${product.productName}</span><span>${Math.min(product.actualQuantity, 100)}%</span>`;  
     const progressBar = document.createElement("div");
     progressBar.className = "progress-bar";
     const span = document.createElement("span");
@@ -79,11 +52,11 @@ fetchTopSellingProducts();
 
 async function fetchMostSoldCategories() {
   try {
-    const response = await fetch("/admin/getMostSoldCategories"); // Adjust the URL if needed
+    const response = await fetch("/admin/getMostSoldCategories"); 
     const data = await response.json();
 
     if (response.ok) {
-      renderTopSellingCategories(data.data); // Use the 'data' field from the response
+      renderTopSellingCategories(data.data); 
     } else {
       renderErrorMessage(data.message || "An error occurred while fetching data. Please refresh the page.");
     }
@@ -95,30 +68,25 @@ async function fetchMostSoldCategories() {
 
 function renderTopSellingCategories(categories) {
   const container = document.querySelector(".progress-containerCategory");
-  container.innerHTML = ""; // Clear existing content
+  container.innerHTML = "";
 
-  // Check if categories data is empty
+
   if (categories.length === 0) {
     container.innerHTML = "<p>No top-selling categories available.</p>";
     return;
   }
 
   categories.forEach((category) => {
-    // Calculate percentage of actual sales based on the highest sold category
-    const percentage = (category.actualSold / categories[0].actualSold) * 100;
 
-    // Create category items
     const categoryItem = document.createElement("div");
     categoryItem.classList.add("item");
-    categoryItem.innerHTML = `<span>${category.categoryName}</span><span>${category.actualSold}</span>`; // Show actualSold as the number
-
-    // Create progress bar
+    categoryItem.innerHTML = `<span>${category.categoryName}</span><span>${Math.min(category.actualSold, 100)}%</span>`; 
     const progressBar = document.createElement("div");
     progressBar.classList.add("progress-bar");
-    // Assuming the highest actualSold is 100%
-    progressBar.innerHTML = `<span style="width: ${percentage}%;"></span>`;
 
-    // Append to container
+    progressBar.innerHTML = `<span style="width: ${Math.min(category.actualSold, 100)}%;"></span>`;
+
+
     container.appendChild(categoryItem);
     container.appendChild(progressBar);
   });
@@ -129,8 +97,118 @@ function renderErrorMessage(message) {
   container.innerHTML = `<p class="error-message">${message}</p>`;
 }
 
-// Fetch the most sold categories when the page loads
+
 fetchMostSoldCategories();
+
+
+
+async function fetchTodaysRevenue() {
+  try {
+    const response = await fetch('/admin/getDailyRevenue');
+    const data = await response.json();
+    console.log(data);
+    if (data.success) {
+      const totalRevenue = parseFloat(data.totalRevenue.replace('₹', '')); 
+      const revenuePercentage = Math.min((totalRevenue / 100000) * 100, 100); 
+
+      document.getElementById('revenue-circle').style.setProperty('--value', revenuePercentage);
+      document.getElementById('revenue-percentage').textContent = `${Math.round(revenuePercentage)}%`;
+      document.getElementById('revenue-amount').textContent = `₹${totalRevenue.toLocaleString()}`;
+    } else {
+      console.error(data.message);
+    }
+  } catch (error) {
+    console.error('Error fetching today\'s revenue:', error);
+  }
+}
+
+
+fetchTodaysRevenue();
+
+
+async function featchUserCount(){
+  try {
+    const response = await fetch('/admin/getUserCount');
+    const data = await response.json();
+    if(data.success){
+      const countPercentage = Math.min((data.userCount / 100) * 100, 100);
+      console.log(countPercentage);
+      document.getElementById('userCount').innerHTML = data.userCount;
+      document.querySelector('.circle-userCount').style.setProperty('--value',countPercentage);
+    }else {
+      document.getElementById('userCount').innerHTML = 'Error to feaching the data';
+    }
+  } catch (error) {
+    document.getElementById('userCount').innerHTML = 'Error to feaching the data';
+  }
+}
+
+
+
+featchUserCount();
+
+
+
+async function feachSales(){
+  try{
+    const response = await fetch('/admin/getTodaySales');
+    const data = await response.json();
+    if(data.success){
+      const countPercentage = Math.min((data.totalAmount / 1000000) * 100, 100);
+      document.getElementById('totalAmount').innerHTML = data.totalAmount;
+      document.getElementById('itemCount').innerHTML = data.totalSalesCount;
+      document.querySelector('.circle-todaySales').style.setProperty('--value',countPercentage);
+    }else {
+      document.getElementById('itemCount').innerHTML = 'Error to feaching the data';
+    }
+  }catch(error){
+    document.getElementById('itemCount').innerHTML = 'Error to feaching the data';
+  }
+}
+
+
+feachSales();
+
+
+async function renderRevenueChart() {
+  try {
+
+    const response = await fetch("/admin/getChartData");
+    const data = await response.json();
+
+    if (data.success) {
+      const ctx = document.getElementById("revenueChart").getContext("2d");
+      const revenueChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          datasets: [
+            {
+              label: "Revenue",
+              data: data.data, 
+              backgroundColor: "#3b82f6",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { callback: (value) => value + "k" },
+            },
+          },
+        },
+      });
+    } else {
+      console.error("Error fetching revenue data:", data.message);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+renderRevenueChart();
 
 
 
@@ -145,7 +223,6 @@ setTimeout(() => {
   }, 500); 
 }, 3000); 
 
-// remove the params from the url
   if (window.location.search) {
     const url = window.location.origin + window.location.pathname;
     window.history.replaceState({}, document.title, url);
