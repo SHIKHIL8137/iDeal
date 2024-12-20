@@ -7,7 +7,7 @@ require('dotenv').config()
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const razorpayInstance = require('../../config/razorPay');
-const { checkout } = require('../../route/admin');
+const PDFDocument = require('pdfkit');
 
 
 const validColors = {
@@ -1837,34 +1837,45 @@ const saveUpdatedAddress = async (req, res) => {
 // place oreder 
 
 
-
 const submitOrder = async (req, res) => {
   try {
-    const { deliveryAddress, billingAddress, paymentMethod, totalAmount,
-      couponDiscount ,couponCode} = req.body;
+    const {
+      deliveryAddress,
+      billingAddress,
+      paymentMethod,
+      totalAmount,
+      couponDiscount,
+      couponCode,
+    } = req.body;
 
     if (!deliveryAddress || !deliveryAddress._id) {
       return res.status(400).json({ message: 'Invalid delivery address' });
     }
+
     const deliveryAddressData = await Address.findById(deliveryAddress._id);
     if (!deliveryAddressData) {
       return res.status(400).json({ message: 'Delivery address not found' });
     }
+
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
     const userId = user._id;
     const checkout = await CheckOut.findOne({ userId });
     if (!checkout) {
       return res.status(400).json({ message: 'Checkout data not found' });
     }
+
     const cart = await Cart.findOne({ userId });
     if (!cart || !cart.items || !Array.isArray(cart.items) || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
     }
+
+    const wallet = await Wallet.findOne({ userId });
 
     // Verify applied coupon
     if (couponCode !== 'N/A') {
@@ -1877,12 +1888,14 @@ const submitOrder = async (req, res) => {
         return res.status(200).json({ message: 'Invalid or inactive coupon.' });
       }
     }
+
     const productIds = cart.items.map((item) => item.productId);
     const productDetails = await Product.find({ _id: { $in: productIds } });
     const productMap = productDetails.reduce((map, product) => {
       map[product._id.toString()] = product;
       return map;
     }, {});
+
     const products = cart.items.map((item) => {
       const product = productMap[item.productId.toString()];
       if (!product) {
@@ -1899,16 +1912,17 @@ const submitOrder = async (req, res) => {
         total: item.quantity * product.Dprice,
       };
     });
+
     for (const item of products) {
       const product = await Product.findById(item.productId);
       if (product.stock < item.quantity) {
-        return res.status(400).json({ message: `Insufficient stock for${product.name}` });
+        return res.status(400).json({ message: `Insufficient stock for ${product.name}` });
       }
     }
-    const discount = couponDiscount + checkout.categoryDiscount || 0;
+
+    const discount = couponDiscount + (checkout.categoryDiscount || 0);
     const orderId = `ORD${Date.now()}`;
     let razorPayOrderId;
-
 
     if (paymentMethod === 'razorPay') {
       const razorPayOrder = await razorpayInstance.orders.create({
@@ -1936,8 +1950,8 @@ const submitOrder = async (req, res) => {
         couponDiscount,
         totalAmount,
         appliedCoupon: couponCode,
-        total_Amt_WOT_Discount : cart.totalActualAmount,
-        deliveryFee :checkout.deliveryFee
+        total_Amt_WOT_Discount: cart.totalActualAmount,
+        deliveryFee: checkout.deliveryFee,
       });
 
       await pendingOrder.save();
@@ -1946,7 +1960,51 @@ const submitOrder = async (req, res) => {
         orderId,
         razorPayOrderId,
       });
+    } else if (paymentMethod === 'Wallet') {
+      if (totalAmount < wallet.balance) {
+        const order = new Orders({
+          orderId,
+          userId,
+          orderDate: new Date(),
+          status: 'Processing',
+          paymentStatus: 'Paid',
+          paymentMethod,
+          deliveryAddress: deliveryAddressData,
+          billingAddress,
+          products,
+          subtotal: checkout.totalAmount,
+          discount,
+          totalAmount,
+          couponDiscount,
+          appliedCoupon: couponCode,
+          total_Amt_WOT_Discount: cart.totalActualAmount,
+          deliveryFee: checkout.deliveryFee,
+        });
+
+        await order.save();
+        const trxId = generateTransactionId();
+        wallet.balance -= totalAmount;
+        wallet.transactions.push({
+          transactionId: trxId,
+          type: 'debit',
+          amount: totalAmount,
+          date: new Date(),
+        });
+        await wallet.save();
+
+        try {
+          await finalizeOrder(userId, products, checkout);
+        } catch (finalizeError) {
+          await Orders.deleteOne({ orderId });
+          return res.status(400).json({ message: finalizeError.message });
+        }
+
+        return res.status(200).json({ message: 'Order placed successfully', orderId });
+      } else {
+        return res.status(400).json({ message: 'Insufficient Balance' });
+      }
     }
+
     const order = new Orders({
       orderId,
       userId,
@@ -1962,21 +2020,23 @@ const submitOrder = async (req, res) => {
       totalAmount,
       couponDiscount,
       appliedCoupon: couponCode,
-      total_Amt_WOT_Discount : cart.totalActualAmount,
-      deliveryFee : checkout.deliveryFee
+      total_Amt_WOT_Discount: cart.totalActualAmount,
+      deliveryFee: checkout.deliveryFee,
     });
 
     await order.save();
+
     try {
       await finalizeOrder(userId, products, checkout);
     } catch (finalizeError) {
       await Orders.deleteOne({ orderId });
       return res.status(400).json({ message: finalizeError.message });
     }
-    res.status(200).json({ message: 'Order placed successfully', orderId });
+
+    return res.status(200).json({ message: 'Order placed successfully', orderId });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
@@ -2464,8 +2524,156 @@ const loadFaild = async(req,res)=>{
   }
 }
 
-// renter the sales table
+// generate the order invoice
 
+const generateSalesInvoice = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const order = await Orders.findOne({orderId}).populate('userId').populate('products.productId');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    generateInvoice(order, res);
+  } catch (error) {
+    console.error('Error generating invoice:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
+
+
+function generateInvoice(order, res) {
+  const doc = new PDFDocument({ margin: 50 });
+  const fileName = `invoice-${order.orderId}.pdf`;
+
+  // Set headers for file download
+  res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+  res.setHeader('Content-Type', 'application/pdf');
+
+
+  doc.pipe(res);
+
+
+  doc
+    .fontSize(24)
+    .text('iDeal Order Invoice', { align: 'center' })
+    .fontSize(10)
+    .fillColor('gray')
+    .text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' })
+    .moveDown(2);
+
+
+  doc
+    .fontSize(10)
+    .fillColor('#000000')
+    .text('Kalarikkal Ltd.', 50, 100)
+    .text('Irinjalakuda, VT / 82021', 50, 115)
+    .text('Phone: 8137046575', 50, 130);
+
+  doc
+    .text(`${order.billingAddress.houseName}`, 400, 100 , { align: 'right' })
+    .text(`${order.billingAddress.country}, ${order.billingAddress.state}, ${order.billingAddress.city}`, 400, 115, { align: 'right' })
+    .text(`${order.billingAddress.zipCode}`, 400, 130, { align: 'right' })
+    .text(`${order.billingAddress.email}`, 400, 145 , { align: 'right' })
+    .text(`${order.billingAddress.phone}`, 400, 160 , { align: 'right' });
+
+
+  doc
+    .moveDown(2)
+    .fontSize(10)
+    .fillColor('#333333')
+    .text(`Invoice Number: ${order.orderId}`, 50, 200)
+    .text(`Date: ${new Date(order.orderDate).toLocaleDateString()}`, 50, 215);
+
+
+  const tableTop = 270;
+  const tableHeaderHeight = 20;
+  doc
+    .fontSize(10)
+    .fillColor('#333333')
+    .text('Product', 50, tableTop)
+    .text('Description', 150, tableTop, { width: 100, align: 'left' })
+    .text('Rate', 300, tableTop, { width: 50, align: 'right' })
+    .text('Quantity', 380, tableTop, { width: 50, align: 'right' })
+    .text('Total', 470, tableTop, { width: 50, align: 'right' });
+
+  doc
+    .moveTo(50, tableTop + 15)
+    .lineTo(550, tableTop + 15)
+    .stroke('#cccccc');
+
+
+  let position = tableTop + tableHeaderHeight;
+  order.products.forEach((product) => {
+    doc
+      .fontSize(10)
+      .fillColor('#000000')
+      .text(product.productName, 50, position)
+      .text(product.productColor, 150, position, { width: 100, align: 'left' })
+      .text(`${product.price.toFixed(2)}`, 300, position, { width: 50, align: 'right' })
+      .text(product.quantity, 380, position, { width: 50, align: 'right' })
+      .text(`${(product.price * product.quantity).toFixed(2)}`, 470, position, { width: 50, align: 'right' });
+
+    position += tableHeaderHeight;
+  });
+
+  doc
+    .moveTo(50, position)
+    .lineTo(550, position)
+    .stroke('#cccccc')
+    .moveDown(1);
+
+  position += 10;
+
+  doc
+    .fontSize(12)
+    .fillColor('#333333')
+    .text('Subtotal:', 300, position)
+    .text(`${order.subtotal.toFixed(2)}`, 480, position);
+
+  doc
+    .text('Discount:', 300, position + 20)
+    .text(`-${order.discount.toFixed(2)}`, 480, position + 20);
+
+  doc
+    .text('Delivery Fee:', 300, position + 40)
+    .text(`${order.deliveryFee.toFixed(2)}`, 480, position + 40);
+
+  doc
+    .text('Total Amount:', 300, position + 60)
+    .fontSize(16)
+    .text(`${order.totalAmount.toFixed(2)}`, 480, position + 60);
+
+  doc
+    .moveDown(4)
+    .fontSize(10)
+    .fillColor('#333333')
+    .text('Terms', 50, position + 100)
+    .fontSize(8)
+    .fillColor('#666666')
+    .text('Please make a transfer to:', 50, position + 115)
+    .text('Kalarikkal', 50, position + 130)
+    .text('IBAN: GB23 2344 2334423234423', 50, position + 145)
+    .text('BIC: Kalarikkal', 50, position + 160);
+
+    doc
+    .moveDown(1)
+    .fontSize(10)
+    .font('Helvetica-Oblique')
+    .fillColor('gray')
+    .text(
+      'This report was generated by iDeal. All amounts are in INR.',
+      50,
+      doc.y,
+      { align: 'center', width: 500 }
+    )
+    .text('For any queries, contact support@ideal.com.', { align: 'center' });
+
+  doc.end();
+}
 
 
 
@@ -2531,5 +2739,6 @@ module.exports={
   loadFaild,
   verifyPayment,
   getCartDetails,
-  cartSummery
+  cartSummery,
+  generateSalesInvoice
 };

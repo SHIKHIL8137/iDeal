@@ -2050,38 +2050,25 @@ const getSalesCount = async (req, res) => {
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
-
-    // Fetch today's orders
     const todaysOrders = await Orders.find({
       orderDate: { $gte: startOfDay, $lte: endOfDay },
-      status: "Delivered", // Filter by order status
+      status: "Delivered", 
     });
-
-    console.log('Today\'s Orders:', todaysOrders);
-
-    // Calculate total sales count and total amount
     const { totalSalesCount, totalAmount } = todaysOrders.reduce(
       (acc, order) => {
         if (order.products && Array.isArray(order.products)) {
-          // Calculate total sales count
           const orderQuantity = order.products.reduce(
             (sum, product) => sum + product.quantity,
             0
           );
           acc.totalSalesCount += orderQuantity;
         }
-
-        // Add totalAmount from the order
         acc.totalAmount += order.totalAmount;
 
         return acc;
       },
       { totalSalesCount: 0, totalAmount: 0 }
     );
-
-    console.log('Total Sales Count:', totalSalesCount);
-    console.log('Total Amount:', totalAmount);
-
     res.status(200).json({
       success: true,
       message: "Sales data fetched successfully.",
@@ -2104,31 +2091,28 @@ const getChartData = async (req, res) => {
   try {
     const startOfYear = new Date(new Date().getFullYear(), 0, 1);
     const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
-
-    // Aggregate monthly revenue
     const revenueData = await Orders.aggregate([
       {
         $match: {
-          status: "Delivered", // Only consider delivered orders
+          status: "Delivered", 
           orderDate: { $gte: startOfYear, $lte: endOfYear },
         },
       },
       {
-        $unwind: "$products", // Unwind the products array
+        $unwind: "$products",
       },
       {
         $addFields: {
-          // Set default values for price and quantity if missing or null
           "products.price": { $ifNull: ["$products.price", 0] },
           "products.quantity": { $ifNull: ["$products.quantity", 0] },
         },
       },
       {
         $group: {
-          _id: { $month: "$orderDate" }, // Group by month
+          _id: { $month: "$orderDate" },
           totalRevenue: {
             $sum: {
-              $multiply: ["$products.price", "$products.quantity", 0.1], // 10% of product price
+              $multiply: ["$products.price", "$products.quantity", 0.1],
             },
           },
         },
@@ -2136,26 +2120,22 @@ const getChartData = async (req, res) => {
       {
         $project: {
           month: "$_id",
-          totalRevenue: { $round: ["$totalRevenue", 2] }, // Round to 2 decimal places
+          totalRevenue: { $round: ["$totalRevenue", 2] },
           _id: 0,
         },
       },
       {
-        $sort: { month: 1 }, // Sort by month in ascending order
+        $sort: { month: 1 },
       },
     ]);
 
-    // Initialize an array with 12 months of revenue data (default to 0)
     const monthlyRevenue = Array(12).fill(0);
-
-    // Populate the monthlyRevenue array with the data from the aggregation
     revenueData.forEach((item) => {
       if (item.month >= 1 && item.month <= 12) {
         monthlyRevenue[item.month - 1] = item.totalRevenue;
       }
     });
 
-    console.log("Monthly Revenue:", monthlyRevenue);
 
     res.status(200).json({
       success: true,

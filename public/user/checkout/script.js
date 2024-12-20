@@ -193,6 +193,9 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
       couponCode
     };
 
+    if(paymentMethod === 'COD'){
+      if(totalAmount< 1000) return showAlert('Order above 1000 allowed for COD','danger');
+    }
 
     const response = await fetch("/user/orderSubmit", {
       method: "POST",
@@ -203,7 +206,6 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
     });
 
     const result = await response.json();
-    console.log(result.orderId);
     if (response.ok) {
       if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
         const rzp = new Razorpay({
@@ -228,6 +230,9 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
         });
         rzp.open();
       } else if (paymentMethod === 'COD') {
+          window.open(`/user/loadOrderConformation/${result.orderId}`, '_blank');
+          window.location.href = '/user/cart';
+      } else if (paymentMethod === 'Wallet') {
         window.open(`/user/loadOrderConformation/${result.orderId}`, '_blank');
         window.location.href = '/user/cart';
       }
@@ -257,7 +262,6 @@ function validateForm() {
 
   let isValid = true;
 
-  // Clear existing errors
   document.querySelectorAll('.error').forEach(error => error.remove());
 
   if (firstName === '') {
@@ -307,7 +311,6 @@ function validateForm() {
   return isValid;
 }
 
-// Function to display error message
 function displayError(fieldId, message) {
   const field = document.getElementById(fieldId);
   const error = document.createElement('div');
@@ -316,7 +319,6 @@ function displayError(fieldId, message) {
   error.textContent = message;
   field.parentElement.appendChild(error);
 
-  // Scroll to the first error for better UX
   if (document.querySelector('.error') === error) {
     field.scrollIntoView({ behavior: 'smooth' });
     field.focus();
@@ -393,13 +395,11 @@ console.log('clicked')
         document.getElementById('couponDiscount').textContent = `₹${result.discount}`;
         document.getElementById('finalTotal').textContent = `₹${result.newTotalAmount}`;
 
-        // Hide coupon input and show applied coupon
         document.getElementById('couponInput').classList.add('d-none');
         const appliedCoupon = document.getElementById('appliedCoupon');
         appliedCoupon.classList.remove('d-none');
         document.getElementById('appliedCouponCode').textContent = couponCode;
       } else {
-        console.log('error')
         showAlert(result.message,'danger');
       }
     })
@@ -423,11 +423,9 @@ function removeCoupon() {
       if (result.success) {
         showAlert(result.message , 'success');
 
-        // Revert UI
         document.getElementById('couponInput').classList.remove('d-none');
         document.getElementById('appliedCoupon').classList.add('d-none');
 
-        // Reset totals
         document.getElementById('couponDiscount').textContent = '₹0';
         document.getElementById('finalTotal').textContent = `₹${result.originalTotal}`;
       } else {

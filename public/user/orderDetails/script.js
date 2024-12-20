@@ -261,6 +261,39 @@ document.querySelectorAll('.return-btn').forEach(button => {
 });
 
 
+async function getInvoice(orderId) {
+  try {
+    const response = await fetch(`/user/downloadInvoice/${orderId}`, {
+      method: 'GET',
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+
+      a.download = `invoice-${orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } else {
+      console.error('Failed to fetch invoice:', await response.text());
+      alert('Failed to download the invoice. Please try again later.');
+    }
+  } catch (error) {
+    console.error('Error fetching invoice:', error);
+    alert('An error occurred while downloading the invoice.');
+  }
+}
+
+
+
+
+
   function validateEmail(email) {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailPattern.test(email);

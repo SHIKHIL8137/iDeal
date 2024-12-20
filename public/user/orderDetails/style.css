@@ -107,3 +107,14 @@ nav{
 .modal-footer{
   border: none;
 }
+.invoiceBtn{
+  border: none;
+  background: none;
+  color: white;
+  opacity: .6;
+  cursor:pointer;
+  transition: .3s ease-in-out;
+}
+.invoiceBtn:hover{
+  opacity: 1;
+}

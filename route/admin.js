@@ -55,6 +55,7 @@ router.get('/getChartData',adminController.getChartData);
 
 
 
+
 router.post('/editCoupon',adminController.editCoupon);
 router.post('/addProduct',uploads.array("images",4),adminController.addProducts);
 router.post('/editProduct/:id', uploads.array("images", 4), adminController.editProduct);

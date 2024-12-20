@@ -40,6 +40,7 @@ router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
 router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 router.get('/getCartDetails',userController.getCartDetails);
 router.get('/cartSummary',userController.cartSummery);
+router.get('/downloadInvoice/:orderId',userController.generateSalesInvoice);
 
 
 
