@@ -37,7 +37,7 @@ const adminValidation=async(req,res)=>{
         const usernameofLogin = adminExist.name;
         req.session.isValidAdmin=true
         req.session.username = usernameofLogin;
-       return res.status(200).redirect('/admin/dashboard?message=Login SuccessFul');
+       return res.status(200).redirect('/admin/dashboard?message=Login SuccessFully');
       }else{
         res.redirect('/admin/login?message=Invalid Password');
       }

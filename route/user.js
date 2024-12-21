@@ -41,6 +41,8 @@ router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 router.get('/getCartDetails',userController.getCartDetails);
 router.get('/cartSummary',userController.cartSummery);
 router.get('/downloadInvoice/:orderId',userController.generateSalesInvoice);
+router.get('/about',userController.loadAbout);
+router.get('/contact',userController.loadContact);
 
 
 

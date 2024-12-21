@@ -2676,6 +2676,25 @@ function generateInvoice(order, res) {
 }
 
 
+// load about page
+
+const loadAbout = async(req,res)=>{
+  try {
+    res.status(200).render('user/about',{title:"About"});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+// load the contact page
+
+const loadContact = async(req,res)=>{
+  try {
+    res.status(200).render('user/contact',{title:"Contact"});
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 
 
@@ -2740,5 +2759,7 @@ module.exports={
   verifyPayment,
   getCartDetails,
   cartSummery,
-  generateSalesInvoice
+  generateSalesInvoice,
+  loadAbout,
+  loadContact
 };

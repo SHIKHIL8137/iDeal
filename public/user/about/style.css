@@ -1,0 +1,163 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+ input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+    body {
+      background-color: #121212;
+      color: white;
+    }
+    .sidebar {
+      height: 308px;
+      background-color: #121212;
+      color: white;
+      width: 300px;
+      padding:0;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      color: #b8b8b8;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: white;
+      background-color: #001569;
+    }
+    .sidebar a i {
+      margin-right: 15px;
+    }
+    .sidebar a.active {
+      background-color: #001569;
+    }
+
+    .footer {
+      background-color: #121212;
+      color: #fff;
+      padding: 20px 0;
+      margin-top: 10vh;
+    }
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.9rem;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer .footer-logo img {
+      width: 70px;
+      margin-right: 8px;
+      margin-bottom: 6px;
+    }
+    .footer .social-icons a {
+      color: #fff;
+      margin: 0 8px;
+      font-size: 1.2rem;
+    }
+    .footer hr {
+      border-color: #444;
+      margin: 10px 0;
+    }
+    .footerSpan{
+      font-size: .8em;
+      font-weight: 200;
+    }
+    .btn-outline-light {
+      background-color: transparent; 
+      color: black;
+      border: none;
+      font-size: 1.5rem;
+    }
+    .no-focus:focus{
+      outline: none;
+      box-shadow: none;
+      border: none;
+    }
+    .no-focus{
+      border: none;
+    }
+    .btn-outline-danger{
+      border: none;
+    }
+    .couponNote{
+      color: #ffffff45;
+    }
+    #alertBox{
+      position: fixed;
+      top: 20px;
+      right: -100%;
+      transition: all 0.7s ease-in-out;
+      z-index: 9999;
+    }
+    
+    #alertBox.show {
+      right: 20px;
+    }
+    
+    #alertBox.hide {
+      right: -100%;
+    }
+ 
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.section-subtitle {
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.671);
+}
+.custom-card {
+  background-color: #111;
+  padding: 2rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.quote {
+  font-style: italic;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+.images-row img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;
+}
+.socialIcons a {
+  color: #fff;
+  margin-right: 15px;
+  font-size: 1.5rem;
+}
+.custom-card p{
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.671);
+}
+.socialIcons{
+  display: flex;
+  flex-direction: column;
+}
+.rightDiv{
+  align-content: center;
+}
