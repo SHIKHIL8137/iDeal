@@ -38,9 +38,9 @@ router.get('/wallet',userMiddleWare.isLoggedIn,userController.loadWallet);
 router.get('/referral',userMiddleWare.isLoggedIn,userController.loadReferral);
 router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
 router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
-router.get('/getCartDetails',userController.getCartDetails);
-router.get('/cartSummary',userController.cartSummery);
-router.get('/downloadInvoice/:orderId',userController.generateSalesInvoice);
+router.get('/getCartDetails',userMiddleWare.isLoggedIn,userController.getCartDetails);
+router.get('/cartSummary',userMiddleWare.isLoggedIn,userController.cartSummery);
+router.get('/downloadInvoice/:orderId',userMiddleWare.isLoggedIn,userController.generateSalesInvoice);
 router.get('/about',userController.loadAbout);
 router.get('/contact',userController.loadContact);
 

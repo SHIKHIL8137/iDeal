@@ -1901,7 +1901,7 @@ const getTopSellingProduct = async(req,res)=>{
     ]);
 
     const actualSales = salesData.map(sale => {
-      const returnInfo = returnData.find(returned => String(returned._id) === String(sale._id)) || { totalReturned: 0 }; // Find matching product in returnData
+      const returnInfo = returnData.find(returned => String(returned._id) === String(sale._id)) || { totalReturned: 0 };
       return {
         productId: sale._id,
         productName: sale.productName,

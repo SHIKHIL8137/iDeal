@@ -39,7 +39,9 @@
               <div class="d-flex justify-content-between align-items-center mb-4">
                 <p class="lead fw-normal mb-0" style="color: #ffffff;">Receipt</p>
                 <p class="small  mb-0" style="color: #bbb;">Receipt Voucher : <%= order.orderId %></p>
-                <button class="invoiceBtn" onclick="getInvoice('<%= order.orderId %>')">Invoive</button>
+                <% if(order.status !== 'Cancelled' && order.status !== 'Processing'){ %>
+                  <button class="invoiceBtn" onclick="getInvoice('<%= order.orderId %>')">Invoive</button>
+                <% } %>
               </div>
               <% order.products.forEach(function(product) { %>
                 <div class="card shadow-0 border mb-4" style="background-color: #2a2a2a;">

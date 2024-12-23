@@ -1,5 +1,5 @@
 <%- include('partials/header.ejs') -%>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
   <link rel="stylesheet" href="/admin/editProduct/style.css">
   </head>
 
@@ -33,7 +33,7 @@
               </a>
             </li>
             <li>
-              <a href="/admin/return"  class="nav-link text-dark">
+              <a href="/admin/return" class="nav-link text-dark">
                 <i class="fas fa-undo"></i> Returns
               </a>
             </li>
@@ -58,7 +58,7 @@
               </a>
             </li>
             <li>
-              <a href="/admin/sales"  class="nav-link text-dark">
+              <a href="/admin/sales" class="nav-link text-dark">
                 <i class="fas fa-money-bill-wave"></i> Sales
               </a>
             </li>
@@ -97,7 +97,8 @@
           <div class="d-flex justify-content-between align-items-center mb-3">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Dashboard</a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page"><a href="/admin/product"
                     class="breadcrumb-item-style-atag">Product List</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Edit Product</li>
@@ -110,160 +111,182 @@
               <div class="row">
                 <div class="col-lg-9">
                   <div class="card mb-4">
-          
+
                     <div class="mb-3">
                       <label for="productName" class="form-label">Product Name</label>
                       <input type="text" class="form-control" id="productName" value="<%= productDetails.name %>">
                     </div>
                     <div class="mb-3">
                       <label for="productDescription" class="form-label">Description</label>
-                      <textarea class="form-control" id="productDescription" rows="3"><%= productDetails.description %></textarea>
+                      <textarea class="form-control" id="productDescription"
+                        rows="3"><%= productDetails.description %></textarea>
                     </div>
                   </div>
-          
+
                   <div class="card mb-4">
                     <h5>Media</h5>
                     <div class="uploaded-images">
                       <% productDetails.images.forEach((image, index)=> { %>
                         <div class="image-item">
                           <img src="<%= image %>" alt="Product Image <%= index + 1 %>" class="fixed-size">
-                          <span class="delete-icon" onclick="deleteImage('<%= productDetails._id %>',' <%= index %>')">&times;</span>
+                          <span class="delete-icon"
+                            onclick="deleteImage('<%= productDetails._id %>',' <%= index %>')">&times;</span>
                         </div>
                         <% }); %>
                     </div>
                     <div class="add-image-box">
                       <h5>Add New Images</h5>
                       <div id="new-images">
-                        <% for (let i = productDetails.images.length; i < 4; i++) { %>
+                        <% for (let i=productDetails.images.length; i < 4; i++) { %>
                           <div>
                             <label for="image<%= i %>">Upload Image:</label>
-                            <input type="file" id="image<%= i %>" name="images" accept="image/*" onchange="viewImage(event, '<%= i %>')">
-                            
+                            <input type="file" id="image<%= i %>" name="images" accept="image/*"
+                              onchange="viewImage(event, '<%= i %>')">
+
                             <!-- Image preview -->
-                            <img id="imgView<%= i %>" class="img-view" style="display: none; width: 100px; height: 150px; margin-top: 10px;">
-                            
+                            <img id="imgView<%= i %>" class="img-view"
+                              style="display: none; width: 100px; height: 150px; margin-top: 10px;">
+
                             <!-- Crop container -->
                             <div class="crop-container" style="display: none;">
-                              <img id="croppedImg<%= i %>" class="cropped-img" style="width: 100px; height: 100px; margin-top: 10px;">
-                              <button id="saveButton<%= i %>" type="button" class="btn btn-primary">Save Cropped Image</button>
+                              <img id="croppedImg<%= i %>" class="cropped-img"
+                                style="width: 100px; height: 100px; margin-top: 10px;">
+                              <button id="saveButton<%= i %>" type="button" class="btn btn-primary">Save Cropped
+                                Image</button>
                             </div>
                           </div>
-                        <% } %>
+                          <% } %>
                       </div>
                     </div>
-                    
+
                   </div>
-                              
-                    <div class="card mb-4">
-                      <h5>Pricing</h5>
-                        <div class="mb-3">
-                          <label for="basePrice" class="form-label"></label>
-                          <input type="number" class="form-control" id="basePrice" placeholder="Type base price here..." value="<%= productDetails.price %>" name="price" required >
-                          <div class="error-message"></div>
-                        </div>
-                        <div class="mb-3">
-                          <label for="discountPercentage" class="form-label">Discount Percentage (%)</label>
-                          <input name="discount" type="number" class="form-control" id="discountPercentage" placeholder="Type discount percentage..." value="<%= ((productDetails.price-productDetails.Dprice)/productDetails.price)*100 %>" required>
-                          <div class="error-message"></div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-4">
-                            <label for="productStorage" class="form-label">Storage</label>
-                            <select class="form-select" id="storageStatus" name="storage" required>
-                              <option value="" disabled selected></option>
-                              <option value="64" <%= productDetails.storage =='64' ? 'selected' : '' %>>64 GB</option>
-                              <option value="128" <%= productDetails.storage =='128' ? 'selected' : '' %>>128 GB</option>
-                              <option value="256" <%= productDetails.storage =='256' ? 'selected' : '' %>>256 GB</option>
-                              <option value="512" <%= productDetails.storage =='512' ? 'selected' : '' %>>512 GB</option>
-                              <option value="10000" <%= productDetails.storage =='10000' ? 'selected' : '' %>>1 TB</option>
-                            </select>
-                            <div class="error-message"></div>
-                          </div>
-                          <div class="col-md-4">
-                            <label for="productColor" class="form-label">Color</label>
-                            <select class="form-select" id="colorStatus" name="color" required>
-                              <option value="" disabled selected></option>
-                              <option value="pink" <%= productDetails.color == 'pink' ? 'selected' : '' %>>Pink</option>
-                              <option value="yellow" <%= productDetails.color == 'yellow' ? 'selected' : '' %>>Yellow</option>
-                              <option value="green" <%= productDetails.color == 'green' ? 'selected' : '' %>>Green</option>
-                              <option value="blue" <%= productDetails.color == 'blue' ? 'selected' : '' %>>Blue</option>
-                              <option value="black" <%= productDetails.color == 'black' ? 'selected' : '' %>>Black</option>
-                              <option value="white" <%= productDetails.color == 'white' ? 'selected' : '' %>>White</option>
-                              <option value="titanium" <%= productDetails.color == 'titanium' ? 'selected' : '' %>>Titanium</option>
-                              <option value="purple" <%= productDetails.color == 'purple' ? 'selected' : '' %>>Purple</option>
-                              <option value="midnight" <%= productDetails.color == 'midnight' ? 'selected' : '' %>>Midnight</option>
-                              <option value="starlight" <%= productDetails.color == 'starlight' ? 'selected' : '' %>>Starlight</option>
-                              <option value="red" <%= productDetails.color == 'red' ? 'selected' : '' %>>Red (Product Red)</option>
-                              <option value="gold" <%= productDetails.color == 'gold' ? 'selected' : '' %>>Gold</option>
-                              <option value="spaceGray" <%= productDetails.color == 'spaceGray' ? 'selected' : '' %>>Space Gray</option>
-                              <option value="jetBlack" <%= productDetails.color == 'jetBlack' ? 'selected' : '' %>>Jet Black</option>
-                              <option value="alpineGreen" <%= productDetails.color == 'alpineGreen' ? 'selected' : '' %>>Alpine Green</option>
-                              <option value="spaceBlue" <%= productDetails.color == 'spaceBlue' ? 'selected' : '' %>>Space Blue</option>
-                              <option value="cosmicSilver" <%= productDetails.color == 'cosmicSilver' ? 'selected' : '' %>>Cosmic Silver</option>
-                              <option value="starlightGold" <%= productDetails.color == 'starlightGold' ? 'selected' : '' %>>Starlight Gold</option>
-                            </select>
-                            
-                            
-                            <div class="error-message"></div>
-                          </div>
-                          <div class="col-md-4">
-                            <label for="productQuantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="productQuantity" name="quantity" value="<%= productDetails.stock %>" required>
-                          </div>
-                        </div>
-                    </div>    
-                  </div>
-                         
-                  <div class="col-lg-3">
-                    <div class="card mb-4">
-                      <div class="mb-3">
-                        <label for="productCategory" class="form-label">Category</label>
-                        <select class="form-select" name="category" id="productCategory" required>
-                          <option value="" disabled selected></option>
-                          <% categoryDetails.forEach((val, ind)=> { %>
-                            <option value="<%= val.name %>" <%= val.name === productDetails.category.name ? 'selected' : '' %>>
-                              <%= val.name %> Series
-                            </option>
-                            <% }); %>
-                        </select>  
-                      </div>
-                     
-                      <div class="mb-3">
-                        <label for="productStatus" class="form-label">condition</label>
-                        <select class="form-select" id="productStatus" name="condition" required>
-                          <option value="" disabled selected></option>
-                          <option value="super" <%= productDetails.condition === 'super' ? 'selected' : '' %>>Super</option>
-                          <option value="good" <%= productDetails.condition === 'good' ? 'selected' : '' %>>Good</option>
-                          <option value="fair" <%= productDetails.condition === 'fair' ? 'selected' : '' %>>Fair</option>
-                        </select>
-                        
-                        <div class="error-message"></div>
-                      </div>
-                      <div class="mb-3">
-                        <label for="productStatus" class="form-label">Conectivity</label>
-                        <select class="form-select" id="productStatus" name="connectivity" required>
-                          <option value="" disabled selected></option>
-                          <option value="4G" <%= productDetails.connectivity === '4G' ? 'selected' : '' %>>4G</option>
-                          <option value="5G" <%= productDetails.connectivity === '5G' ? 'selected' : '' %>>5G</option>
-                        </select>
-                        
-                        <div class="error-message"></div>
-                      </div>
+
+                  <div class="card mb-4">
+                    <h5>Pricing</h5>
+                    <div class="mb-3">
+                      <label for="basePrice" class="form-label"></label>
+                      <input type="number" class="form-control" id="basePrice" placeholder="Type base price here..."
+                        value="<%= productDetails.price %>" name="price" required>
+                      <div class="error-message"></div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                      <button id="cancelbtn" class="btn btn-secondary w-45">Cancel</button>
-                      <button type="button" id="submitButton" class="btn btn-primary w-45">Save Product</button>
+                    <div class="mb-3">
+                      <label for="discountPercentage" class="form-label">Discount Percentage (%)</label>
+                      <input name="discount" type="number" class="form-control" id="discountPercentage"
+                        placeholder="Type discount percentage..."
+                        value="<%= ((productDetails.price-productDetails.Dprice)/productDetails.price)*100 %>" required>
+                      <div class="error-message"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <label for="productStorage" class="form-label">Storage</label>
+                        <select class="form-select" id="storageStatus" name="storage" required>
+                          <option value="" disabled selected></option>
+                          <option value="64" <%=productDetails.storage=='64' ? 'selected' : '' %>>64 GB</option>
+                          <option value="128" <%=productDetails.storage=='128' ? 'selected' : '' %>>128 GB</option>
+                          <option value="256" <%=productDetails.storage=='256' ? 'selected' : '' %>>256 GB</option>
+                          <option value="512" <%=productDetails.storage=='512' ? 'selected' : '' %>>512 GB</option>
+                          <option value="10000" <%=productDetails.storage=='10000' ? 'selected' : '' %>>1 TB</option>
+                        </select>
+                        <div class="error-message"></div>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="productColor" class="form-label">Color</label>
+                        <select class="form-select" id="colorStatus" name="color" required>
+                          <option value="" disabled selected></option>
+                          <option value="pink" <%=productDetails.color=='pink' ? 'selected' : '' %>>Pink</option>
+                          <option value="yellow" <%=productDetails.color=='yellow' ? 'selected' : '' %>>Yellow</option>
+                          <option value="green" <%=productDetails.color=='green' ? 'selected' : '' %>>Green</option>
+                          <option value="blue" <%=productDetails.color=='blue' ? 'selected' : '' %>>Blue</option>
+                          <option value="black" <%=productDetails.color=='black' ? 'selected' : '' %>>Black</option>
+                          <option value="white" <%=productDetails.color=='white' ? 'selected' : '' %>>White</option>
+                          <option value="titanium" <%=productDetails.color=='titanium' ? 'selected' : '' %>>Titanium
+                          </option>
+                          <option value="purple" <%=productDetails.color=='purple' ? 'selected' : '' %>>Purple</option>
+                          <option value="midnight" <%=productDetails.color=='midnight' ? 'selected' : '' %>>Midnight
+                          </option>
+                          <option value="starlight" <%=productDetails.color=='starlight' ? 'selected' : '' %>>Starlight
+                          </option>
+                          <option value="red" <%=productDetails.color=='red' ? 'selected' : '' %>>Red (Product Red)
+                          </option>
+                          <option value="gold" <%=productDetails.color=='gold' ? 'selected' : '' %>>Gold</option>
+                          <option value="spaceGray" <%=productDetails.color=='spaceGray' ? 'selected' : '' %>>Space Gray
+                          </option>
+                          <option value="jetBlack" <%=productDetails.color=='jetBlack' ? 'selected' : '' %>>Jet Black
+                          </option>
+                          <option value="alpineGreen" <%=productDetails.color=='alpineGreen' ? 'selected' : '' %>>Alpine
+                            Green</option>
+                          <option value="spaceBlue" <%=productDetails.color=='spaceBlue' ? 'selected' : '' %>>Space Blue
+                          </option>
+                          <option value="cosmicSilver" <%=productDetails.color=='cosmicSilver' ? 'selected' : '' %>
+                            >Cosmic Silver</option>
+                          <option value="starlightGold" <%=productDetails.color=='starlightGold' ? 'selected' : '' %>
+                            >Starlight Gold</option>
+                        </select>
+
+
+                        <div class="error-message"></div>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="productQuantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="productQuantity" name="quantity"
+                          value="<%= productDetails.stock %>" required>
+                      </div>
                     </div>
                   </div>
                 </div>
-  
+
+                <div class="col-lg-3">
+                  <div class="card mb-4">
+                    <div class="mb-3">
+                      <label for="productCategory" class="form-label">Category</label>
+                      <select class="form-select" name="category" id="productCategory" required>
+                        <option value="" disabled selected></option>
+                        <% categoryDetails.forEach((val, ind)=> { %>
+                          <option value="<%= val.name %>" <%=val.name===productDetails.category.name ? 'selected' : ''
+                            %>>
+                            <%= val.name %> Series
+                          </option>
+                          <% }); %>
+                      </select>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="productStatus" class="form-label">condition</label>
+                      <select class="form-select" id="productStatus" name="condition" required>
+                        <option value="" disabled selected></option>
+                        <option value="super" <%=productDetails.condition==='super' ? 'selected' : '' %>>Super</option>
+                        <option value="good" <%=productDetails.condition==='good' ? 'selected' : '' %>>Good</option>
+                        <option value="fair" <%=productDetails.condition==='fair' ? 'selected' : '' %>>Fair</option>
+                      </select>
+
+                      <div class="error-message"></div>
+                    </div>
+                    <div class="mb-3">
+                      <label for="productStatus" class="form-label">Conectivity</label>
+                      <select class="form-select" id="productStatus" name="connectivity" required>
+                        <option value="" disabled selected></option>
+                        <option value="4G" <%=productDetails.connectivity==='4G' ? 'selected' : '' %>>4G</option>
+                        <option value="5G" <%=productDetails.connectivity==='5G' ? 'selected' : '' %>>5G</option>
+                      </select>
+
+                      <div class="error-message"></div>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <button id="cancelbtn" class="btn btn-secondary w-45">Cancel</button>
+                    <button type="button" id="submitButton" class="btn btn-primary w-45">Save Product</button>
+                  </div>
+                </div>
               </div>
-            </form>
+
           </div>
+          </form>
+        </div>
+      </div>
     </div>
     </div>
-    </div>
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -280,7 +303,7 @@
         </div>
       </div>
     </div>
-    
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>

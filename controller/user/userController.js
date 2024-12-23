@@ -2549,7 +2549,6 @@ function generateInvoice(order, res) {
   const doc = new PDFDocument({ margin: 50 });
   const fileName = `invoice-${order.orderId}.pdf`;
 
-  // Set headers for file download
   res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
   res.setHeader('Content-Type', 'application/pdf');
 

@@ -5,190 +5,192 @@
   <body>
     <div id="alertBox">
     </div>
-        <div class="container-fluid">
-          <div class="row flex-nowrap">
-            <!-- Sidebar -->
-            <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
-              <ul class="nav nav-pills flex-column ">
-                <li>
-                  <a href="#" class="nav-link text-dark">
-                    <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
-                  </a>
-                </li>
-              </ul>
-              <p class="text-uppercase text-primary navMainHeading mt-3">Menu</p>
-              <ul class="nav nav-pills flex-column ">
-                <li class="nav-item">
-                  <a href="/admin/dashboard" class="nav-link text-dark">
-                    <i class="fas fa-th-large"></i> Dashboard
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/product" class="nav-link text-dark">
-                    <i class="fas fa-box"></i> Products
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/orders" class="nav-link active">
-                    <i class="fas fa-shopping-cart"></i> Orders
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/return"  class="nav-link text-dark">
-                    <i class="fas fa-undo"></i> Returns
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/coupon" class="nav-link text-dark">
-                    <i class="fas fa-ticket-alt"></i> Coupon
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/banner" class="nav-link text-dark">
-                    <i class="fas fa-image"></i> Banner
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/transaction" class="nav-link text-dark">
-                    <i class="fas fa-exchange-alt"></i> Transaction
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/offer" class="nav-link text-dark">
-                    <i class="fas fa-tag"></i> Offer
-                  </a>
-                </li>
-                <li>
-                  <a href="/admin/sales"  class="nav-link text-dark">
-                    <i class="fas fa-money-bill-wave"></i> Sales
-                  </a>
-                </li>
-              </ul>
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <!-- Sidebar -->
+        <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
+          <ul class="nav nav-pills flex-column ">
+            <li>
+              <a href="#" class="nav-link text-dark">
+                <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
+              </a>
+            </li>
+          </ul>
+          <p class="text-uppercase text-primary navMainHeading mt-3">Menu</p>
+          <ul class="nav nav-pills flex-column ">
+            <li class="nav-item">
+              <a href="/admin/dashboard" class="nav-link text-dark">
+                <i class="fas fa-th-large"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="/admin/product" class="nav-link text-dark">
+                <i class="fas fa-box"></i> Products
+              </a>
+            </li>
+            <li>
+              <a href="/admin/orders" class="nav-link active">
+                <i class="fas fa-shopping-cart"></i> Orders
+              </a>
+            </li>
+            <li>
+              <a href="/admin/return" class="nav-link text-dark">
+                <i class="fas fa-undo"></i> Returns
+              </a>
+            </li>
+            <li>
+              <a href="/admin/coupon" class="nav-link text-dark">
+                <i class="fas fa-ticket-alt"></i> Coupon
+              </a>
+            </li>
+            <li>
+              <a href="/admin/banner" class="nav-link text-dark">
+                <i class="fas fa-image"></i> Banner
+              </a>
+            </li>
+            <li>
+              <a href="/admin/transaction" class="nav-link text-dark">
+                <i class="fas fa-exchange-alt"></i> Transaction
+              </a>
+            </li>
+            <li>
+              <a href="/admin/offer" class="nav-link text-dark">
+                <i class="fas fa-tag"></i> Offer
+              </a>
+            </li>
+            <li>
+              <a href="/admin/sales" class="nav-link text-dark">
+                <i class="fas fa-money-bill-wave"></i> Sales
+              </a>
+            </li>
+          </ul>
 
-              <p class="text-uppercase text-primary mt-4 mb-2 navMainHeading">User Management</p>
-              <ul class="nav nav-pills flex-column ">
-                <li>
-                  <a href="/admin/customers" class="nav-link text-dark">
-                    <i class="fas fa-users"></i> Customers
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-md-10 p-4">
-              <!-- Top Navbar -->
-              <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Orders</h2>
-                <div class="d-flex align-items-center">
-                  <!-- Search Bar -->
-                  <input type="text" id="searchBar" class="form-control me-3 w-50" placeholder="Search...">
-              
-                  <!-- Admin Profile -->
-                  <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                      <%= username %>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="adminDropdown">
-                      <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Breadcrumb and Actions -->
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <nav aria-label="breadcrumb">
-                  <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a href="/admin/dashboard"
-                        class="breadcrumb-item-style-atag">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page" Order List</li>
-                  </ol>
-                </nav>
-              </div>
-
-              <!-- Filters -->
-              <div class="d-flex justify-content-start gap-2 mb-3">
-                <button class="btn btn-outline-primary btn-filter active">All Products</button>
-                <button class="btn btn-outline-success btn-filter">Delivered</button>
-                <button class="btn btn-outline-warning btn-filter">Processing</button>
-                <button class="btn btn-outline-danger btn-filter">Cancelled</button>
-              </div>
-
-              <table id="ordersTable" class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Products</th>
-                    <th>Order Date</th>
-                    <th>Payment</th>
-                    <th>Status</th>
-                    <th>Amount</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Initial Data Loaded -->
-                </tbody>
-              </table>
-              
-              
-              
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="showing1-10Text">Showing 1-10 from <%= orders.length %></span>
-                <ul class="pagination justify-content-center">
-                  <li class="page-item">
-                    <button class="page-link" id="prevPage">&laquo;</button>
-                  </li>
-                  <li class="page-item">
-                    <button class="page-link" id="nextPage">&raquo;</button>
-                  </li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
+          <p class="text-uppercase text-primary mt-4 mb-2 navMainHeading">User Management</p>
+          <ul class="nav nav-pills flex-column ">
+            <li>
+              <a href="/admin/customers" class="nav-link text-dark">
+                <i class="fas fa-users"></i> Customers
+              </a>
+            </li>
+          </ul>
         </div>
 
-      <!-- Edit Order Status Modal -->
-      <div class="modal fade" id="editOrderStatusModal" tabindex="-1" aria-labelledby="editOrderStatusLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="editOrderStatusLabel">Edit Order Status</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+          <!-- Top Navbar -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Orders</h2>
+            <div class="d-flex align-items-center">
+              <!-- Search Bar -->
+              <input type="text" id="searchBar" class="form-control me-3 w-50" placeholder="Search...">
+
+              <!-- Admin Profile -->
+              <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <%= username %>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                  <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+                </ul>
+              </div>
             </div>
-            <div class="modal-body">
-              <!-- Form for Updating Order Status -->
-                <div class="mb-3">
-                  <label for="orderId" class="form-label">Order ID</label>
-                  <input type="text" class="form-control" id="orderId"  readonly>
-                </div>
-                <div class="mb-3">
-                  <label for="orderStatus" class="form-label">Order Status</label>
-                  <select class="form-select" id="orderStatus" required>
-                    <option value="Processing">Processing</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                  </select>
-                </div>
-                <input type="hidden" id="orderDbid">
+          </div>
+
+          <!-- Breadcrumb and Actions -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/admin/dashboard" class="breadcrumb-item-style-atag">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" Order List</li>
+              </ol>
+            </nav>
+          </div>
+
+          <!-- Filters -->
+          <div class="d-flex justify-content-start gap-2 mb-3">
+            <button class="btn btn-outline-primary btn-filter active">All Products</button>
+            <button class="btn btn-outline-success btn-filter">Delivered</button>
+            <button class="btn btn-outline-warning btn-filter">Processing</button>
+            <button class="btn btn-outline-danger btn-filter">Cancelled</button>
+          </div>
+
+          <table id="ordersTable" class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Products</th>
+                <th>Order Date</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Initial Data Loaded -->
+            </tbody>
+          </table>
+
+
+
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="showing1-10Text">Showing 1-10 from <%= orders.length %></span>
+            <ul class="pagination justify-content-center">
+              <li class="page-item">
+                <button class="page-link" id="prevPage">&laquo;</button>
+              </li>
+              <li class="page-item">
+                <button class="page-link" id="nextPage">&raquo;</button>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Order Status Modal -->
+    <div class="modal fade" id="editOrderStatusModal" tabindex="-1" aria-labelledby="editOrderStatusLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editOrderStatusLabel">Edit Order Status</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Form for Updating Order Status -->
+            <div class="mb-3">
+              <label for="orderId" class="form-label">Order ID</label>
+              <input type="text" class="form-control" id="orderId" readonly>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" id="saveOrderStatus">Save Changes</button>
+            <div class="mb-3">
+              <label for="orderStatus" class="form-label">Order Status</label>
+              <select class="form-select" id="orderStatus" required>
+                <option value="Processing">Processing</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
             </div>
+            <input type="hidden" id="orderDbid">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="saveOrderStatus">Save Changes</button>
           </div>
         </div>
       </div>
-      
-      
+    </div>
 
 
-<script id="ordersData" type="application/json">
+
+
+    <script id="ordersData" type="application/json">
   <%- JSON.stringify(orders) %>
 </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="/admin/orders/script.js"></script>
-        <%- include('partials/footer.ejs') -%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/orders/script.js"></script>
+    <%- include('partials/footer.ejs') -%>

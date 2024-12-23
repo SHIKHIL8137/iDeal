@@ -1,44 +1,46 @@
-
 <%- include('partials/header.ejs') -%>
-<link rel="stylesheet" href="/admin/login/style.css">
-</head>
-<body>
-  <% if (message && errBoolean) { %>
-    <div id="alertBox" class="alert alert-success" role="alert">
-      <%= message %>
-    </div>
-  <% } else if (message && !errBoolean) { %>
-    <div id="alertBox" class="alert alert-danger" role="alert">
-      <%= message %>
-    </div>
-  <% } %>
-  <nav class="navbar navbar-expand-lg adminNavBar">
-      <div class="container justify-content-around">
-          <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/idealLogo.svg" alt="iDeal Logo"></a>
+  <link rel="stylesheet" href="/admin/login/style.css">
+  </head>
+
+  <body>
+    <% if (message && errBoolean) { %>
+      <div id="alertBox" class="alert alert-success" role="alert">
+        <%= message %>
       </div>
-  </nav>
-  <div class="container">
-    <div class="login-container">
-      <div class="login-header text-center mt-4 mb-4 m-5">
-        <h3 class="fw-bold">Admin Login</h3>
-      </div>
-      <p id="errorMsg"></p>
-      <form id="emailForm" action="/admin/adminValidation" method="post">
-        <div class="mb-4">
-          <input type="email" class="form-control border-0" id="email" placeholder="Enter email " name="email">
+      <% } else if (message && !errBoolean) { %>
+        <div id="alertBox" class="alert alert-danger" role="alert">
+          <%= message %>
         </div>
-        <div class="mb-4 d-flex position-relative">
-          <input type="password" class="form-control border-0" id="password" placeholder="Enter password" name="password">
-          <button class="btn border-0" type="button" id="togglePassword">
-            <i class="fa fa-eye" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="d-flex justify-content-end align-items-center mb-3 mt-4">
-          <a href="/admin/forgotPassword" class="text-decoration-none forgTxt">Forgot password?</a>
-        </div>
-        <button type="submit" class="btn btn-custom w-100 mb-3 text-light">Sign In</button>
-      </form>
-    </div>
-  </div>
-  <script src="/admin/login/script.js"></script>
-  <%- include('partials/footer.ejs') -%>
+        <% } %>
+          <nav class="navbar navbar-expand-lg adminNavBar">
+            <div class="container justify-content-around">
+              <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/idealLogo.svg"
+                  alt="iDeal Logo"></a>
+            </div>
+          </nav>
+          <div class="container">
+            <div class="login-container">
+              <div class="login-header text-center mt-4 mb-4 m-5">
+                <h3 class="fw-bold">Admin Login</h3>
+              </div>
+              <p id="errorMsg"></p>
+              <form id="emailForm" action="/admin/adminValidation" method="post">
+                <div class="mb-4">
+                  <input type="email" class="form-control border-0" id="email" placeholder="Enter email " name="email">
+                </div>
+                <div class="mb-4 d-flex position-relative">
+                  <input type="password" class="form-control border-0" id="password" placeholder="Enter password"
+                    name="password">
+                  <button class="btn border-0" type="button" id="togglePassword">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <div class="d-flex justify-content-end align-items-center mb-3 mt-4">
+                  <a href="/admin/forgotPassword" class="text-decoration-none forgTxt">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-custom w-100 mb-3 text-light">Sign In</button>
+              </form>
+            </div>
+          </div>
+          <script src="/admin/login/script.js"></script>
+          <%- include('partials/footer.ejs') -%>

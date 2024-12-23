@@ -119,7 +119,7 @@
                     <option value="Category" <%=offerProduct?.applicableTo==='Category' ? 'selected' : '' %>>Category
                     </option>
                   </select>
-                  <div class="error" id="applicableToError"></div> 
+                  <div class="error" id="applicableToError"></div>
                 </div>
               </div>
 
@@ -132,8 +132,8 @@
                     <% availableProducts.forEach(product=> { %>
                       <option value="<%= product._id %>" <%=offerProduct?.product?.equals(product._id) ? 'selected' : ''
                         %>>
-                        <%= product.name %> (Status: <%= product.condition %>, Storage: <%= product.storage %>, Color: <%=
-                                product.color %>)
+                        <%= product.name %> (Status: <%= product.condition %>, Storage: <%= product.storage %>, Color:
+                              <%= product.color %>)
                       </option>
                       <% }); %>
                   </select>
@@ -213,7 +213,7 @@
                   <label for="validTill" class="form-label">Valid Till</label>
                   <input type="date" class="form-control" id="validTill" name="validTill"
                     value="<%= offerProduct?.validTill ? offerProduct.validTill.toISOString().slice(0, 10) : '' %>">
-                  <div class="error" id="validTillError"></div> 
+                  <div class="error" id="validTillError"></div>
                 </div>
               </div>
 
@@ -226,14 +226,15 @@
                     <option value="true" <%=offerProduct?.isActive ? 'selected' : '' %>>Active</option>
                     <option value="false" <%=!offerProduct?.isActive ? 'selected' : '' %>>Inactive</option>
                   </select>
-                  <div class="error" id="isActiveError"></div> 
+                  <div class="error" id="isActiveError"></div>
                 </div>
               </div>
 
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="discountCap" class="form-label">Maximum discount</label>
-                  <input type="number" class="form-control" id="discountCap" name="discountCap" value="<%= offerProduct?.discountCap || '' %>" >
+                  <input type="number" class="form-control" id="discountCap" name="discountCap"
+                    value="<%= offerProduct?.discountCap || '' %>">
                   <div class="error" id="discountCapError"></div>
                 </div>
               </div>

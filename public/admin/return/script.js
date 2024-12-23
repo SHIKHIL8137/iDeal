@@ -201,6 +201,9 @@ async function approve(returnCancelId) {
     const data = await response.json();
     if (response.ok) {
       showAlert(data.message, 'success');
+      setTimeout(()=>{
+window.location.reload()
+      },4000)
     } else {
       showAlert(data.message || 'Failed to approve the return request.', 'danger');
     }
@@ -224,6 +227,9 @@ async function reject(returnCancelId, reason) {
     const data = await response.json();
     if (response.ok) {
       showAlert(data.message, 'success');
+      setTimeout(()=>{
+        window.location.reload()
+              },4000)
     } else {
       showAlert(data.message || 'Failed to reject the return request.', 'danger');
     }

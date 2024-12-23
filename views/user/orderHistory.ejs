@@ -1,170 +1,176 @@
 <%- include('partials/header.ejs') -%>
-    <link rel="stylesheet" href="/user/orderHistory/style.css">
-</head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="/user/about">About Us</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="/user/contact">Contact Us</a></li>
-        </ul>
-      </div>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/user/userProfile"><img src="/image/icons/user-circle.svg" alt=""></a></li>
-          <li class="nav-item"><a class="nav-link" href="/user/cart"><img src="/image/icons/shopping bag.svg" alt=""></a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <div class="container" id="container-div">
-    <div class="row pageMainrow">
-      <!-- Sidebar -->
-      <div class="sidebar d-flex flex-column col-md-3 col-12 gap-2">
-        <a href="/user/userProfile">
-          <i class="fas fa-user"></i> Account Details
-        </a>
-        <a href="/user/orderHistory" class="active">
-          <i class="fas fa-clock"></i> Order History
-        </a>
-        <a href="/user/wallet">
-          <i class="fas fa-wallet"></i> Wallet
-        </a>
-        <a href="/user/cart">
-          <i class="fas fa-shopping-cart"></i> Shopping Cart
-        </a>
-        <a href="/user/Wishlist">
-          <i class="fas fa-heart"></i> Wishlist
-        </a>
-        <a href="/user/address">
-          <i class="fas fa-map-marker-alt"></i> Address
-        </a>
-        <a href="/user/referral" >
-          <i class="fas fa-user-friends"></i> Referral
-        </a>
-        <a href="/user/logOut">
-          <i class="fas fa-sign-out-alt"></i> Log-out
-        </a>
-      </div>
+  <link rel="stylesheet" href="/user/orderHistory/style.css">
+  </head>
 
-      <!-- Content -->
-      <div class="col-md-9 col-12">
-        <h1 class="mb-4">Order History</h1>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Product Name</th>
-              <th scope="col">Status</th>
-              <th scope="col">Date</th>
-              <th scope="col">Total</th>
-              <th scope="col">Order Details</th>
-            </tr>
-          </thead>
-          <tbody id="orderTableBody">
-            <% orders.forEach((order, index) => { %>
-              <tr class="order-row" data-order-id="<%= order.orderId %>" data-page="<%= Math.floor(index / 10) + 1 %>">
-                <td>
-                  <%= order.firstProductName %> (<%= order.firstProductQuantity %> Items)
-                </td>
-                <td>
-                  <% if (order.status === 'Processing') { %>
-                    <span class="badge bg-warning text-dark">Processing</span>
-                  <% } else if (order.status === 'Returned') { %>
-                    <span class="badge bg-primary">Returned</span>
-                  <% } else if (order.status === 'Delivered') { %>
-                    <span class="badge bg-success">Delivered</span>
-                  <% } else if (order.status === 'Cancelled') { %>
-                    <span class="badge bg-danger">Cancelled</span>
-                  <% } else { %>
-                    <span class="badge bg-secondary">Unknown</span>
-                  <% } %>
-                </td>
-                <td>
-                  <%= new Date(order.orderDate).toLocaleString('en-IN', {
-                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                  }) %>
-                </td>
-                <td>₹<%= order.totalAmount.toLocaleString('en-IN') %></td>
-                <td>
-                  <button class="ratingBtn" data-order-id="<%= order.orderId %>">Oreder Details</button>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-          
-        </table>
-        
-        
-        
-        
-        
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <span class="showing1-10Text">Showing 1-10 of <%= orders.length %></span>
-          <ul class="pagination justify-content-center">
-            <li class="page-item">
-              <button class="page-link" id="prevPage" disabled>&laquo;</button>
-            </li>
-            <li class="page-item">
-              <button class="page-link" id="nextPage">&raquo;</button>
-            </li>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="/user/home">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/user/shop">Shop</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/user/about">About Us</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/user/contact">Contact Us</a></li>
           </ul>
-        </div>        
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="/user/userProfile"><img src="/image/icons/user-circle.svg"
+                  alt=""></a></li>
+            <li class="nav-item"><a class="nav-link" href="/user/cart"><img src="/image/icons/shopping bag.svg"
+                  alt=""></a></li>
+          </ul>
+        </div>
       </div>
-      
-    </div>
-  </div>
-  <div class="footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <!-- Logo and Tagline -->
-        <div class="col-md-4 text-center text-md-start">
-          <div class="footer-logo">
-            <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
-            <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+    </nav>
+    <div class="container" id="container-div">
+      <div class="row pageMainrow">
+        <!-- Sidebar -->
+        <div class="sidebar d-flex flex-column col-md-3 col-12 gap-2">
+          <a href="/user/userProfile">
+            <i class="fas fa-user"></i> Account Details
+          </a>
+          <a href="/user/orderHistory" class="active">
+            <i class="fas fa-clock"></i> Order History
+          </a>
+          <a href="/user/wallet">
+            <i class="fas fa-wallet"></i> Wallet
+          </a>
+          <a href="/user/cart">
+            <i class="fas fa-shopping-cart"></i> Shopping Cart
+          </a>
+          <a href="/user/Wishlist">
+            <i class="fas fa-heart"></i> Wishlist
+          </a>
+          <a href="/user/address">
+            <i class="fas fa-map-marker-alt"></i> Address
+          </a>
+          <a href="/user/referral">
+            <i class="fas fa-user-friends"></i> Referral
+          </a>
+          <a href="/user/logOut">
+            <i class="fas fa-sign-out-alt"></i> Log-out
+          </a>
+        </div>
+
+        <!-- Content -->
+        <div class="col-md-9 col-12">
+          <h1 class="mb-4">Order History</h1>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Date</th>
+                <th scope="col">Total</th>
+                <th scope="col">Order Details</th>
+              </tr>
+            </thead>
+            <tbody id="orderTableBody">
+              <% orders.forEach((order, index)=> { %>
+                <tr class="order-row" data-order-id="<%= order.orderId %>"
+                  data-page="<%= Math.floor(index / 10) + 1 %>">
+                  <td>
+                    <%= order.firstProductName %> (<%= order.firstProductQuantity %> Items)
+                  </td>
+                  <td>
+                    <% if (order.status==='Processing' ) { %>
+                      <span class="badge bg-warning text-dark">Processing</span>
+                      <% } else if (order.status==='Returned' ) { %>
+                        <span class="badge bg-primary">Returned</span>
+                        <% } else if (order.status==='Delivered' ) { %>
+                          <span class="badge bg-success">Delivered</span>
+                          <% } else if (order.status==='Cancelled' ) { %>
+                            <span class="badge bg-danger">Cancelled</span>
+                            <% } else { %>
+                              <span class="badge bg-secondary">Unknown</span>
+                              <% } %>
+                  </td>
+                  <td>
+                    <%= new Date(order.orderDate).toLocaleString('en-IN', { year: 'numeric' , month: 'short' ,
+                      day: 'numeric' , hour: '2-digit' , minute: '2-digit' }) %>
+                  </td>
+                  <td>₹<%= order.totalAmount.toLocaleString('en-IN') %>
+                  </td>
+                  <td>
+                    <button class="ratingBtn" data-order-id="<%= order.orderId %>">Oreder Details</button>
+                  </td>
+                </tr>
+                <% }) %>
+            </tbody>
+
+          </table>
+
+
+
+
+
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="showing1-10Text">Showing 1-10 of <%= orders.length %></span>
+            <ul class="pagination justify-content-center">
+              <li class="page-item">
+                <button class="page-link" id="prevPage" disabled>&laquo;</button>
+              </li>
+              <li class="page-item">
+                <button class="page-link" id="nextPage">&raquo;</button>
+              </li>
+            </ul>
           </div>
         </div>
-        
-        <!-- Navigation Links -->
-        <div class="col-md-4 text-center">
-          <a href="/user/home">Home</a>
-          <a href="/user/shop">Shop</a>
-          <a href="#">About Us</a>
-          <a href="#">Contact Us</a>
-        </div>
-        
-        <!-- Social Media Icons -->
-        <div class="col-md-4 text-center text-md-end social-icons pt-3">
-          <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
-          <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
-          <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
-        </div>
+
       </div>
-      <hr>
-      <div class="row">
-        <div class="col text-center text-md-start">
-          <small class="footerSpan">Copyright © 2023 iDeal. All rights reserved.</small>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Logo and Tagline -->
+          <div class="col-md-4 text-center text-md-start">
+            <div class="footer-logo">
+              <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
+              <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+            </div>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="col-md-4 text-center">
+            <a href="/user/home">Home</a>
+            <a href="/user/shop">Shop</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+          </div>
+
+          <!-- Social Media Icons -->
+          <div class="col-md-4 text-center text-md-end social-icons pt-3">
+            <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
+            <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
+            <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
+          </div>
         </div>
-        <div class="col text-center text-md-end">
-          <a href="#" class="footerSpan">Privacy Policy</a>
-          <a href="#" class="footerSpan">Terms of Use</a>
+        <hr>
+        <div class="row">
+          <div class="col text-center text-md-start">
+            <small class="footerSpan">Copyright © 2023 iDeal. All rights reserved.</small>
+          </div>
+          <div class="col text-center text-md-end">
+            <a href="#" class="footerSpan">Privacy Policy</a>
+            <a href="#" class="footerSpan">Terms of Use</a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
 
-  
 
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="/user/orderHistory/script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"></script>
+    <script src="/user/orderHistory/script.js"></script>
 
 
-  <%- include('partials/footer.ejs') -%>
+    <%- include('partials/footer.ejs') -%>
