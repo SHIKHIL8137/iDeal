@@ -1,0 +1,120 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+ } 
+ input::placeholder,textarea::placeholder{
+  font-size: 12px;
+}
+nav{
+  background-color: black;
+}
+.logoImag{
+  width: 80px;
+  height: 40px;
+}
+    body {
+      background-color: #121212;
+      color: white;
+    }
+
+    .footer {
+      background-color: #121212;
+      color: #fff;
+      padding: 20px 0;
+    }
+    .footer a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 0.9rem;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer .footer-logo img {
+      width: 70px;
+      margin-right: 8px;
+      margin-bottom: 6px;
+    }
+    .footer .social-icons a {
+      color: #fff;
+      margin: 0 8px;
+      font-size: 1.2rem;
+    }
+    .footer hr {
+      border-color: #444;
+      margin: 10px 0;
+    }
+    .footerSpan{
+      font-size: .8em;
+      font-weight: 200;
+    }
+#container-div{
+  height: 100vh;
+}
+  
+.modal-content{
+  background-color: #121212;
+  padding: 20px;
+}
+#feedback{
+  background-color: #1d1d1d;
+  color: white;
+  border: none;
+}
+#feedback::placeholder{
+  color: white;
+}
+#alertBox {
+  position: fixed;
+  top: 20px;
+  right: -100%;
+  transition: all 0.5s ease-in-out;
+  z-index: 9999;
+}
+
+#alertBox.show {
+  right: 20px;
+}
+
+#alertBox.hide {
+  right: -100%;
+}
+.modal-content{
+  background-color: black;
+}
+.modal-header{
+  border: none;
+}
+.form-control{
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border: none;
+}
+.form-control:focus{
+  outline: none;
+  box-shadow: none;
+  border: none;
+  background-color: #1a1a1a;
+  color: white;
+}
+.form-control::placeholder{
+  color: #ffffff;
+}
+.modal-footer{
+  border: none;
+}
+.invoiceBtn{
+  border: none;
+  background: none;
+  color: white;
+  opacity: .6;
+  cursor:pointer;
+  transition: .3s ease-in-out;
+}
+.invoiceBtn:hover{
+  opacity: 1;
+}

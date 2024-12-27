@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
       loginMessage.style.display = "block";
     }, 1000); 
   }
-});
+},fetchBanners());
 
 // redirect to login
 function redirectToLogin() {
@@ -384,5 +384,23 @@ async function applyFilters() {
 
   } catch (error) {
     console.error("Error applying filters:", error);
+  }
+}
+
+async function fetchBanners() {
+  try {
+      const response = await fetch('/user/getbanners');
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+          const { home_image, offer_banner } = data.data;
+          if (offer_banner) {
+            document.querySelector('.promo-banner').style.backgroundImage = `url(${offer_banner})`;
+          }
+      } else {
+          console.error('Failed to fetch banners:', data.error || 'Unknown error');
+      }
+  } catch (error) {
+      console.error('Error fetching banners:', error);
   }
 }

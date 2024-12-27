@@ -45,7 +45,10 @@ function renderCoupons() {
   const endIndex = Math.min(startIndex + limit, filteredCoupons.length);
 
   const couponsToRender = filteredCoupons.slice(startIndex, endIndex);
-
+if(filteredCoupons.length === 0){
+  tableBody.innerHTML ='<tr><td colspan="9" class="text-center text-danger">No Coupon found.</td></tr>';
+}
+  
   couponsToRender.forEach((coupon) => {
     const row = document.createElement('tr');
 
@@ -64,7 +67,6 @@ function renderCoupons() {
       <td>${new Date(coupon.createdAt).toLocaleDateString('en-IN')}</td>
       <td>
         <button class="btn btn-sm btn-outline-primary" onclick="editCoupon('${coupon._id}')">Edit</button>
-        <button class="btn btn-sm btn-outline-danger" onclick="deleteCoupon('${coupon._id}')">Delete</button>
       </td>
     `;
 
@@ -174,34 +176,34 @@ function editCoupon(couponId) {
 
 // Delete a coupon
 
-let couponIdToDelete = null; 
+// let couponIdToDelete = null; 
 
-function deleteCoupon(couponId) {
-  couponIdToDelete = couponId;
-  const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-  deleteModal.show();
-}
-document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-  if (couponIdToDelete) {
-    fetch(`/admin/deleteCoupon/${couponIdToDelete}`, {
-      method: 'DELETE',
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === 'success') {
-          window.location.href = '/admin/Coupon?message=Coupon deleted Successfully.&err=true';
-        } else {
-          window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
-        }
-      })
-      .catch((error) => {
-        window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
-      });
+// function deleteCoupon(couponId) {
+//   couponIdToDelete = couponId;
+//   const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+//   deleteModal.show();
+// }
+// document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+//   if (couponIdToDelete) {
+//     fetch(`/admin/deleteCoupon/${couponIdToDelete}`, {
+//       method: 'DELETE',
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data.status === 'success') {
+//           window.location.href = '/admin/Coupon?message=Coupon deleted Successfully.&err=true';
+//         } else {
+//           window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
+//         }
+//       })
+//       .catch((error) => {
+//         window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
+//       });
       
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteModal.hide(); 
-  }
-});
+//     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+//     deleteModal.hide(); 
+//   }
+// });
 
 
 

@@ -54,6 +54,9 @@
           <a href="/user/address">
             <i class="fas fa-map-marker-alt"></i> Address
           </a>
+          <a href="/user/referral">
+            <i class="fas fas fa-user-friends"></i> Referral
+          </a>
           <a href="/user/logOut">
             <i class="fas fa-sign-out-alt"></i> Log-out
           </a>
@@ -62,57 +65,12 @@
         <!-- Content -->
         <div class="col-md-9 content">
           <h2 class="mb-4">Wishlist</h2>
-          <% if (wishlist && wishlist.length> 0) { %>
             <table class="table align-middle">
               <thead>
               </thead>
               <tbody>
-                <% wishlist.forEach(item=> { %>
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <!-- Display product image -->
-                        <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="me-3"
-                          width="50" height="50" style="object-fit: contain;">
-                        <div class="d-flex flex-column">
-                          <strong>
-                            <%= item.productId.name %>
-                          </strong>
-                          <small>
-                            <%= item.productId.storage %>GB(<%= item.productId.color %>)
-                          </small>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span class="text-white"><del style="font-size: 13px;">₹<%= item.productId.price.toLocaleString()
-                            %></del> ₹<%= item.productId.Dprice.toLocaleString() %></span>
-                    </td>
-                    <td>
-                      <%= item.productId.condition %>
-                    </td>
-                    <td>
-                      <span class="<%= item.productId.stock > 0 ? 'in-stock' : 'out-of-stock' %>">
-                        <%= item.productId.stock> 0 ? 'In Stock' : 'Out of Stock' %>
-                      </span>
-                    </td>
-                    <td>
-                      <div class="tableAddToCartDiv">
-                        <button id="addTocartProduct" data-product='<%- JSON.stringify(item.productId).replace(/'
-                          /g, '&#39;' ) %>'
-                          onclick="addtoCart(this)" class="btn btn-primary btn-sm" <%= item.productId.stock> 0 ? '' :
-                            'disabled' %>>Add to Cart</button>
-                        <button class="btn-remove"
-                          onclick="deleteFromWishlist('<%= item.productId._id %>')">&times;</button>
-                      </div>
-                    </td>
-                  </tr>
-                  <% }) %>
               </tbody>
             </table>
-            <% } else { %>
-              <p>Your wishlist is empty. Start adding products to your wishlist!</p>
-              <% } %>
         </div>
 
       </div>
@@ -221,7 +179,7 @@
       crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-
+    <script type="application/json" id="offerData"><%- JSON.stringify(offer) %></script>
     <script src="/user/Wishlist/script.js"></script>
 
 

@@ -49,23 +49,23 @@ ol li{
     }
 
   .pagination-rounded .page-item .page-link {
-    border-radius: 50%; /* Makes buttons round */
-    padding: 0.5rem 0.7rem; /* Ensures proper size */
+    border-radius: 50%;
+    padding: 0.5rem 0.7rem;
   }
 
   .pagination-rounded .page-item.active .page-link {
     background-color: #0d6efd;
     color: white;
-    border-radius: 50%; /* Keeps the active button round */
+    border-radius: 50%; 
   }
 
   .pagination-rounded .page-link {
-    color: #0d6efd; /* Default color for links */
+    color: #0d6efd;
     border: 1px solid #dee2e6;
   }
 
   .pagination-rounded .page-item:hover .page-link {
-    background-color: #f0f0f0; /* Subtle hover effect */
+    background-color: #f0f0f0;
   }
 
   .nav-link {
@@ -77,16 +77,16 @@ ol li{
   }
 
   .nav-link.active {
-    background-color: #2a4365; /* Active background */
-    color: #513a3a; /* Active text */
+    background-color: #2a4365; 
+    color: #513a3a; 
   }
 
   .nav-link:hover {
-    background-color: #c3c3c3; /* Hover effect */
+    background-color: #c3c3c3; 
   }
 
   .nav-link i {
-    margin-right: 10px; /* Spacing for icons */
+    margin-right: 10px; 
     color: black;
   }
 
@@ -162,14 +162,18 @@ td div::-webkit-scrollbar {
   display: none;
 }
 .reason-cell {
-  max-width: 150px; /* Adjust the width as needed */
+  max-width: 150px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: pointer; /* Indicate it's interactive */
+  cursor: pointer; 
 }
 
 .tooltip-inner {
-  max-width: 300px; /* Adjust to control tooltip width */
-  white-space: normal; /* Allow text wrapping in the tooltip */
+  max-width: 300px;
+  white-space: normal; 
+}
+
+#paginationInfo{
+  font-size: 13px;
 }

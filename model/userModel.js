@@ -409,6 +409,9 @@ const orderSchema = new mongoose.Schema({
   appliedCoupon :{
     type : String
   },
+  appliedDiscountPercentage :{
+    type : Number,
+   },
   couponDiscount :{
     type : Number,
     default : 0
@@ -465,16 +468,13 @@ const walletSchema = new mongoose.Schema({
     transactionId: {
       type: String,
       unique: true, 
-      required: true,
     },
     type: {
       type: String,
       enum: ['credit', 'debit'], 
-      required: true,
     },
     amount: {
       type: Number,
-      required: true,
     },
     date: {
       type: Date,
@@ -597,7 +597,7 @@ const returnCancelSchema = new mongoose.Schema({
   refundAmount: {
     type: Number,
     required: function () {
-      return this.paymentMethod === 'Online' && this.paymentStatus === 'Paid'; 
+      return this.paymentStatus === 'Paid'; 
     },
   },
   pickupAddress: {
@@ -659,6 +659,9 @@ const returnCancelSchema = new mongoose.Schema({
 
 
 const pendingOrderSchema = new mongoose.Schema({
+  razorPayOrderId :{
+    type :String,
+  },
   orderId: { 
     type: String, 
     required: true, 
@@ -671,7 +674,7 @@ const pendingOrderSchema = new mongoose.Schema({
     },
   pendingStatus:{
     type : String,
-    default : 'Pending Payment'
+    default : 'Pending-Payment'
   },
   paymentStatus: { 
     type: String, 
@@ -825,6 +828,10 @@ const pendingOrderSchema = new mongoose.Schema({
   appliedCoupon :{
     type : String
   },
+  appliedDiscountPercentage :{
+   type : Number,
+  }
+  ,
   couponDiscount :{
     type : Number,
     default : 0
@@ -836,7 +843,11 @@ const pendingOrderSchema = new mongoose.Schema({
   deliveryFee :{
     type : Number,
     default : 0
-  }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, 
+  },
 });
 
 

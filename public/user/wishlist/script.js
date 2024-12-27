@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded',getWishlistData());
+const offer = JSON.parse(document.getElementById('offerData').textContent);
+
+
 async function deleteFromWishlist(productId) {
   try {
     const response = await fetch(`/user/deleteFromWishlist/${productId}`, {
@@ -11,9 +15,7 @@ async function deleteFromWishlist(productId) {
 
     if (result.status) {
       showAlert(result.message || "Item removed from wishlist",'success');
-      setTimeout(()=>{
-        window.location.reload()
-      },4000)
+      getWishlistData()
     } else {
       showAlert(result.message || "Failed to remove item from wishlist",'danger');
     }
@@ -27,25 +29,23 @@ async function deleteFromWishlist(productId) {
 
 
 
-async function addtoCart(buttonElement){
+async function addtoCart(buttonElement) {
   const productDataJson = buttonElement.getAttribute('data-product'); 
   const product = JSON.parse(productDataJson);
-
   const productId = product._id;
-let price;
-let actualPrice;
-if(product.offer) {
- price = (product.price - (product.price * (offer.discountValue / 100)));
- actualPrice = product.Dprice
-}else{
- price = product.Dprice;
- actualPrice = product.Dprice;
-}
-  const datatoSet = { productId ,price , actualPrice};
-  console.log(datatoSet)
-  const button = document.getElementById('addTocartProduct');
-    button.disabled = true; 
-    button.innerText = 'Adding...';
+
+  const offerProduct = offer.filter((val) => val.product === productId);
+  const discountValue = offerProduct.length > 0 ? offerProduct[0].discountValue : 0;
+  const price = product.offer 
+    ? product.price - (product.price * (discountValue / 100)) 
+    : product.Dprice;
+  const actualPrice = product.Dprice;
+
+  const datatoSet = { productId, price, actualPrice };
+
+  buttonElement.disabled = true;
+  buttonElement.innerText = 'Adding...';
+
   try {
     const response = await fetch('/user/addtoCartProduct', {
       method: 'POST',
@@ -64,12 +64,79 @@ if(product.offer) {
     }
   } catch (error) {
     console.error('Error:', error);
-    showAlert('Failed to add product to cart. Please try again.', 'danger');
+    showAlert('An error occurred while adding the product to cart. Please try again.', 'danger');
   } finally {
-    button.disabled = false; 
-    button.innerText = 'Add to Cart';
+    buttonElement.disabled = false;
+    buttonElement.innerText = 'Add to Cart';
   }
 }
+
+
+async function getWishlistData() {
+  try {
+    const response = await fetch('/user/getWishListData', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (response.ok) {
+      const data = await response.json();
+      renderTable(data.wishlist); 
+    } else {
+      console.error('Failed to fetch wishlist data:', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching wishlist data:', error);
+  }
+}
+
+function renderTable(wishlist) {
+  const wishlistContainer = document.querySelector('.content tbody');
+  wishlistContainer.innerHTML = ''; 
+  if (wishlist.length > 0) {
+    wishlist.forEach(item => {
+      let productOffer = offer.filter((val) => val.product === item.productId._id);
+      let discountValue = productOffer.length > 0 ? productOffer[0].discountValue : 0;
+      let discountedPrice = item.productId.price - (item.productId.price * (discountValue / 100));
+      const row = `
+        <tr>
+          <td>
+            <div class="d-flex align-items-center">
+              <img src="${item.productId.images[0]}" alt="${item.productId.name}" class="me-3" width="50" height="50" style="object-fit: contain;">
+              <div class="d-flex flex-column">
+                <strong>${item.productId.name}</strong>
+                <small>${item.productId.storage}GB(${item.productId.color})</small>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="text-white">
+              <del style="font-size: 13px;">₹${item.productId.price.toLocaleString()}</del> 
+              ₹${item.productId.offer ? discountedPrice.toLocaleString() : item.productId.Dprice.toLocaleString()}
+            </span>
+          </td>
+          <td>${item.productId.condition}</td>
+          <td>
+            <span class="${item.productId.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+              ${item.productId.stock > 0 ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </td>
+          <td>
+            <div class="tableAddToCartDiv">
+              <button id="addTocartProduct" data-product='${JSON.stringify(item.productId).replace(/'/g, '&#39;')}' onclick="addtoCart(this)" class="btn btn-primary btn-sm" ${item.productId.stock > 0 ? '' : 'disabled'}>Add to Cart</button>
+              <button class="btn-remove" onclick="deleteFromWishlist('${item.productId._id}')">&times;</button>
+            </div>
+          </td>
+        </tr>
+      `;
+      wishlistContainer.insertAdjacentHTML('beforeend', row);
+    });
+  } else {
+    wishlistContainer.innerHTML = '<p>Your wishlist is empty. Start adding products to your wishlist!</p>';
+  }
+}
+
+
+
 
 
 

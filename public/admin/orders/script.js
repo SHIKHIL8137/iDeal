@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const rowsPerPage = 10; 
   let currentPage = 1; 
   let filteredOrders = [...orders]; 
-
+console.log(orders);
 
   const tableBody = document.querySelector("#ordersTable tbody");
   const prevPageButton = document.getElementById("prevPage");
@@ -27,12 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     filteredOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
+    if(filteredOrders.length === 0){
+      tableBody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">No orders found.</td></tr>';
+    }
+
     filteredOrders.slice(start, end).forEach(order => {
       const row = `
         <tr>
           <td>${order.orderId}</td>
           <td>
-            ${order.userId.firstName} ${order.userId.lastName}<br>
+            ${order.billingAddress.fname} ${order.billingAddress.lname}<br>
             <small>${order.userId.email}</small>
           </td>
           <td style="max-width: 200px; overflow: hidden;">
@@ -47,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
               `).join('')}
             </div>
           </td>
-          <td>${new Date(order.orderDate).toLocaleDateString()}</td>
+          <td>${new Date(order.orderDate).toLocaleDateString('en-IN')}</td>
           <td>
             <strong>Status:</strong> ${order.paymentStatus}<br>
             <strong>Method:</strong> ${order.paymentMethod}

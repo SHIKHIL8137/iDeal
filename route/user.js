@@ -43,7 +43,9 @@ router.get('/cartSummary',userMiddleWare.isLoggedIn,userController.cartSummery);
 router.get('/downloadInvoice/:orderId',userMiddleWare.isLoggedIn,userController.generateSalesInvoice);
 router.get('/about',userController.loadAbout);
 router.get('/contact',userController.loadContact);
-
+router.get('/getWishListData',userController.getWishlistData);
+router.get('/pendingDetails',userController.loadPending);
+router.get('/getbanners',userController.getbanners);
 
 
 

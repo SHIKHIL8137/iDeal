@@ -62,7 +62,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const paginatedOrders = orders.slice(start, end);
 
         if (paginatedOrders.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5">No data available</td></tr>';
+            
+            tableBody.innerHTML = '<tr><td colspan="5"  class="text-center text-danger">No data available</td></tr>';
         } else {
             paginatedOrders.forEach(order => {
                 const tr = document.createElement('tr');

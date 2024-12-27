@@ -1,53 +1,66 @@
 
   document.addEventListener('DOMContentLoaded', () => {
-
-    const orderRows = document.querySelectorAll('.ratingBtn');
-
-
-    orderRows.forEach(row => {
-      row.addEventListener('click', () => {
-        const orderId = row.getAttribute('data-order-id');
-
-        window.location.href = `/user/orderDetails/${orderId}`;
+    function setupOrderDetailsButtons(buttonClass, dataAttribute) {
+      const buttons = document.querySelectorAll(buttonClass);
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const orderId = button.getAttribute(dataAttribute);
+          window.location.href = `/user/orderDetails/${orderId}`;
+        });
       });
-    });
-
-
-
-    const rowsPerPage = 10;
-  let currentPage = 1;
-  const rows = document.querySelectorAll('.order-row');
-  const totalPages = Math.ceil(rows.length / rowsPerPage);
-
-  function renderPage(page) {
-    rows.forEach(row => {
-      const rowPage = parseInt(row.getAttribute('data-page'), 10);
-      row.style.display = rowPage === page ? '' : 'none';
-    });
-
-    // Update pagination UI
-    document.getElementById('prevPage').disabled = page === 1;
-    document.getElementById('nextPage').disabled = page === totalPages;
-    document.querySelector('.showing1-10Text').innerText =
-      `Showing ${(page - 1) * rowsPerPage + 1}-${Math.min(page * rowsPerPage, rows.length)} of ${rows.length}`;
-  }
-
-  document.getElementById('prevPage').addEventListener('click', () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderPage(currentPage);
+      
     }
-  });
-
-  document.getElementById('nextPage').addEventListener('click', () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderPage(currentPage);
+    function setupPendingDetailsButtons(buttonClass, dataAttribute) {
+      const buttons = document.querySelectorAll(buttonClass);
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          const orderId = button.getAttribute(dataAttribute);
+          window.location.href = `/user/pendingDetails?orderId=${orderId}`;
+        });
+      });
+      
     }
-  });
-
-  // Initial render
-  renderPage(currentPage);
   
-  });
+    function setupPagination(rowsClass, rowsPerPage, prevButtonId, nextButtonId, showingTextClass) {
+      let currentPage = 1;
+      const rows = document.querySelectorAll(rowsClass);
+      const totalPages = Math.ceil(rows.length / rowsPerPage);
+  
+      function renderPage(page) {
+        rows.forEach(row => {
+          const rowPage = parseInt(row.getAttribute('data-page'), 10);
+          row.style.display = rowPage === page ? '' : 'none';
+        });
+  
+        document.getElementById(prevButtonId).disabled = page === 1;
+        document.getElementById(nextButtonId).disabled = page === totalPages;
+  
+        const showingText = document.querySelector(showingTextClass);
+        showingText.innerText =
+          `Showing ${(page - 1) * rowsPerPage + 1}-${Math.min(page * rowsPerPage, rows.length)} of ${rows.length}`;
+      }
+  
+      document.getElementById(prevButtonId).addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderPage(currentPage);
+        }
+      });
+  
+      document.getElementById(nextButtonId).addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderPage(currentPage);
+        }
+      });
+  
+      renderPage(currentPage);
+    }
+  
+    setupOrderDetailsButtons('.OrderDetailsBtn', 'data-order-id');
+    setupPagination('.order-row', 10, 'prevPage', 'nextPage', '.showing1-10Text');
 
+    setupPendingDetailsButtons('.PendingBtn', 'data-Pending-id');
+    setupPagination('.pendingOrder-row', 10, 'PendingPrevPage', 'PendingNextPage', '.pendingShowing1-10Text');
+  });
+  

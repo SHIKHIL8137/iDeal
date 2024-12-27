@@ -66,7 +66,9 @@
                         <p class="mb-0 small" style="color: #bbb;">₹<%= product.total.toLocaleString() %></p>
                       </div>
                     </div>
-              
+                    <!-- <%= order.appliedCoupon === 'N/A' 
+                    ? product.total.toLocaleString() 
+                    : (product.total - (product.total * (order.appliedCouponPercentage / 100))).toLocaleString() %> -->
                     <div class="text-center mt-2">
                       <% if (order.status === 'Delivered') { %>
                         <% const returnRequest = returnStatusMap[product.productId.toString()]; %>

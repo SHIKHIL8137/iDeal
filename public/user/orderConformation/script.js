@@ -10,7 +10,7 @@ document.addEventListener('keydown', (e) => {
 
 window.onload = () => {
   const orderId = document.getElementById('orderId').value; 
-  const initialTimerValue = 10; 
+  const initialTimerValue = 5; 
   let secondsLeft = initialTimerValue;
 
   const countdownElement = document.getElementById('timer');

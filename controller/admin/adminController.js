@@ -1,4 +1,4 @@
-const {Product,Category,Admin,Coupon, Offer,Transaction} = require('../../model/adminModel');
+const {Product,Category,Admin,Coupon, Offer,Transaction,Banner} = require('../../model/adminModel');
 const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
 const fs= require('fs');
 const path = require('path');
@@ -1069,19 +1069,19 @@ const searchCoupon = async (req, res) => {
 
 // Delete coupon
 
-const deleteCoupon = async(req,res)=>{
-  const couponId = req.params.couponId; 
-  try {
-    const result = await Coupon.findByIdAndDelete(couponId);
-    if (!result) {
-      return res.status(404).json();
-    }
-    res.json();
-  } catch (err) {
-    console.error(err);
-    res.status(500).json();
-  }
-}
+// const deleteCoupon = async(req,res)=>{
+//   const couponId = req.params.couponId; 
+//   try {
+//     const result = await Coupon.findByIdAndDelete(couponId);
+//     if (!result) {
+//       return res.status(404).json();
+//     }
+//     res.json();
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json();
+//   }
+// }
 
 
 // load return page
@@ -1150,13 +1150,27 @@ const approveReturn = async (req, res) => {
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
-
+    const product = await Product.findById(returnCancel.productId);
+    if (!product) {
+      return res.status(404).json({ status: false, message: "Product not found" });
+    }
+    const order = await Orders.findByIdAndUpdate(
+      returnCancel.orderId,
+      {
+        $inc: {
+          totalAmount: -returnCancel.refundAmount,
+          total_Amt_WOT_Discount: -product.Dprice,
+        },
+      },
+      { new: true }
+    );
+    if (!order) {
+      return res.status(404).json({ status: false, message: "Order not found" });
+    }
+ 
     const trxId = generateTransactionId();
     let userWallet = await Wallet.findOne({ userId : returnCancel.userId });
-    console.log('userWallet',userWallet)
     if(!userWallet) return res.status(404).json({ status: false, message: "Wallet not found" });
-
-
     userWallet.balance += returnCancel.refundAmount;
     userWallet.transactions.push({
       transactionId: trxId,
@@ -1166,6 +1180,12 @@ const approveReturn = async (req, res) => {
     });
 
     await userWallet.save();
+    await Product.findByIdAndUpdate(
+      returnCancel.productId,
+      { $inc: { stock: returnCancel.productQauntity } },
+      { new: true }
+    );
+
     const newTransaction = new Transaction({
       userId : user._id,
       customer : user.email,
@@ -2152,6 +2172,75 @@ const getChartData = async (req, res) => {
 };
 
 
+// load banner
+
+
+const loadBanner = async(req,res)=>{
+  try{
+    const username=req.session.username;
+    res.status(200).render('admin/banner',{
+  username,
+  title:'Banner'
+});
+  }catch(error){
+    res.status(500).send('Internal server Error');
+  }
+}
+
+
+// upload banner
+
+const uploadBanner = async (req, res) => {
+  try {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded.' });
+    }
+console.log(req.file)
+    const { bannerType } = req.body;
+    if (!bannerType || (bannerType !== 'home' && bannerType !== 'offer')) {
+        return res.status(400).json({ error: 'Invalid banner type.' });
+    }
+
+    const filePath = `/uploads/re-image/${req.file.filename}`
+    const update = bannerType === 'home'
+        ? { home_image: filePath }
+        : { offer_banner: filePath };
+
+    const updatedBanner = await Banner.findOneAndUpdate({}, update, { new: true, upsert: true });
+
+    res.status(201).json({
+        success: true,
+        message: 'Banner uploaded successfully!',
+        filePath: filePath,
+        data: updatedBanner,
+    });
+} catch (error) {
+    console.error('Error uploading banner:', error);
+    res.status(500).json({ error: 'Failed to upload the banner.' });
+}
+};
+
+
+// get banner images 
+
+const getbanners = async (req, res) => {
+  try {
+      const banner = await Banner.findOne(); 
+      if (!banner) {
+          return res.status(404).json({ error: 'No banners found.' });
+      }
+      res.status(200).json({
+          success: true,
+          data: banner,
+      });
+  } catch (error) {
+      console.error('Error fetching banners:', error);
+      res.status(500).json({ error: 'Failed to fetch banners.' });
+  }
+};
+
+
+
 
 
 module.exports={
@@ -2196,7 +2285,7 @@ module.exports={
  getCoupons,
  editCoupon,
  searchCoupon,
- deleteCoupon,
+//  deleteCoupon,
  loadReturn,
  getReturnData,
  approveReturn,
@@ -2219,5 +2308,8 @@ module.exports={
  getDailyRevenue,
  getUserCount,
  getSalesCount,
- getChartData
+ getChartData,
+ loadBanner,
+ uploadBanner,
+ getbanners
 }

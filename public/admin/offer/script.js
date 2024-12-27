@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-
+        if(filteredData.length === 0){
+          table.innerHTML ='<tr><td colspan="7" class="text-center text-danger">No Offer found.</td></tr>';
+        }
         for (let i = startIndex; i < endIndex; i++) {
           const element = filteredData[i];
           const row = document.createElement('tr');
@@ -42,7 +44,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ${element.isActive ? 'Active' : 'Inactive'}
               </span>
             </td>
-            <td>${new Date(element.validTill).toLocaleDateString()}</td>
+            <td>${new Date(element.validFrom).toLocaleDateString('en-IN')}</td>
+            <td>${new Date(element.validTill).toLocaleDateString('en-IN')}</td>
             <td>
               <button class="btn btn-outline-success" onclick="editOffer('${element._id}')">Edit</button>
               <button class="btn btn-outline-danger" onclick="showDeleteModal('${element._id}')">Delete</button>

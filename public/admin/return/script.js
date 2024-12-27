@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <td class="reason-cell" data-bs-toggle="tooltip" data-bs-placement="top" title="Click to view details">
           <a href="/admin/returnOrderDetails/${request._id}" class="text-decoration-none text-black">${request.reason}</a>
         </td>
-        <td>${new Date(request.createdAt).toLocaleDateString()}</td>
+        <td>${new Date(request.createdAt).toLocaleDateString('en-IN')}</td>
         <td>
           <span class="badge ${getStatusBadgeClass(request.adminStatus)}">${request.adminStatus}</span>
         </td>
@@ -116,12 +116,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         setupPaginationControls(filteredData);
       } else {
         tbody.innerHTML =
-          '<tr><td colspan="7" class="text-center text-danger">No return orders found.</td></tr>';
+          '<tr><td colspan="8" class="text-center text-danger">No return orders found.</td></tr>';
       }
     } catch (error) {
       console.error('Error fetching data:', error);
       tbody.innerHTML =
-        '<tr><td colspan="7" class="text-center text-danger">Failed to load data</td></tr>';
+        '<tr><td colspan="8" class="text-center text-danger">Failed to load data</td></tr>';
     }
   }
 

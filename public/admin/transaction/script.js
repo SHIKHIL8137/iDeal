@@ -18,15 +18,17 @@ async function fetchTransactions() {
   }
 }
 
-// Render the current page of transactions
 function renderTable() {
   const tableBody = document.querySelector('#transactionsTable tbody');
-  tableBody.innerHTML = ''; // Clear existing rows
-
+  tableBody.innerHTML = ''; 
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = Math.min(startIndex + rowsPerPage, filteredTransactions.length);
 
   const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
+
+  if(filteredTransactions.length === 0){
+    tableBody.innerHTML ='<tr><td colspan="6" class="text-center text-danger">No Transactions found.</td></tr>';
+  }
   currentTransactions.forEach(transaction => {
     const row = `
       <tr>
@@ -36,7 +38,7 @@ function renderTable() {
         <td><span class="badge ${getBadgeClass(transaction.transactionType)}">
           ${transaction.transactionType.toUpperCase()}
         </span></td>
-        <td>${new Date(transaction.createdAt).toLocaleDateString()}</td>
+        <td>${new Date(transaction.createdAt).toLocaleDateString('en-IN')}</td>
         <td>₹${transaction.amount.toFixed(2)}</td>
       </tr>
     `;
@@ -57,7 +59,7 @@ function updatePaginationInfo() {
 
 // Filter transactions based on the selected type
 function filterTransactions(type) {
-  currentPage = 1; // Reset to the first page
+  currentPage = 1; 
   if (type === 'all') {
     filteredTransactions = [...transactions];
   } else {

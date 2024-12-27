@@ -306,6 +306,21 @@ required : true
 });
 
 
+const bannerSchema = new mongoose.Schema({
+  home_image: {
+    type: String,
+    required: true, 
+  },
+  offer_banner: {
+    type: String,
+    required: true, 
+  },
+  created_at: {
+    type: Date,
+    default: Date.now, 
+  },
+});
+
 
 module.exports = {
   Product:mongoose.model('Product',productSchema),
@@ -315,4 +330,5 @@ module.exports = {
   Coupon:mongoose.model('Coupon',couponSchema),
   Offer:mongoose.model('Offer',offerSchema),
   Transaction : mongoose.model('Transaction',transactionSchema),
+  Banner : mongoose.model('Banner',bannerSchema),
 };

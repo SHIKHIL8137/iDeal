@@ -52,6 +52,8 @@ router.get('/getDailyRevenue',adminAuth.isLoggedIn,adminController.getDailyReven
 router.get('/getUserCount',adminAuth.isLoggedIn,adminController.getUserCount);
 router.get('/getTodaySales',adminAuth.isLoggedIn,adminController.getSalesCount);
 router.get('/getChartData',adminAuth.isLoggedIn,adminController.getChartData);
+router.get('/banner',adminAuth.isLoggedIn,adminController.loadBanner);
+router.get('/getbanners',adminController.getbanners);
 
 
 
@@ -73,10 +75,11 @@ router.post('/returnApprove',adminController.approveReturn);
 router.post('/returnReject',adminController.rejectReturn);
 router.post('/addOffer',adminController.addOffer);
 router.post('/editOffer/:offerId',adminController.editOffer);
+router.post('/upload-banners', uploads.single('banner_image'), adminController.uploadBanner);
 
 
 
 router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
-router.delete('/deleteCoupon/:couponId',adminController.deleteCoupon);
+// router.delete('/deleteCoupon/:couponId',adminController.deleteCoupon);
 router.delete('/offerDelete/:offerId',adminController.deleteOffer);
 module.exports=router

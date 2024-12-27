@@ -206,14 +206,20 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
     });
 
     const result = await response.json();
+    console.log(result.razorPayOrderId);
     if (response.ok) {
       if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
         const rzp = new Razorpay({
-          key: 'rzp_test_MJ6J1WvPqqk5wn',
+          key: result.razorPayKey,
           amount: result.totalAmount * 100,
           currency: 'INR',
           order_id: result.razorPayOrderId,
           handler: async (razorpayResponse) => {
+            if (!razorpayResponse.razorpay_payment_id) {
+              showAlert('Payment failed. Please try again.', 'danger');
+              rzp.close();
+              return;
+            }
             const verifyResponse = await fetch(`/user/verify-payment/${result.orderId}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -224,9 +230,20 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
             if (verificationResult.success) {
               window.location.href = `/user/loadOrderConformation/${verificationResult.orderId}`;
             } else {
+              rzp.close();
               showAlert('Payment Verification Failed!','danger');
             }
           },
+          modal: {
+            ondismiss: () => {
+              showAlert('Payment was not completed. Please try again.', 'warning');
+            },
+          },
+        });
+        rzp.on('payment.failed', (response) => {
+          window.open(`/user/faild`, '_blank');
+          window.location.href = '/user/cart';
+          rzp.close(); 
         });
         rzp.open();
       } else if (paymentMethod === 'COD') {
@@ -324,8 +341,6 @@ function displayError(fieldId, message) {
     field.focus();
   }
 }
-
-
 })
 
 

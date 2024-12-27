@@ -9,7 +9,7 @@ function renderTable(data) {
   tableBody.innerHTML = "";
 
   if (data.length === 0) {
-    tableBody.innerHTML = `<tr><td colspan="6" class="text-center">No records available.</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="6"  class="text-center text-danger">No records available.</td></tr>`;
     return;
   }
 
@@ -31,7 +31,7 @@ function renderTable(data) {
             ${val.block ? "Blocked" : "Active"}
           </span>
         </td>
-        <td>${new Date(val.createdAt).toLocaleDateString()}</td>
+        <td>${new Date(val.createdAt).toLocaleDateString('en-IN')}</td>
         <td>
           <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('${val._id}')">Edit</button>
           <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('${val._id}')">Delete</button>
