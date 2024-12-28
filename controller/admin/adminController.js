@@ -1067,22 +1067,6 @@ const searchCoupon = async (req, res) => {
 }
 
 
-// Delete coupon
-
-// const deleteCoupon = async(req,res)=>{
-//   const couponId = req.params.couponId; 
-//   try {
-//     const result = await Coupon.findByIdAndDelete(couponId);
-//     if (!result) {
-//       return res.status(404).json();
-//     }
-//     res.json();
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json();
-//   }
-// }
-
 
 // load return page
 
@@ -2285,7 +2269,6 @@ module.exports={
  getCoupons,
  editCoupon,
  searchCoupon,
-//  deleteCoupon,
  loadReturn,
  getReturnData,
  approveReturn,

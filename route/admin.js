@@ -80,6 +80,5 @@ router.post('/upload-banners', uploads.single('banner_image'), adminController.u
 
 
 router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
-// router.delete('/deleteCoupon/:couponId',adminController.deleteCoupon);
 router.delete('/offerDelete/:offerId',adminController.deleteOffer);
 module.exports=router

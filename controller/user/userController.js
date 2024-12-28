@@ -1899,10 +1899,10 @@ const submitOrder = async (req, res) => {
       }
     }
     const discount = couponDiscount + (checkout.categoryDiscount || 0);
-    console.log(discount);
-    console.log(totalAmount);
+
+
     const appliedDiscountPercentage = ((discount / checkout.totalAmount) * 100).toFixed(2);
-    console.log(appliedDiscountPercentage);
+
     const productIds = cart.items.map((item) => item.productId);
     const productDetails = await Product.find({ _id: { $in: productIds } });
     const productMap = productDetails.reduce((map, product) => {
