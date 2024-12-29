@@ -1156,6 +1156,7 @@ const cartSummery = async(req,res)=>{
       const userId = user._id;
 
       const userCart = await Cart.findOne({ userId }).populate('items.productId');
+      if(!userCart) return res.status(200).json({status:false,message : 'Cart items Not found'});
 
       let discountCategoryOffer = null; 
       let totalCategoryDiscount = 0; 
