@@ -36,7 +36,7 @@ passport.use(
 
           await Wallet.findOneAndUpdate(
             { userId: user._id },
-            { $setOnInsert: { balance: 0 } },
+            { $setOnInsert: { balance: 0 , transactions: []} },
             { upsert: true, new: true }
           );
         }
