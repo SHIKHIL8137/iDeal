@@ -282,8 +282,21 @@ border: none;
   .navbar-nav{
     text-align: center;
   }
-  #loginMessage{
-    top: 300px;
-    right: 0px;
+  #couponSidebar{
+    max-width: 250px;
+    width: 100%;
+  }
+  .coupon-code-container input{
+    max-width: 145px;
+    width: 100%;
+  }
+  .chechoutRow{
+    padding-top: 10px;
+  }
+  hr{
+    margin-top: 70px;
+  }
+  .float-end{
+    margin-top: 15px;
   }
 }
