@@ -452,8 +452,8 @@ const addAdmin=async(req,res)=>{
  try {
   const adminDetails=req.body;
  const {name,email,password}=adminDetails;
-
- const user = await Admin.findOne({email:email});
+console.log(req.body);
+ const user = await Admin.findOne({email});
  if(user) return res.status(400).send("user exist");
  const hashedPassword = await bcrypt.hash(password, 10);
  const newUser=new Admin({
@@ -463,9 +463,14 @@ const addAdmin=async(req,res)=>{
   password:hashedPassword,
 
  })
-await newUser.save();
+
+
+
+const response = await newUser.save();
+console.log(response);
 res.status(200).redirect('/admin/login')
  } catch (error) {
+  console.log(error)
   res.status(500).send("Internal Server eroor");
  }
 }

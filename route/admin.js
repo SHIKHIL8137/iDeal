@@ -63,7 +63,7 @@ router.post('/addProduct',uploads.array("images",4),adminController.addProducts)
 router.post('/editProduct/:id', uploads.array("images", 4), adminController.editProduct);
 router.post('/updateCategory/:id',adminController.updateCategory)
 router.post('/addCategory',adminAuth.isLoggedIn ,adminController.addCategory);
-router.post('/addAdmin',adminAuth.isLoggedIn ,adminController.addAdmin);  
+router.post('/addAdmin',adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
 router.post('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
 router.post('/addCustomer',adminAuth.isLoggedIn ,adminController.addCustomer);
