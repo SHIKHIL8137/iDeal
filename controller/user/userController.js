@@ -192,7 +192,7 @@ const loadCategoryShop = async (req, res) => {
     }
 
 
-    res.status(200).render('user/CategoryShop', { productDetails: filteredProducts ,sessionCheck,title:"Shop Category"});
+    res.status(200).render('user/categoryShop', { productDetails: filteredProducts ,sessionCheck,title:"Shop Category"});
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
@@ -394,7 +394,7 @@ const otpVerification = async (req, res) => {
     );
     await Wallet.findOneAndUpdate(
       { userId: rNewUserId },
-      { $setOnInsert: { balance: 0 } },
+      { $setOnInsert: { balance: 0 ,transactions: []} },
       { upsert: true, new: true }
     );
     await OTP.deleteMany({ email });
