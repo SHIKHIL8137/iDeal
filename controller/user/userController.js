@@ -556,7 +556,7 @@ async function sendResetPasswordLink(email, req, res) {
     to: email,
     subject: 'Password Reset Request',
     html: `<p>You requested a password reset. Please click the link below to reset your password:</p>
-           <p><a href="http://localhost:3000/user/changePassword/${resetToken}">Reset Password</a></p>
+           <p><a href="/user/changePassword/${resetToken}">Reset Password</a></p>
            <p>This link will expire in 10 minute.</p>
            <p>If you did not request a password reset, please ignore this email.</p>`,
   };
