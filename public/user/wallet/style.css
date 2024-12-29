@@ -187,3 +187,30 @@ box-shadow: 0 0px 20px #ffffff2f;
 .modal-content .btn-close {
   fill: rgb(185, 70, 70) !important;
 }
+
+@media (max-width:576px){
+  .sidebar{
+    width: 100vw;
+    margin-top: 0;
+  }
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+  .content{
+    padding-left: 10px;
+    margin-top: 50px;
+  }
+  .content h2 {
+    text-align: center;
+  }
+  .transaction-table h3{
+    text-align: center;
+  }
+  .table th{
+    font-size: 15px;
+  }
+}

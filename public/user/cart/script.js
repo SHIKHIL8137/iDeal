@@ -139,7 +139,7 @@ function renderCart(userCart) {
       <div class="card mb-3">
         <div class="card-body d-flex align-items-center justify-content-between">
           <!-- Product Info -->
-          <div class="d-flex align-items-center" style="max-width:250px; width: 100%;">
+          <div class="d-flex align-items-center cartItemdivRight" style="max-width:250px; width: 100%;">
             <img src="${item.productId.images[0]}" alt="${item.productId.name}" class="me-3"
               style="width: 60px; height: 60px; object-fit: contain;">
             <div>

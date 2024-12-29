@@ -140,3 +140,26 @@ nav{
     color: #000000;
   }
 
+  @media (max-width:576px){
+    .sidebar{
+      margin-top: 0;
+      width: 100vw;
+    }
+    .navbar-nav{
+      text-align: center;
+    }
+    #loginMessage{
+      top: 300px;
+      right: 0px;
+    }
+    .content{
+      padding-left: 10px;
+      margin-top: 50px;
+    }
+    .content h3{
+      text-align: center;
+    }
+    .profilePicture{
+      text-align: center;
+    }
+  }

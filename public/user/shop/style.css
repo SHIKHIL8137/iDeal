@@ -218,3 +218,16 @@ height: 120px;
 #loginMessage button {
   margin-top: 5px;
 }
+
+@media (max-width:576px){
+  .sidebar{
+    min-height: 75vh;
+  }
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+}

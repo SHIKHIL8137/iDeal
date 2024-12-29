@@ -163,3 +163,36 @@ nav{
     background-color: transparent;
    cursor: pointer;
   }
+
+  @media (max-width:576px){
+    .sidebar{
+      width: 100vw;
+      margin-top: 0px;
+    }
+    .navbar-nav{
+      text-align: center;
+    }
+    #loginMessage{
+      top: 300px;
+      right: 0px;
+    }
+    .content{
+      padding-left: 10px;
+      margin-top: 50px;
+    }
+    .content h3{
+      text-align: center;
+    }
+    .pageMainrow{
+      margin-top: 0px;
+    }
+    h4{
+      text-align: center;
+    }
+    .table th{
+      font-size: 14px;
+    }
+    .footer{
+      margin-top: 0px;
+    }
+  }

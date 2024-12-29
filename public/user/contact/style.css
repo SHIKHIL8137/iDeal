@@ -159,3 +159,26 @@ opacity: .7;
   box-shadow: none;
   background-color: #ffffff00; 
 }
+
+@media (max-width:576px){
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+  .containerForm{
+    padding: 0px;
+  }
+  .contact-info{
+    padding: 20px 0 20px 0;
+    text-align: center;
+  }
+  .contact-section{
+    padding: 40px;
+  }
+  .row{
+    margin: 0px;
+  }
+}

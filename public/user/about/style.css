@@ -161,3 +161,22 @@ nav{
 .rightDiv{
   align-content: center;
 }
+@media (max-width:576px){
+  .sidebar{
+    min-height: 75vh;
+  }
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+  .socialIcons{
+    flex-direction: row;
+    justify-content: space-evenly;
+  }
+  .footer{
+    margin-top: 0px;
+  }
+}

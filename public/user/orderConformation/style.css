@@ -173,3 +173,15 @@ nav{
   animation: pulse 1s infinite;
 }
 
+@media (max-width:576px){
+  .sidebar{
+    min-height: 75vh;
+  }
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+}

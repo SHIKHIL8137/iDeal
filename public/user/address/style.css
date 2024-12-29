@@ -115,3 +115,27 @@ nav{
 #alertBox.hide {
   right: -100%;
 }
+@media (max-width:576px){
+  .sidebar{
+    width: 100vw;
+    margin-top: 0;
+  }
+  .navbar-nav{
+    text-align: center;
+  }
+  #loginMessage{
+    top: 300px;
+    right: 0px;
+  }
+  .content{
+    padding-left: 10px;
+    margin-top: 120px;
+  }
+  .form-container h4 {
+    text-align: center;
+    margin-top: 10px;
+  }
+  .pageMainrow{
+    margin-top: 0px;
+  }
+}
