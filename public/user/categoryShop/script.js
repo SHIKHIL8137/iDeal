@@ -124,8 +124,30 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 async function sortProduct(order) {
+  let priceRange = document.getElementById('priceRange').value;
+  let storageValues = Array.from(document.querySelectorAll('.storage-checkbox:checked')).map(e => e.value);
+  let connectivityValues = Array.from(document.querySelectorAll('.connectivity-checkbox:checked')).map(e => e.value);
+  let ratingValues = Array.from(document.querySelectorAll('.rating-checkbox:checked')).map(e => e.value);
+  let conditionValue = Array.from(document.querySelectorAll('.condition-checkbox:checked')).map(e => e.value);
+
+
+  let filterData = {
+    price: priceRange || null, 
+    storage: storageValues.length > 0 ? storageValues : null, 
+    connectivity: connectivityValues.length > 0 ? connectivityValues : null,
+    rating: ratingValues.length > 0 ? ratingValues : null,
+    condition: conditionValue.length > 0 ? conditionValue : null
+  };
+  
+  
   try { 
-    const response = await fetch(`/user/sortCategoryProduct?order=${order}&id=${categoryId}`);
+    const response = await fetch(`/user/sortCategoryProduct?order=${order}&id=${categoryId}`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(filterData)
+    });
     if (!response.ok) throw new Error(`Product not found! Status: ${response.status}`);
 
     const data = await response.json();

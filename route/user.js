@@ -20,9 +20,7 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
 router.get('/userProfile',userMiddleWare.isLoggedIn,userController.loadProfile);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut) 
-router.get('/search',userController.productSearching)
-router.get('/sortProduct',userController.sortedProduct);
-router.get('/sortCategoryProduct',userController.sortCategoryProduct);
+router.get('/search',userController.productSearching);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
 router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
@@ -49,7 +47,8 @@ router.get('/getbanners',userController.getbanners);
 
 
 
-
+router.post('/sortProduct',userController.sortedProduct);
+router.post('/sortCategoryProduct',userController.sortCategoryProduct);
 router.post('/productReview/:id',userController.productReview);
 router.post('/filterProducts',userController.filterProduct);
 router.post('/categoryShopFilter',userController.categoryShopFilter);
