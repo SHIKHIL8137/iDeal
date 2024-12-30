@@ -276,7 +276,9 @@ const addCategory=async(req,res)=>{
   const categoryDetails= req.body;
   const{name ,description , status }=categoryDetails;
   const trimedName=name.trim();
-  const nameExists=await Category.findOne({name:trimedName});
+  const nameExists = await Category.findOne({ 
+    name: { $regex: `^${trimedName}$`, $options: 'i' } 
+  });
   if(nameExists){
    return res.redirect('/admin/addCategory?message=the category exists&err=false');
   }
@@ -358,7 +360,6 @@ const editProduct = async (req, res) => {
   try {
     const productId = req.params.id; 
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
-console.log(req.files)
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).send('Invalid Product ID');
     }
