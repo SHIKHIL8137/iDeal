@@ -1369,7 +1369,7 @@ try {
   const userEmail = req.session.isLoggedEmail;
   const message = req.query.message;
   const errBoolean = req.query.err;
-  const coupons = await Coupon.find();
+  const coupons = await Coupon.find().sort({createdAt : -1});
   const user = await User.findOne({ email: userEmail }).populate('addresses');
   res.status(200).render('user/checkOut',{user,message,errBoolean ,coupons,title:"Check Out"});
 } catch (error) {
@@ -2237,9 +2237,7 @@ const submitOrder = async (req, res) => {
 const verifyPayment = async (req, res) => {
   try {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-    console.log(req.body)
     const orderId = req.params.orderId;
-    console.log(orderId);
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)

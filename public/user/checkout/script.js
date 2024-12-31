@@ -206,7 +206,6 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
     });
 
     const result = await response.json();
-    console.log(result.razorPayOrderId);
     if (response.ok) {
       if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
         const rzp = new Razorpay({
