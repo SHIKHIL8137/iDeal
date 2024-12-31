@@ -137,7 +137,7 @@
                       </option>
                       <% }); %>
                   </select>
-                  <div class="error" id="productSelectError"></div> <!-- Error Message -->
+                  <div class="error" id="productSelectError"></div> 
                 </div>
               </div>
 
@@ -153,7 +153,7 @@
                       </option>
                       <% }); %>
                   </select>
-                  <div class="error" id="categorySelectError"></div> <!-- Error Message -->
+                  <div class="error" id="categorySelectError"></div> 
                 </div>
               </div>
 
@@ -163,7 +163,7 @@
                   <label for="title" class="form-label">Offer Title</label>
                   <input type="text" class="form-control" id="title" name="title"
                     value="<%= offerProduct?.title || '' %>">
-                  <div class="error" id="titleError"></div> <!-- Error Message -->
+                  <div class="error" id="titleError"></div> 
                 </div>
               </div>
 
@@ -173,7 +173,7 @@
                   <label for="description" class="form-label">Offer Description</label>
                   <input type="text" class="form-control" id="description" name="description"
                     value="<%= offerProduct?.description || '' %>">
-                  <div class="error" id="descriptionError"></div> <!-- Error Message -->
+                  <div class="error" id="descriptionError"></div> 
                 </div>
               </div>
 
@@ -183,17 +183,17 @@
                   <label for="discountValue" class="form-label">Discount Value (%)</label>
                   <input type="number" class="form-control" id="discountValue" name="discountValue" min="0"
                     value="<%= offerProduct?.discountValue || '' %>">
-                  <div class="error" id="discountValueError"></div> <!-- Error Message -->
+                  <div class="error" id="discountValueError"></div> 
                 </div>
               </div>
 
               <!-- Minimum Order Amount -->
               <div class="col-md-6">
                 <div class="mb-3">
-                  <label for="minOrderAmount" class="form-label">Minimum Order Amount</label>
+                  <label for="minOrderAmount" class="form-label">Minimum Amount</label>
                   <input type="number" class="form-control" id="minOrderAmount" name="minOrderAmount" min="0"
                     value="<%= offerProduct?.minOrderAmount || '' %>">
-                  <div class="error" id="minOrderAmountError"></div> <!-- Error Message -->
+                  <div class="error" id="minOrderAmountError"></div> 
                 </div>
               </div>
 
@@ -203,7 +203,7 @@
                   <label for="validFrom" class="form-label">Valid From</label>
                   <input type="date" class="form-control" id="validFrom" name="validFrom"
                     value="<%= offerProduct?.validFrom ? offerProduct.validFrom.toISOString().slice(0, 10) : '' %>">
-                  <div class="error" id="validFromError"></div> <!-- Error Message -->
+                  <div class="error" id="validFromError"></div> 
                 </div>
               </div>
 
