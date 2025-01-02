@@ -1,14 +1,43 @@
+let user;
+async function getUserDetails(){
+try {
+ const response = await fetch('/user/getUserDetails')
+ if(!response.ok) throw Error('Error to fetch data') ;
+ const result = await response.json();
+if(result.status){
+  user = result.user;
+  renderUserDetails(result.user);
+}else{
+  showAlert('An error occure to fetch the data please try again later');
+}
+} catch (error) {
+ showAlert('Error Occure') ;
+}
+}
+
+function renderUserDetails(user) {
+  const defaultProfilePicture = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+
+  document.getElementById('profilePreview').src = user?.profilePicture || defaultProfilePicture;
+  document.getElementById('firstName').value = user?.firstName || '';
+  document.getElementById('secondName').value = user?.lastName || '';
+  document.getElementById('username').value = user?.username || '';
+  document.getElementById('email').value = user?.email || '';
+  document.getElementById('secondaryEmail').value = user?.secondEmail || '';
+  document.getElementById('phone').value = user?.phone || '';
+}
+
+
+
+
 let emailValid = true;
 let otherField = true;
 
-
-// ceck the email exist or not
 const resultMessage = document.getElementById('alertBox');
 document.addEventListener('DOMContentLoaded', function () {
+  getUserDetails();
   const searchEmail = document.getElementById('email');
   const message = document.getElementById('message');
-
-  const user = JSON.parse(document.getElementById('userData').textContent);
   let debounceTimeout = null;
 
   searchEmail.addEventListener('input', function () {
@@ -168,10 +197,7 @@ document.getElementById('confirmSaveButton').addEventListener('click', async fun
     if (response.ok) {
       await response.json();
       showAlert('Form submitted successfully!', 'success');
-
-      setTimeout(()=>{
-        window.location.reload();
-      },3000)  
+      getUserDetails();
     } else {
       showAlert('Failed to submit the form. Please try again.', 'danger');
     }
@@ -256,9 +282,7 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
 
       if (response.ok) {
         showAlert(result.message, 'success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 3000);
+        getUserDetails();
       } else {
         showAlert(result.message || 'Failed to update password. Please try again.', 'danger');
       }

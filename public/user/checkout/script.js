@@ -1,15 +1,35 @@
 
-const userDetails = JSON.parse(document.getElementById('userData').textContent);
-const addresses = userDetails.addresses;
-let selectedDeliveryAddress = addresses[0]; 
+let selectedDeliveryAddress; 
+let addresses = []; 
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const deliveryAddressContainer = document.getElementById('deliveryAddress');
+  getCheckOutData();
+});
 
-  // Render delivery addresses dynamically
+async function getCheckOutData() {
+  try {
+    const response = await fetch('/user/getCheckOutData');
+    if (!response.ok) throw Error('Error fetching the user details');
+    const result = await response.json();
+    if (result.status) {
+      addresses = result.user.addresses; 
+      renderData(result.user);
+      selectedDeliveryAddress = addresses[0]; 
+    } else {
+      showAlert('Error fetching the data', 'danger');
+    }
+  } catch (error) {
+    showAlert('Error occurred', 'danger');
+  }
+}
+
+function renderData(data) {
+  const deliveryAddressContainer = document.getElementById('deliveryAddress');
   deliveryAddressContainer.innerHTML = addresses.map((address, index) => `
     <div class="form-check">
-      <input class="form-check-input" type="radio" name="address" id="address${index}" ${index === 0 ? 'checked' : ''} onchange="selectDeliveryAddress('${address._id}')">
+      <input class="form-check-input" type="radio" name="address" id="address${index}" 
+        ${index === 0 ? 'checked' : ''} 
+        onchange="selectDeliveryAddress('${address._id}')">
       <label class="form-check-label" for="address${index}">
         <b>${address.fname} ${address.lname}</b> &nbsp;&nbsp; ${address.phone}<br>
         ${address.houseName}, ${address.city}, ${address.state}<br>
@@ -24,24 +44,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     <hr>
   `).join('') + `<button class="btn btn-primary mt-3" onclick="addAddress()">Add Address</button>`;
 
-  // Automatically fill the form if the checkbox is already checked on load
   if (document.getElementById("sameAsDelivery").checked) {
     fillBillingAddressForm(selectedDeliveryAddress);
   }
-  
-});
-
+}
 
 function selectDeliveryAddress(addressId) {
-  selectedDeliveryAddress = addresses.find(address => address._id === addressId);
-
+  selectedDeliveryAddress = addresses.find(address => address._id === addressId); // Use global addresses
 
   if (document.getElementById("sameAsDelivery").checked) {
     fillBillingAddressForm(selectedDeliveryAddress);
   }
 }
 
-// Fill billing address form with delivery address data
+
 function fillBillingAddressForm(address) {
   document.getElementById("billingFirstName").value = address.fname;
   document.getElementById("billingLastName").value = address.lname;
@@ -65,12 +81,12 @@ document.getElementById("sameAsDelivery").addEventListener('change', function() 
   }
 });
 
-// Clear the billing address form
+
 function clearBillingAddressForm() {
   document.getElementById("billingFirstName").value = '';
   document.getElementById("billingLastName").value = '';
   document.getElementById("billingCompany").value = '';
-  document.getElementById("billingAddress").value = '';
+  document.getElementById("billingHouseName").value = '';
   document.getElementById("billingCountry").value = '';
   document.getElementById("billingState").value = '';
   document.getElementById("billingCity").value = '';
@@ -79,21 +95,34 @@ function clearBillingAddressForm() {
   document.getElementById("billingPhone").value = '';
 }
 
-// Edit, delete, and add address functions
+
+
 function editAddress(id) {
   window.location.href = `/user/editAddress/${id}`;
 }
 
-function deleteAddress(id) {
-  if (confirm('Are you sure you want to delete this address?')) {
-    fetch(`/user/deleteAddress/${id}`, { method: 'DELETE' })
-      .then(response => response.json())
-      .then(data => {
-        if (data.message === 'Address deleted successfully') location.reload();
+
+async function deleteAddress(id){
+  if(confirm('Are you sure you want to delete this address?')){
+    try {
+      const response = await fetch(`/user/deleteAddress/${id}`,{
+        method : 'DELETE'
       })
-      .catch(error => showAlert('Error deleting address:', 'danger'));
+      if(!response.ok) throw Error('Error to delete the address please try again later');
+      const result = await response.json();
+      if(result.status){
+       showAlert('Address Deleted Successfully','success');
+       getCheckOutData();
+      }else{
+        showAlert('An error occur address deletion try again later','danger')
+      }
+    } catch (error) {
+      showAlert('Internal Server error please again later','danger');
+    }
+  }
 }
-}
+
+
 function addAddress() {
   window.location.href = '/user/address';
 }
@@ -470,23 +499,6 @@ function showAlert(message, type) {
 }
 
 
-
-
-
-
-
-
-
-// for alert box
-const alertBox = document.getElementById("alertBox");
-  alertBox.classList.add("show");
-  setTimeout(() => {
-    alertBox.classList.remove("show");
-    alertBox.classList.add("hide");
-    setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 500); 
-  }, 3000); 
 
 // remove the params from the url
   if (window.location.search) {

@@ -11,7 +11,7 @@
         <div class="d-flex flex-column  p-3 text-white vh-100 col-md-2" style="width: 250px;">
           <ul class="nav nav-pills flex-column ">
             <li>
-              <a href="#" class="nav-link text-dark">
+              <a href="/admin/dashboard" class="nav-link text-dark">
                 <img class="idealLogo" src="/image/icons/idealLogo.svg" alt="iDeal Log">
               </a>
             </li>
@@ -110,10 +110,10 @@
 
           <!-- Filters -->
           <div class="d-flex justify-content-start gap-2 mb-3">
-            <button class="btn btn-outline-primary btn-filter active">All Products</button>
-            <button class="btn btn-outline-success btn-filter">Delivered</button>
-            <button class="btn btn-outline-warning btn-filter">Processing</button>
-            <button class="btn btn-outline-danger btn-filter">Cancelled</button>
+            <button class="btn btn-outline-primary" data-filter="All">All Products</button>
+            <button class="btn btn-outline-secondary" data-filter="Processing">Processing</button>
+            <button class="btn btn-outline-warning" data-filter="Delivered">Delivered</button>
+            <button class="btn btn-outline-danger" data-filter="Cancelled">Cancelled</button>
           </div>
 
           <table id="ordersTable" class="table table-hover align-middle">
@@ -129,9 +129,7 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- Initial Data Loaded -->
-            </tbody>
+            <tbody id="productTableBody"></tbody>
           </table>
 
 

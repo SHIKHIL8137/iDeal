@@ -236,11 +236,8 @@ const loadProductDetails = async (req, res) => {
     }
     const offerProduct = await Offer.findOne({ product: productId, isActive: true });
     const productOffer = offerProduct || null;
-  
-    const offerCategory = await Offer.findOne({category:product.category , isActive : true});
+    const offerCategory = await Offer.findOne({category:product.category._id , isActive : true});
     const categoryOffer = offerCategory || null;
-
-
     const sessionCheck = req.session.isUser || false;
     res.status(200).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts,title:"Product Details",productOffer,categoryOffer});
   } catch (error) {
@@ -248,7 +245,6 @@ const loadProductDetails = async (req, res) => {
     res.status(500).send('Internal server Error');
   }
 };
-
 
 // function for generating the otp fo signup
 
@@ -642,12 +638,20 @@ const changePassword = async (req, res) => {
 
 const loadProfile = async(req,res)=>{
 try {
-  const email = req.session.isLoggedEmail;
-  const user =await User.findOne({email});
-  res.status(200).render('user/profileDetails',{user,title:"Profile"})
+  res.status(200).render('user/profileDetails',{title:"Profile"})
 } catch (error) {
   res.status(401).send('Internal Server Error');
 }
+}
+
+const getUserDetails = async(req,res)=>{
+  try {
+    const email = req.session.isLoggedEmail;
+    const user =await User.findOne({email});
+    res.status(200).json({user,status : true})
+  } catch (error) {
+    res.status(401).json({status : false , message :'Internal Server Error'});
+  }
 }
 
 
@@ -1249,6 +1253,43 @@ const loadOrderDetails = async (req, res) => {
   }
 };
 
+// get the ordered product details
+
+const orderDetails = async(req,res)=>{
+  try{
+    const orderId = req.params.id;
+
+    if (!orderId) {
+      return res.status(400).send('Order ID is required');
+    }
+    const order = await Orders.findOne({ orderId }).populate('userId', 'username email');
+
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    let returnStatusMap = {};
+    if (order.status === 'Delivered') {
+      const returnRequests = await ReturnCancel.find({ orderId: order._id });
+
+ 
+      returnRequests.forEach((req) => {
+        if (req.productId) { 
+          returnStatusMap[req.productId.toString()] = req;
+        }
+      });
+    }
+    res.status(200).json({
+      order,
+      returnStatusMap,
+      status :true
+    });
+  }catch(error){
+    res.status(500).json({status : false , message : "Internal Server Error"})
+  }
+}
+
+
 
 // load cart page
 
@@ -1366,7 +1407,7 @@ const cartSummery = async(req,res)=>{
 
 const loadCheckout =  async(req,res)=>{
 try {
-  const userEmail = req.session.isLoggedEmail;
+  const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
   const message = req.query.message;
   const errBoolean = req.query.err;
   const coupons = await Coupon.find().sort({createdAt : -1});
@@ -1376,6 +1417,18 @@ try {
   res.status(500).send('Internal Server Error')
 }
 
+}
+
+// load checkout data
+
+const getCheckOutData = async(req,res)=>{
+  try{
+    const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
+    const user = await User.findOne({ email: userEmail }).populate('addresses');
+    res.status(200).json({status : true , user});
+  }catch(error){
+    res.status(500).json({status :false , message :'Internal server error'});
+  }
 }
 
 
@@ -1882,11 +1935,10 @@ const checkoutDataStore = async (req, res) => {
 
 const getCheckoutSummery = async(req,res)=>{
   try {
-    const email = req.session.isLoggedEmail;
+    const email = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
     const user = await User.findOne({email});
     const userId = user._id;
     const userSummeryDetails = await CheckOut.findOne({userId});
-    console.log(userSummeryDetails);
     res.status(200).json(userSummeryDetails);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error.' });
@@ -1899,16 +1951,16 @@ const getCheckoutSummery = async(req,res)=>{
 const deleteAddress = async (req,res)=>{
   try {
     const addressId = req.params.id;
-
+console.log(addressId)
 
     if (!addressId.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ message: 'Invalid address ID' });
+      return res.status(400).json({status:false, message: 'Invalid address ID' });
     }
 
     const deletedAddress = await Address.findByIdAndDelete(addressId);
 
     if (!deletedAddress) {
-      return res.status(404).json({ message: 'Address not found' });
+      return res.status(404).json({ status:false, message: 'Address not found' });
     }
 
 
@@ -1917,10 +1969,10 @@ const deleteAddress = async (req,res)=>{
       { $pull: { addresses: addressId } } 
     );
 
-    res.status(200).json({ message: 'Address deleted successfully' });
+    res.status(200).json({ status: true , message: 'Address deleted successfully' });
   } catch (error) {
     console.error('Error deleting address:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({status:false , message: 'Internal server error' });
   }
 }
 
@@ -2485,6 +2537,18 @@ const getWishlistData = async (req, res) => {
 
 const loadWallet = async (req, res) => {
   try {
+    res.status(200).render('user/wallet', {
+      title: 'Wallet'});
+  } catch (error) {
+    console.error('Error loading wallet:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+// get transaction details data
+
+const getTransactionDetails = async(req,res)=>{
+  try {
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
 
@@ -2505,16 +2569,11 @@ const loadWallet = async (req, res) => {
       deposit: transaction.type === 'credit' ? `₹${transaction.amount}` : '-',
     }));
 
-    res.status(200).render('user/wallet', {
-      title: 'Wallet',
-      balance: wallet ? wallet.balance : 0,
-      transactions: formattedTransactions,
-    });
+    res.status(200).json({status : true , transactions:formattedTransactions ,balance: wallet ? wallet.balance : 0})
   } catch (error) {
-    console.error('Error loading wallet:', error);
-    res.status(500).send('Internal Server Error');
+    
   }
-};
+}
 
 
 
@@ -2848,7 +2907,7 @@ function generateInvoice(order, res) {
       .text(product.productColor, 150, position, { width: 100, align: 'left' })
       .text(`${product.price.toFixed(2)}`, 300, position, { width: 50, align: 'right' })
       .text(product.quantity, 380, position, { width: 50, align: 'right' })
-      .text(`${(product.price * product.quantity).toFixed(2)}`, 470, position, { width: 50, align: 'right' });
+      .text(`${(product.total * product.quantity).toFixed(2)}`, 470, position, { width: 50, align: 'right' });
 
     position += tableHeaderHeight;
   });
@@ -3030,5 +3089,9 @@ module.exports={
   loadContact,
   getWishlistData,
   loadPending,
-  getbanners
+  getbanners,
+  getCheckOutData,
+  orderDetails,
+  getTransactionDetails,
+  getUserDetails
 };

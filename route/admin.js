@@ -10,36 +10,33 @@ const adminAuth =require('../middleware/adminauth');
 router.get('/login',adminAuth.checkSession,adminController.loadLogin)
 router.get('/forgotPassword',adminController.loadforgotPassword);
 router.get('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.resetPasswordPage);
-router.get('/product',adminAuth.isLoggedIn,adminController.loadProduct);
+router.get('/product',adminController.loadProduct);
 router.get('/addProduct',adminAuth.isLoggedIn,adminController.loadAddProduct);
-router.get('/editProduct/:id',adminAuth.isLoggedIn,adminController.loadEditProduct);
-router.get('/category',adminAuth.isLoggedIn,adminController.loadCategory);
+router.get('/editProduct',adminAuth.isLoggedIn,adminController.loadEditProduct);
+router.get('/category',adminController.loadCategory);
 router.get('/addCategory',adminAuth.isLoggedIn,adminController.loadAddCategory);
 router.get('/editCategory/:id',adminAuth.isLoggedIn,adminController.loadEditCategory)
 router.get('/customers',adminAuth.isLoggedIn,adminController.loadCustomers);
 router.get('/addCustomer',adminAuth.isLoggedIn,adminController.loadAddCustomer);
 router.get('/editCustomer/:id',adminAuth.isLoggedIn,adminController.loadEditCustomer)
-router.get('/deleteProduct/:id',adminAuth.isLoggedIn ,adminController.deleteProduct);
-router.get('/deleteCategory/:id',adminAuth.isLoggedIn ,adminController.deleteCategory);
 router.get('/dashboard',adminAuth.isLoggedIn,adminController.loadDashboard);
-router.get('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
-router.get('/orders',adminAuth.isLoggedIn,adminController.loadOrder)
+router.get('/orders',adminController.loadOrder)
 router.get('/orderDetails/:orderId',adminAuth.isLoggedIn ,adminController.loadDetails);
-router.get('/offer',adminAuth.isLoggedIn ,adminController.loadOffer);
-router.get('/coupon',adminAuth.isLoggedIn ,adminController.loadCoupon);
+router.get('/offer',adminController.loadOffer);
+router.get('/coupon',adminController.loadCoupon);
 router.get('/addCoupon' ,adminAuth.isLoggedIn ,adminController.loadAddCoupon);
 router.get('/editCoupon/:couponId' ,adminAuth.isLoggedIn ,adminController.loadEditCoupon);
 router.get('/sales',adminAuth.isLoggedIn ,adminController.loadSales);
 router.get('/coupon-data',adminAuth.isLoggedIn ,adminController.getCoupons);
 router.get('/search-coupons',adminAuth.isLoggedIn ,adminController.searchCoupon);
-router.get('/return',adminAuth.isLoggedIn ,adminController.loadReturn);
-router.get('/return-requests' ,adminAuth.isLoggedIn ,adminController.getReturnData);
+router.get('/return',adminController.loadReturn);
+router.get('/return-requests' ,adminController.getReturnData);
 router.get('/returnOrderDetails/:returnId',adminAuth.isLoggedIn ,adminController.getreturnOrderDetails);
 router.get('/addOffer',adminAuth.isLoggedIn ,adminController.loadAddOffer);
 router.get('/editOffer/:offerId',adminAuth.isLoggedIn ,adminController.loadEditOffer);
-router.get('/getOfferTable',adminAuth.isLoggedIn ,adminController.getOfferTable);
+router.get('/getOfferTable',adminController.getOfferTable);
 router.get('/getSalesTable',adminAuth.isLoggedIn ,adminController.getSalesTable);
 router.get('/getFillterdSalesTable',adminAuth.isLoggedIn ,adminController.getFilteredSalesTable);
 router.get('/downloadSalesPDF',adminAuth.isLoggedIn ,adminController.reportPDF);
@@ -54,6 +51,10 @@ router.get('/getTodaySales',adminAuth.isLoggedIn,adminController.getSalesCount);
 router.get('/getChartData',adminAuth.isLoggedIn,adminController.getChartData);
 router.get('/banner',adminAuth.isLoggedIn,adminController.loadBanner);
 router.get('/getbanners',adminController.getbanners);
+router.get('/getTheProductDetails',adminController.loadProductDetails);
+router.get('/getCategoryDetails',adminController.getCategoryDetails);
+router.get('/getOrderDetails',adminController.getOrderDetails);
+router.get('/getCustomersDetails',adminController.getCustomersDetails);
 
 
 
@@ -81,4 +82,7 @@ router.post('/upload-banners', uploads.single('banner_image'), adminController.u
 
 router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,adminController.deleteProductImage);
 router.delete('/offerDelete/:offerId',adminController.deleteOffer);
+router.delete('/deleteProduct/:id',adminAuth.isLoggedIn ,adminController.deleteProduct);
+router.delete('/deleteCategory/:id',adminAuth.isLoggedIn ,adminController.deleteCategory);
+router.delete('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 module.exports=router

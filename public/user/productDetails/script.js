@@ -1,6 +1,7 @@
 
 const product = JSON.parse(document.getElementById('productData').textContent);
 const offer = JSON.parse(document.getElementById('offerData').textContent);
+console.log(offer);
 
   const productScrollContainer = document.getElementById("scroll-container");
   const productScrollBack = document.getElementById("scroll-back");
@@ -55,9 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // ------------------------------
+
   //  Session Check and Message Display
-  // ------------------------------
   const navbar = document.getElementById("checkSession");
   const sessionCheck = navbar.dataset.sessionCheck === "true";
   console.log("Raw data-session-check:", navbar.dataset.sessionCheck);
@@ -69,9 +69,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
   }
 
-  // ------------------------------
+
   //  Tab Toggle for Description & Reviews
-  // ------------------------------
   const descriptionBtn = document.getElementById("description-btn");
   const reviewBtn = document.getElementById("review-btn");
   const descriptionContent = document.getElementById("description-content");
@@ -93,9 +92,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ------------------------------
+
   //  Product Image Zoom Feature
-  // ------------------------------
   const productImage = document.getElementById("product-image");
   const zoomedImage = document.getElementById("zoomed-image");
 
@@ -123,9 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
     zoomedImage.style.backgroundSize = `${productImage.width * 2}px ${productImage.height * 2}px`;
   }
 
-  // ------------------------------
   //  Quantity Update Buttons
-  // ------------------------------
   let quantity = 1;
   const maxQuantity = 10;
   const quantityValueElement = document.getElementById("quantityValue");
@@ -156,9 +152,9 @@ document.addEventListener("DOMContentLoaded", function () {
     updateQuantityDisplay();
   }
 
-  // ------------------------------
+
   //  Tooltip Initialization
-  // ------------------------------
+
   const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
   tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
@@ -188,6 +184,7 @@ document.getElementById('addTocartProduct').addEventListener('click', async () =
 const productId = product._id;
 let price;
 let actualPrice;
+console.log(offer);
 if(product.offer) {
  price = (product.price - (product.price * (offer.discountValue / 100)));
  actualPrice = product.Dprice

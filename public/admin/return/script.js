@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const tbody = document.querySelector('#ordersTable tbody');
+  fetchData();
+});
+
+const tbody = document.querySelector('#ordersTable tbody');
   const recordsPerPage = 10; 
   let currentPage = 1;
   let allData = [];
   let filteredData = []; 
 
   function renderTable(data) {
-    console.log(data)
     const startIndex = (currentPage - 1) * recordsPerPage;
     const endIndex = startIndex + recordsPerPage;
     const paginatedData = data.slice(startIndex, endIndex);
@@ -136,8 +138,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
 
-  fetchData();
-});
 
 let currentAction = null;  
 let currentReturnCancelId = null;
@@ -201,9 +201,7 @@ async function approve(returnCancelId) {
     const data = await response.json();
     if (response.ok) {
       showAlert(data.message, 'success');
-      setTimeout(()=>{
-window.location.reload()
-      },4000)
+      fetchData();
     } else {
       showAlert(data.message || 'Failed to approve the return request.', 'danger');
     }
@@ -227,9 +225,7 @@ async function reject(returnCancelId, reason) {
     const data = await response.json();
     if (response.ok) {
       showAlert(data.message, 'success');
-      setTimeout(()=>{
-        window.location.reload()
-              },4000)
+      fetchData();
     } else {
       showAlert(data.message || 'Failed to reject the return request.', 'danger');
     }

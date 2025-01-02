@@ -23,9 +23,10 @@ router.get('/logOut',userMiddleWare.logOut,userController.logOut)
 router.get('/search',userController.productSearching);
 router.get('/searchCategoryProduct',userController.categoryProductSearching);
 router.get('/orderHistory',userMiddleWare.isLoggedIn,userController.loadOrderHistory);
-router.get('/orderDetails/:id',userMiddleWare.isLoggedIn,userController.loadOrderDetails)
+router.get('/orderDetails/:id',userController.loadOrderDetails)
 router.get('/cart',userMiddleWare.isLoggedIn,userController.loadCart)
-router.get('/checkOut',userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
+// router.get('/checkOut',userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
+router.get('/checkOut',userController.loadCheckout)
 router.get('/address',userMiddleWare.isLoggedIn,userController.loadAddress);
 router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,userController.loadOrderConformation);
 router.get('/check-email',userMiddleWare.isLoggedIn,userController.checkEmail);
@@ -44,6 +45,10 @@ router.get('/contact',userController.loadContact);
 router.get('/getWishListData',userController.getWishlistData);
 router.get('/pendingDetails',userController.loadPending);
 router.get('/getbanners',userController.getbanners);
+router.get('/getCheckOutData',userController.getCheckOutData);
+router.get('/getOrderDetails/:id',userController.orderDetails);
+router.get('/getTransactionTable',userController.getTransactionDetails);
+router.get('/getUserDetails',userController.getUserDetails);
 
 
 

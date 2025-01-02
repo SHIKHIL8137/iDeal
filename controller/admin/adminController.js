@@ -87,12 +87,25 @@ const loadProduct=async(req,res)=>{
   try {
     const username=req.session.username;
     const message=req.query.message;
-    const products=await Product.find().populate('category');
-    res.status(200).render('admin/product',{products,message,username,title:"Products"})
+    res.status(200).render('admin/product',{message,username,title:"Products"})
   } catch (error) {
     res.status(500).send('Internal server error');
   }
 }
+
+
+// render the product table
+
+const loadProductDetails = async(req,res)=>{
+  try {
+    const products=await Product.find().populate('category');
+    res.status(200).json({status : true ,products})
+  } catch (error) {
+    res.status(500).json({message : 'Internal server error'});
+  }
+}
+
+
 
 // render the add product page
 
@@ -116,7 +129,7 @@ const loadAddProduct=async(req,res)=>{
 const loadEditProduct=async(req,res)=>{
   try {
     const username=req.session.username;
-    const productId=req.params.id;
+    const productId=req.query.productId;
     const productDetails = await Product.findById(productId).populate('category');
     const categoryDetails = await Category.find();
     res.status(200).render('admin/editProduct',{productDetails,categoryDetails,username,title:"Edit Product"});
@@ -131,11 +144,21 @@ const loadEditProduct=async(req,res)=>{
 const loadCategory=async(req,res)=>{
   try {
     const username=req.session.username;
-const category=await Category.find();
-const message=req.query.message;
-    res.status(200).render('admin/category',{category,message,username,title:"Category"});
+    res.status(200).render('admin/category',{username,title:"Category"});
   } catch (error) {
     res.status(500).send('Internal server error');
+  }
+}
+
+
+// get category details table
+
+const getCategoryDetails = async(req,res)=>{
+  try {
+    const category=await Category.find();
+    res.status(200).json({status:true ,category});
+  } catch (error) {
+    res.status(500).json({message : 'Internal server error'});
   }
 }
 
@@ -181,6 +204,21 @@ const loadCustomers=async(req,res)=>{
     res.status(500).send('Internal server error');
   }
 }
+
+
+// get the customers details
+
+const getCustomersDetails = async(req,res)=>{
+  try{
+    const userDetails=await User.find();
+    res.status(200).json({status : true , userDetails});
+  }catch (error){
+    res.status(500).json({status : false , message : "Internal Server Error"});
+  }
+}
+
+
+
 
 // renter the customers edit page
 
@@ -299,15 +337,19 @@ const addCategory=async(req,res)=>{
 // Delete product route
 
 const deleteProduct = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    await Product.findByIdAndDelete(id); 
-    res.redirect('/admin/product?message=Product deleted successfully');
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      return res.status(404).json({ status: false, message: 'Product not found.' });
+    }
+    res.status(200).json({ status: true, message: 'Product deleted successfully.' });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
+    console.error('Error deleting product:', error);
+    res.status(500).json({ status: false, message: 'Server error. Unable to delete product.' });
   }
 };
+
 
 
 //update category route
@@ -345,11 +387,10 @@ const deleteCategory=async(req,res)=>{
     const categoryId = req.params.id;
     await Product.deleteMany({ category: categoryId });
     await Category.findByIdAndDelete(categoryId); 
-
-    res.redirect('/admin/category?message=Category and its products deleted successfully');
+    res.status(200).json({ status: true, message: 'Category and its products deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ status: false, message: 'Server error. Unable to delete category.' });
   }
 }
 
@@ -497,10 +538,10 @@ const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     await User.findByIdAndDelete(id); 
-    res.redirect('/admin/customers?message=User deleted successfully');
+    res.status(200).json({status : true , message :"Customer deleted successfully"});
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({status:false,message :'Internal Server Error'});
   }
 };
 
@@ -758,15 +799,27 @@ const loadOrder = async (req, res) => {
       .populate('userId', 'firstName lastName email')
       .populate('products.productId', 'name price')
       .exec();
-
-  
-
     res.status(200).render('admin/orders', { username, message, orders , title:"Orders"});
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
 };
+
+// get the order details 
+
+const getOrderDetails = async (req,res)=>{
+  try {
+    const orders = await Orders.find()
+    .populate('userId', 'firstName lastName email')
+    .populate('products.productId', 'name price')
+    .exec();
+    res.status(200).json({status : true , orders});
+  } catch (error) {
+    res.status(500).json({status : false , message :'Internal Server error'});
+  }
+}
+
 
 
 
@@ -1154,6 +1207,18 @@ const approveReturn = async (req, res) => {
       },
       { new: true }
     );
+    if (order) {
+      await Orders.findByIdAndUpdate(
+        returnCancel.orderId,
+        {
+          $max: {
+            totalAmount: 0,
+            total_Amt_WOT_Discount: 0,
+          },
+        },
+        { new: true }
+      );
+    }
     if (!order) {
       return res.status(404).json({ status: false, message: "Order not found" });
     }
@@ -1438,7 +1503,6 @@ const getOfferTable = async (req, res) => {
       product: offer.product || null,
       category: offer.category || null,
     }));
-
     res.status(200).json({ status: true, data: sanitizedOffers });
   } catch (error) {
     console.error('Error fetching offers:', error);
@@ -2233,6 +2297,11 @@ const getbanners = async (req, res) => {
 
 
 
+
+
+
+
+
 module.exports={
   loadLogin,
   loadforgotPassword,
@@ -2300,5 +2369,9 @@ module.exports={
  getChartData,
  loadBanner,
  uploadBanner,
- getbanners
+ getbanners,
+ loadProductDetails,
+ getCategoryDetails,
+ getOrderDetails,
+ getCustomersDetails
 }

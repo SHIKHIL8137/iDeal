@@ -1,7 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const transactions = JSON.parse(document.getElementById('transactionsData').textContent); 
+  transactionTable();
+});
+
+async function transactionTable(){
+  try{
+    const response = await fetch('/user/getTransactionTable');
+    console.log(response);
+    if(!response.ok) throw Error('Error fetching the transaction data please refresh the page');
+
+    const result = await response.json();
+
+    if(result.status){
+      renderTransactions(result.transactions,result.balance);
+
+    }else{
+
+      showAlert('An Error occure to fetch the transaction details','danger');
+    }
+  }catch(error){
+    showAlert('Error occure','danger');
+  }
   
-  console.log(transactions);
+}
+
+
+  
   const rowsPerPage = 5;
   let currentPage = 1;
 
@@ -10,12 +33,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const prevPageBtn = document.getElementById('prevPage');
   const nextPageBtn = document.getElementById('nextPage');
 
-  function renderTransactions() {
+  function renderTransactions(transactions,balance) {
+    const balanceField = document.getElementById('walletBalance');
+    balanceField.textContent = `₹${balance}` ;
+    console.log(transactions)
     transactionTableBody.innerHTML = '';
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = Math.min(startIndex + rowsPerPage, transactions.length);
     const currentTransactions = transactions.slice(startIndex, endIndex);
-
     currentTransactions.forEach((transaction) => {
       const row = `
         <tr>
@@ -37,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     showingText.textContent = `Showing ${startIndex + 1}-${endIndex} of ${transactions.length}`;
-
+    console.log('8')
     prevPageBtn.disabled = currentPage === 1;
     nextPageBtn.disabled = currentPage === Math.ceil(transactions.length / rowsPerPage);
   }
@@ -55,10 +80,6 @@ document.addEventListener('DOMContentLoaded', function () {
       renderTransactions();
     }
   });
-
-  // Initial render
-  renderTransactions();
-});
 
 
 
@@ -110,9 +131,8 @@ async function addMoneyToWallet(amount) {
         document.getElementById("addMoneyModal")
       );
       addMoneyModal.hide();
-      setTimeout(()=>{
-        window.location.reload();
-      },4000)
+      transactionTable()
+      document.getElementById('amount').value = '';
     } else {
       showAlert(result.message || "Failed to add money to wallet",'danger');
     }
