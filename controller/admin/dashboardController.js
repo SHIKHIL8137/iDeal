@@ -1,5 +1,7 @@
 
-const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
+const {User}  = require('../../model/user/userModel');
+const {Orders} = require('../../model/user/orderModel')
+const {ReturnCancel} = require('../../model/user/returnCancelModel');
 
 // get the top Saling product
 

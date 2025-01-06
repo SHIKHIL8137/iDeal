@@ -139,7 +139,7 @@ const productSearching = async (req, res) => {
 const sortedProduct = async (req, res) => {
   try {
     const order = req.query.order?.toLowerCase();
-    const sortOrder = order === "desc" ? -1 : 1; // Determine sort order
+    const sortOrder = order === "desc" ? -1 : 1; 
 
     const { price, storage, connectivity, rating, condition } = req.body;
 
