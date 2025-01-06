@@ -39,6 +39,12 @@ passport.use(
             { $setOnInsert: { balance: 0 , transactions: []} },
             { upsert: true, new: true }
           );
+
+          await Cart.findOneAndUpdate(
+            { userId: user._id },
+            { $setOnInsert: {items: []} },
+            { upsert: true, new: true }
+          );
         }
 
         return done(null, user);
