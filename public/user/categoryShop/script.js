@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
   productCards.forEach(card => {
     card.addEventListener('click', function() {
       const productId = this.dataset.productId;
-      window.location.href = `/user/productDetails/${productId}`;
+      window.location.href = `/productDetails/${productId}`;
     });
   });
 });
@@ -141,7 +141,7 @@ async function sortProduct(order) {
   
   
   try { 
-    const response = await fetch(`/user/sortCategoryProduct?order=${order}&id=${categoryId}`,{
+    const response = await fetch(`/sortCategoryProduct?order=${order}&id=${categoryId}`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ async function sortProduct(order) {
     productCards.forEach(card => {
       card.addEventListener('click', function() {
         const productId = this.dataset.productId;
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       });
     });
     
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   function fetchProducts(query) {
-    fetch(`/user/searchCategoryProduct?search=${query}&id=${categoryId}`)
+    fetch(`/searchCategoryProduct?search=${query}&id=${categoryId}`)
       .then(response => response.json())
       .then(data => {
 
@@ -275,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
           productCards.forEach(card => {
             card.addEventListener('click', function() {
               const productId = this.dataset.productId;
-              window.location.href = `/user/productDetails/${productId}`;
+              window.location.href = `/productDetails/${productId}`;
             });
           });
 
@@ -311,7 +311,7 @@ async function applyFilters() {
   
 
   try {
-    const response = await fetch(`/user/categoryShopFilter?id=${categoryId}`, {
+    const response = await fetch(`/categoryShopFilter?id=${categoryId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -368,7 +368,7 @@ async function applyFilters() {
     productCards.forEach(card => {
       card.addEventListener('click', function() {
         const productId = this.dataset.productId;
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       });
     });
 

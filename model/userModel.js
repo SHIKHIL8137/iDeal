@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-
-
 const userSchema = new mongoose.Schema(
   {
     googleId: {
@@ -63,7 +61,6 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true } 
 );
-
 
 const addressSchema = new mongoose.Schema(
   {
@@ -144,31 +141,25 @@ const cartSchema = new mongoose.Schema({
       productId: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Product', 
-        required: true,
       },
       quantity: {
         type: Number,
-        required: true,
         min: 1, 
       },
       price: {
         type: Number,
-        required: true,
       },
       actualPrice: {
         type: Number,
-        required: true,
       },
       totalPrice: {
         type: Number,
-        required: true,
         default: function () {
           return this.quantity * this.price;
         },
       },
       totalActualPrice : {
         type: Number,
-        required: true,
         default: function () {
           return this.quantity * this.actualPrice;
         },
@@ -177,12 +168,10 @@ const cartSchema = new mongoose.Schema({
   ],
   totalAmount: {
     type: Number,
-    required: true,
     default: 0,
   },
   totalActualAmount: {
     type: Number,
-    required: true,
     default: 0,
   },
   totalDiscountAmount: {
@@ -199,7 +188,6 @@ const cartSchema = new mongoose.Schema({
   },
 });
 
-
 const checkoutSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId, 
@@ -209,7 +197,6 @@ const checkoutSchema = new mongoose.Schema({
   totalAmount: {
     type: Number,
     required: true,
-
   },cartId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Cart', 
@@ -232,8 +219,6 @@ const checkoutSchema = new mongoose.Schema({
     default : 0
   }
 });
-
-
 
 const orderSchema = new mongoose.Schema({
   orderId: { 
@@ -264,7 +249,6 @@ const orderSchema = new mongoose.Schema({
     enum: ['COD','razorPay', 'Wallet'], 
     required: true 
   }, 
-
   deliveryAddress: { 
     fname: { 
       type: String,
@@ -306,7 +290,6 @@ const orderSchema = new mongoose.Schema({
       required: true, 
     }, 
   },
-
   billingAddress: {
     fname: { 
       type: String,
@@ -348,7 +331,6 @@ const orderSchema = new mongoose.Schema({
       required: true, 
     }
   },
-
   products: [
     {
       productId: { 
@@ -390,7 +372,6 @@ const orderSchema = new mongoose.Schema({
       }
     }
   ],
-
   subtotal: { 
     type: Number, 
     required: true 
@@ -426,8 +407,6 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-
-
 const wishlistSchema = new mongoose.Schema(
   {
     userId: {
@@ -450,8 +429,7 @@ const wishlistSchema = new mongoose.Schema(
     ],
   },
   { timestamps: true }
-)
-
+);
 
 const walletSchema = new mongoose.Schema({
   userId: {
@@ -490,8 +468,6 @@ const walletSchema = new mongoose.Schema({
   },
 });
 
-
-
 const referralSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -516,10 +492,6 @@ const referralSchema = new mongoose.Schema({
     default: 0,  
   },
 });
-
-
-
-
 
 const returnCancelSchema = new mongoose.Schema({
   orderId: {
@@ -655,8 +627,6 @@ const returnCancelSchema = new mongoose.Schema({
   },
 });
 
-
-
 const pendingOrderSchema = new mongoose.Schema({
   razorPayOrderId :{
     type :String,
@@ -727,7 +697,6 @@ const pendingOrderSchema = new mongoose.Schema({
       required: true, 
     }, 
   },
-
   billingAddress: {
     fname: { 
       type: String,
@@ -769,7 +738,6 @@ const pendingOrderSchema = new mongoose.Schema({
       required: true, 
     }
   },
-
   products: [
     {
       productId: { 
@@ -811,7 +779,6 @@ const pendingOrderSchema = new mongoose.Schema({
       } 
     }
   ],
-
   subtotal: { 
     type: Number, 
     required: true 
@@ -849,17 +816,10 @@ const pendingOrderSchema = new mongoose.Schema({
   },
 });
 
-
-
-
-
-
-
 returnCancelSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
-
 
 module.exports = {
   User: mongoose.model('User', userSchema),

@@ -10,7 +10,7 @@ const checkSessionResetPassword=async(req,res,next)=>{
 
 const checkSession=async(req,res,next)=>{
   if (req.session.isUser) {
-    return res.redirect('/user/shop');
+    return res.redirect('/shop');
   }next();
 }
 
@@ -34,7 +34,7 @@ const logOut=async (req,res,next)=>{
       return res.status(500).send('Error logging out');
     }
     res.clearCookie('connect.sid');
-    res.redirect('/user/home');
+    res.redirect('/');
   });
 }
 

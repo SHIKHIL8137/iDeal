@@ -45,7 +45,6 @@ function renderTable(order) {
     return;
   }
 
-  // Sort orders by creation date (descending)
   order.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -235,6 +234,7 @@ document.addEventListener('click', event => {
     }
 
     const newStatus = document.getElementById('orderStatus').value;
+    console.log(newStatus);
     const orderDbid = document.getElementById('orderDbid').value;
     try {
       const response = await fetch(`/admin/updateStatusOrder/${orderDbid}`, {

@@ -4,6 +4,7 @@ require('dotenv').config();
 const path=require('path');
 const userRoute=require('./route/user');
 const adminRoute=require('./route/admin');
+const mainRoute = require('./route/main');
 const connectDB=require('./config/connectDB');
 const session=require('express-session');
 const passport=require('./config/passport')
@@ -35,7 +36,7 @@ app.set('views',path.join(__dirname,'views'));
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
-
+app.use('/',mainRoute);
 app.use('/user',userRoute);
 app.use('/admin',adminRoute);
 

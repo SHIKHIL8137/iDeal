@@ -1,13 +1,10 @@
 //form validation
 
-function validateForm(event) {
-  event.preventDefault(); 
-
-
-  const firstName = document.getElementById('firstName').value.trim();
-  const lastName = document.getElementById('lastName').value.trim();
+function validateForm() {
+  const fname = document.getElementById('firstName').value.trim();
+  const lname = document.getElementById('lastName').value.trim();
   const companyName = document.getElementById('companyName').value.trim();
-  const address = document.getElementById('address').value.trim();
+  const houseName = document.getElementById('address').value.trim();
   const country = document.getElementById('country').value.trim();
   const state = document.getElementById('state').value.trim();
   const city = document.getElementById('city').value.trim();
@@ -21,11 +18,11 @@ function validateForm(event) {
   document.querySelectorAll('.error').forEach(error => error.remove());
 
 
-  if (firstName === '') {
+  if (fname === '') {
     displayError('firstName', 'First name is required');
     isValid = false;
   }
-  if (lastName === '') {
+  if (lname === '') {
     displayError('lastName', 'Last name is required');
     isValid = false;
   }
@@ -51,7 +48,7 @@ function validateForm(event) {
     isValid = false;
   }
 
-  if (address === '') {
+  if (houseName === '') {
     displayError('address', 'Address is required');
     isValid = false;
   }
@@ -69,8 +66,60 @@ function validateForm(event) {
   }
 
   if (isValid) {
-    document.querySelector('form').submit();
+    const formData={
+       fname, 
+       lname ,
+       companyName ,
+       houseName ,
+       country ,
+       state ,
+       city ,
+       zipCode ,
+       email ,
+       phone ,
+    }
+    console.log(formData)
+    sendDataToTheServer(formData);
   }
+}
+
+
+async function sendDataToTheServer(data){
+  try {
+    document.getElementById('savebtn').textContent ='Saving....';
+    const response = await fetch('/user/saveAddress',{
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    if(!response.ok) return showAlert('An error occure submitting the data please try again later','danger');
+    const result = await response.json();
+    if(result.status){
+      showAlert(result.message,'success');
+      clearInput();
+      document.getElementById('savebtn').textContent ='Save';
+    }else{
+      showAlert(result.message,'danger');
+      document.getElementById('savebtn').textContent ='Save';
+    }
+  } catch (error) {
+    showAlert('Internal Server Error','danger');
+  }
+}
+
+function clearInput(){
+  document.getElementById('firstName').value='';
+  document.getElementById('lastName').value='';
+  document.getElementById('companyName').value='';
+  document.getElementById('address').value='';
+  document.getElementById('country').value='';
+  document.getElementById('state').value='';
+  document.getElementById('city').value='';
+  document.getElementById('zipCode').value='';
+   document.getElementById('email').value='';
+  document.getElementById('phone').value='';
 }
 
 // Function to display error message
@@ -80,23 +129,27 @@ function displayError(fieldId, message) {
   error.classList.add('error');
   error.style.color = 'red';
   error.textContent = message;
+  error.style.fontSize = '12px';
   field.parentElement.appendChild(error);
+  setTimeout(()=>{
+  error.style.display='none';
+  },3000)
 }
 
-// Add event listener to form submission
-document.querySelector('form').addEventListener('submit', validateForm);
+function showAlert(message, type) {
 
-
-// for alert box
-const alertBox = document.getElementById("alertBox");
-  alertBox.classList.add("show");
+  const alertBox = document.createElement('div');
+  alertBox.id = 'alertBox';
+  alertBox.className = `alert alert-${type} show`;
+  alertBox.role = 'alert';
+  alertBox.innerHTML = message;
+  document.body.appendChild(alertBox);
   setTimeout(() => {
-    alertBox.classList.remove("show");
-    alertBox.classList.add("hide");
-    setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 500); 
-  }, 3000); 
+      alertBox.classList.remove('show');
+      alertBox.classList.add('hide');
+      setTimeout(() => alertBox.remove(), 700); 
+  }, 3000);
+}
 
 
 

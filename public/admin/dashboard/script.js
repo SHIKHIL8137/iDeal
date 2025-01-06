@@ -20,26 +20,32 @@ async function fetchTopSellingProducts() {
 
 function renderProgressBars(products) {
 
+  const largestQuantity = products.reduce((acc, product) => {
+    return product.actualQuantity > acc ? product.actualQuantity : acc;
+  }, 0);
+
   const container = document.querySelector(".progress-container");
-  container.innerHTML = ""; // Clear existing content
+  container.innerHTML = ""; 
+
   products.forEach(product => {
     const item = document.createElement("div");
     item.className = "item";
-    item.innerHTML = `<span>${product.productName}</span><span>${Math.min(product.actualQuantity, 100)}%</span>`;  
+    const percentage = Math.round((product.actualQuantity / largestQuantity) * 100);
+    item.innerHTML = `<span>${product.productName}</span><span>${percentage}%</span>`;
     const progressBar = document.createElement("div");
     progressBar.className = "progress-bar";
     const span = document.createElement("span");
-    span.style.width = `${Math.min(product.actualQuantity, 100)}%`;
+    span.style.width = `${percentage}%`;
     progressBar.appendChild(span);
-
     container.appendChild(item);
     container.appendChild(progressBar);
   });
 }
 
+
 function renderErrorMessage(message) {
   const container = document.querySelector(".progress-container");
-  container.innerHTML = ""; // Clear existing content
+  container.innerHTML = "";
   const errorMessage = document.createElement("div");
   errorMessage.className = "error-message";
   errorMessage.style.color = "red";
@@ -67,6 +73,11 @@ async function fetchMostSoldCategories() {
 }
 
 function renderTopSellingCategories(categories) {
+  const largestQuantity = categories.reduce((acc, product) => {
+    return product.actualSold > acc ? product.actualSold : acc;
+  }, 0);
+
+
   const container = document.querySelector(".progress-containerCategory");
   container.innerHTML = "";
 
@@ -77,14 +88,14 @@ function renderTopSellingCategories(categories) {
   }
 
   categories.forEach((category) => {
-
+    const percentage = Math.round((category.actualSold / largestQuantity) * 100);
     const categoryItem = document.createElement("div");
     categoryItem.classList.add("item");
-    categoryItem.innerHTML = `<span>${category.categoryName}</span><span>${Math.min(category.actualSold, 100)}%</span>`; 
+    categoryItem.innerHTML = `<span>${category.categoryName}</span><span>${percentage}%</span>`; 
     const progressBar = document.createElement("div");
     progressBar.classList.add("progress-bar");
 
-    progressBar.innerHTML = `<span style="width: ${Math.min(category.actualSold, 100)}%;"></span>`;
+    progressBar.innerHTML = `<span style="width: ${percentage}%;"></span>`;
 
 
     container.appendChild(categoryItem);

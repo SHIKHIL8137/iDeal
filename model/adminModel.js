@@ -143,9 +143,6 @@ const reviewSchema = new mongoose.Schema({
   }
 });
 
-
-
-
 const couponSchema = new mongoose.Schema({
   code: {
     type: String,
@@ -204,9 +201,6 @@ const couponSchema = new mongoose.Schema({
     default : Date.now
   }
 });
-
-
-
 
 const offerSchema = new mongoose.Schema({
   title: {

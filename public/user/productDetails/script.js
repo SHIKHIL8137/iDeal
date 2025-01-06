@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Product ID:", productId);
 
       if (productId) {
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       } else {
         console.error("Product ID is missing!");
       }

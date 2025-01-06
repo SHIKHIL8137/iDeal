@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const productId = this.dataset.productId;  
       console.log(productId); 
       if (productId) {
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       } else {
         console.error('Product ID is missing!');
       }
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   function fetchProducts(query) {
-    fetch(`/user/search?search=${query}`)
+    fetch(`/search?search=${query}`)
       .then(response => response.json())
       .then(data => {
 
@@ -239,7 +239,7 @@ async function sortProduct(order) {
   };
 
   try {
-    const response = await fetch(`/user/sortProduct?order=${order}`,{
+    const response = await fetch(`/sortProduct?order=${order}`,{
       method:'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -297,7 +297,7 @@ async function sortProduct(order) {
       const productId = this.dataset.productId;  
       console.log(productId); 
       if (productId) {
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       } else {
         console.error('Product ID is missing!');
       }
@@ -330,7 +330,7 @@ async function applyFilters() {
   
 
   try {
-    const response = await fetch(`/user/filterProducts`, {
+    const response = await fetch(`/filterProducts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -390,7 +390,7 @@ async function applyFilters() {
       const productId = this.dataset.productId; 
       console.log(productId);  
       if (productId) {
-        window.location.href = `/user/productDetails/${productId}`;
+        window.location.href = `/productDetails/${productId}`;
       } else {
         console.error('Product ID is missing!');
       }

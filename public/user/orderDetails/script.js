@@ -20,13 +20,11 @@ showAlert('an Error occure please refresh the page')
 
 
 function renderOrderDetails(order, returnStatusMap) {
-  const container = document.querySelector('#orderDetailsCard'); // Adjust the selector as needed
+  const container = document.querySelector('#orderDetailsCard'); 
   if (!container) return;
 
-  // Clear existing content
   container.innerHTML = '';
 
-  // Build order details
   const orderHTML = `
       <div class="container py-5 h-80">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -137,7 +135,6 @@ function renderOrderDetails(order, returnStatusMap) {
 
   `;
 
-  // Inject the order details into the container
   container.innerHTML = orderHTML;
 }
 
