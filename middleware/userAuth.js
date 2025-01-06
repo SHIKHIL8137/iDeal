@@ -1,4 +1,5 @@
-const {User,Orders}=require('../model/userModel');
+
+const {User} = require('../model/user/userModel');
 
 
 const checkSessionResetPassword=async(req,res,next)=>{

@@ -1,5 +1,6 @@
-const { Product, Category ,Review,Coupon, Offer, Transaction ,Banner} = require('../../model/adminModel');
-const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCancel,PendingOrder}=require('../../model/userModel');
+
+const {User} = require('../../model/user/userModel')
+const {Address} = require('../../model/user/addressModel')
 require('dotenv').config()
 
 

@@ -1,10 +1,5 @@
 
-const {Product,Category,Admin,Coupon, Offer,Transaction,Banner} = require('../../model/adminModel');
-const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
-
-
-
-
+const {Coupon} = require('../../model/admin/couponModel');
 
 // Load Coupon 
 

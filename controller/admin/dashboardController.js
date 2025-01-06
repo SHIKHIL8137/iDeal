@@ -1,9 +1,5 @@
-const {Product,Category,Admin,Coupon, Offer,Transaction,Banner} = require('../../model/adminModel');
+
 const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
-
-
-
-
 
 // get the top Saling product
 

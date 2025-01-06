@@ -1,13 +1,24 @@
-const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCancel,PendingOrder}=require('../../model/userModel');
+
+const {User} = require('../../model/user/userModel');
+const {Address} = require('../../model/user/addressModel');
+const {OTP} = require('../../model/user/otpModel');
+const {Cart,CheckOut} = require('../../model/user/cartModel');
+const {Orders} = require('../../model/user/orderModel');
+const {Wallet} = require('../../model/user/walletModel');
+const {Referral} = require('../../model/user/referralModel');
+const {PendingOrder} = require('../../model/user/pendingModel');
+
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const nodeMailer=require('nodemailer');
-const { Product, Category ,Review,Coupon, Offer, Transaction ,Banner} = require('../../model/adminModel');
+const {Product} = require('../../model/admin/ProductModel');
+const {Review} = require('../../model/admin/reviewModel');
+const {Coupon} = require('../../model/admin/couponModel');
+const {Transaction} = require('../../model/admin/transactionModel');
+const {Banner} = require('../../model/admin/bannerModel');
 require('dotenv').config()
 const crypto = require('crypto');
-const mongoose = require('mongoose');
 const razorpayInstance = require('../../config/razorPay');
-const PDFDocument = require('pdfkit');
 const validColors = {
   pink: "#FFC0CB",
   yellow: "#FFFF00",

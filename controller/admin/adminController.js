@@ -1,5 +1,8 @@
-const {Product,Category,Admin,Coupon, Offer,Transaction,Banner} = require('../../model/adminModel');
-const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
+
+const {Admin} = require('../../model/admin/adminModel');
+const {Banner} = require('../../model/admin/bannerModel');
+const {User} = require('../../model/user/userModel');
+const {OTP} = require('../../model/user/otpModel');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodeMailer=require('nodemailer');

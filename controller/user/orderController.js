@@ -1,5 +1,11 @@
-const { Product, Category ,Review,Coupon, Offer, Transaction ,Banner} = require('../../model/adminModel');
-const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCancel,PendingOrder}=require('../../model/userModel');
+
+const {User} = require('../../model/user/userModel');
+const {Orders} = require('../../model/user/orderModel');
+const {Wallet} = require('../../model/user/walletModel');
+const {ReturnCancel} = require('../../model/user/returnCancelModel');
+const {PendingOrder} = require('../../model/user/pendingModel');
+const { Product} = require('../../model/admin/ProductModel');
+const {Coupon } = require('../../model/admin/couponModel');
 const mongoose = require('mongoose');
 require('dotenv').config()
 

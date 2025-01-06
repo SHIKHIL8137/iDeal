@@ -1,6 +1,7 @@
-const {User,Address,OTP,Cart,CheckOut,Orders,WishList,Wallet,Referral,ReturnCancel,PendingOrder}=require('../../model/userModel');
+
 const mongoose = require('mongoose');
-const { Product, Category ,Review,Coupon, Offer, Transaction ,Banner} = require('../../model/adminModel');
+const {Product} = require('../../model/admin/ProductModel');
+const {Offer} = require('../../model/admin/offerModel');
 require('dotenv').config();
 
 

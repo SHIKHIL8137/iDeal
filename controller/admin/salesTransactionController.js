@@ -1,5 +1,6 @@
-const {Product,Category,Admin,Coupon, Offer,Transaction,Banner} = require('../../model/adminModel');
-const {User,Address,OTP,Orders,ReturnCancel,Wallet}=require('../../model/userModel');
+
+const {Transaction} = require('../../model/admin/transactionModel');
+const {Orders} = require('../../model/user/orderModel');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
 
