@@ -314,7 +314,7 @@ async function sendResetPasswordLink(email, req, res) {
   try {
  
     const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent: ${info.response}`);
+    console.log(email,`Email sent: ${info.response}`);
 
     const user = await OTP.findOne({ email });
     if (user) await OTP.deleteMany({ email });
