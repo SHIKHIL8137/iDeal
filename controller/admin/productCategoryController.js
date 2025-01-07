@@ -170,7 +170,7 @@ const addProducts = async (req, res) => {
 
     await newProduct.save();
     
-    res.redirect('/admin/addProduct?message=product added successfuly');
+    res.redirect('/admin/product?message=product added successfuly');
   } catch (error) {
     console.error("Error while adding product:", error);
     return res.redirect('admin/pageerror');
@@ -198,7 +198,7 @@ const addCategory=async(req,res)=>{
     status:boolenValue,
   })
   await newCategory.save();
-  res.redirect('/admin/addCategory?message=Catagory added Successfully&err=true');
+  res.redirect('/admin/category?message=Catagory added Successfully');
  } catch (error) {
   res.status(500).send('Inernal server error');
  }
