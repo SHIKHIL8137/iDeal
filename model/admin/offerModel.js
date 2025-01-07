@@ -19,11 +19,6 @@ const offerSchema = new mongoose.Schema({
     type: Number, 
     required: false, 
   },
-  minOrderAmount: {
-    type: Number,
-    required: true,
-    default: 0, 
-  },
   validFrom: {
     type: Date,
     required: true,

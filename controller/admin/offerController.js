@@ -108,7 +108,7 @@ const loadEditOffer = async (req, res) => {
 
 const addOffer = async(req,res)=>{
   try {
-const{product,category,title, description,discountValue,discountCap,minOrderAmount,validFrom,validTill,isActive}=req.body
+const{product,category,title, description,discountValue,discountCap,validFrom,validTill,isActive}=req.body
  console.log(req.body);
     if(product!==''){
       const newOffer = new Offer({
@@ -117,7 +117,6 @@ const{product,category,title, description,discountValue,discountCap,minOrderAmou
         title, 
         description,
         discountValue,
-        minOrderAmount,
         validFrom,
         validTill,
         isActive,
@@ -133,7 +132,6 @@ const{product,category,title, description,discountValue,discountCap,minOrderAmou
         title, 
         description,
         discountValue,
-        minOrderAmount,
         validFrom,
         validTill,
         isActive,
@@ -216,7 +214,6 @@ const editOffer = async (req, res) => {
     const isActiveFlag = isActive === 'true';
 
     const updateData = {
-      minOrderAmount,
       discountValue,
       title,
       description,

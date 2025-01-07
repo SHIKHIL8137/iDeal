@@ -62,12 +62,6 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
     showError('discountValue', 'Discount value must be a positive number.');
   }
 
- 
-  if (document.getElementById('minOrderAmount').value === "" || document.getElementById('minOrderAmount').value < 0) {
-    formIsValid = false;
-    showError('minOrderAmount', 'Minimum order amount must be a positive number.');
-  }
-
 
   if (document.getElementById('validFrom').value === "") {
     formIsValid = false;
