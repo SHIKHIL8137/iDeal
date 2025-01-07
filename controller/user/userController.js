@@ -433,7 +433,7 @@ try {
   const userEmail = req.session.isLoggedEmail || 'shikhilks02@gmail.com';
   const message = req.query.message;
   const errBoolean = req.query.err;
-  const coupons = await Coupon.find().sort({createdAt : -1});
+  const coupons = await Coupon.find({isActive : true }).sort({createdAt : -1});
   const user = await User.findOne({ email: userEmail }).populate('addresses');
   res.status(200).render('user/checkOut',{user,message,errBoolean ,coupons,title:"Check Out"});
 } catch (error) {
