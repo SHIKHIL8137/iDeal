@@ -24,7 +24,7 @@ const loadSales = async(req,res)=>{
 
 const getSalesTable = async(req,res)=>{
   try {
-    const orderData = await Orders.find().sort({orderDate : -1});
+    const orderData = await Orders.find({status : 'Delivered'}).sort({orderDate : -1});
     res.status(200).json({
       status: true,
       data: orderData,
@@ -60,8 +60,10 @@ const getFilteredSalesTable = async (req, res) => {
 
       console.log(start,end);
       const orderData = await Orders.find({
-          orderDate: { $gte: start, $lte: end }
-      }).sort({ orderDate: -1 }); 
+        orderDate: { $gte: start, $lte: end },
+        status: 'Delivered'
+      }).sort({ orderDate: -1 });
+      
 
       return res.status(200).json({ 
           status: true, 
@@ -226,8 +228,10 @@ const reportPDF = async (req, res) => {
       }
 
       const data = await Orders.find({
-          orderDate: { $gte: start, $lte: end }
+        orderDate: { $gte: start, $lte: end },
+        status: 'Delivered'
       }).sort({ orderDate: -1 });
+    
 
       if (data.length === 0) {
           return res.status(404).json({ status: false, message: 'No data found for the specified date range.' });
@@ -352,8 +356,10 @@ const reportExcel = async (req,res)=>{
     }
 
     const data = await Orders.find({
-      orderDate: { $gte: start, $lte: end }
-    }).sort({ orderDate: -1 });
+      orderDate: { $gte: start, $lte: end },
+      status: 'Delivered'
+  }).sort({ orderDate: -1 });
+  
 
     if (data.length === 0) {
       return res.status(404).json({ status: false, message: 'No data found for the specified date range.' });
