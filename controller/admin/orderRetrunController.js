@@ -179,28 +179,17 @@ const getReturnData = async (req, res) => {
 const approveReturn = async (req, res) => {
   try {
     const { returnCancelId } = req.body; 
-    if (!returnCancelId) {
-      return res.status(400).json({ status: false, message: "returnCancelId is required" });
-    }
-
+    if (!returnCancelId) return res.status(400).json({ status: false, message: "returnCancelId is required" });
     const returnCancel = await ReturnCancel.findByIdAndUpdate(
       returnCancelId, 
       { $set: { adminStatus: 'Approved' ,pickupStatus : 'Completed',refundStatus : 'Completed'} }, 
       { new: true } 
     );
-
-    if (!returnCancel) {
-      return res.status(404).json({ status: false, message: "Return request not found" });
-    }
-
+    if (!returnCancel) return res.status(404).json({ status: false, message: "Return request not found" });
     const user = await User.findById(returnCancel.userId);
-    if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ status: false, message: "User not found" });
     const product = await Product.findById(returnCancel.productId);
-    if (!product) {
-      return res.status(404).json({ status: false, message: "Product not found" });
-    }
+    if (!product) return res.status(404).json({ status: false, message: "Product not found" });
     const order = await Orders.findByIdAndUpdate(
       returnCancel.orderId,
       {
@@ -223,10 +212,7 @@ const approveReturn = async (req, res) => {
         { new: true }
       );
     }
-    if (!order) {
-      return res.status(404).json({ status: false, message: "Order not found" });
-    }
- 
+    if (!order) return res.status(404).json({ status: false, message: "Order not found" });
     const trxId = generateTransactionId();
     let userWallet = await Wallet.findOne({ userId : returnCancel.userId });
     if(!userWallet) return res.status(404).json({ status: false, message: "Wallet not found" });
@@ -237,7 +223,6 @@ const approveReturn = async (req, res) => {
       amount : returnCancel.refundAmount,
       date: new Date(),
     });
-
     await userWallet.save();
     await Product.findByIdAndUpdate(
       returnCancel.productId,

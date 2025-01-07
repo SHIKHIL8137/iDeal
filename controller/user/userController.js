@@ -132,6 +132,7 @@ async function sendOTPEmail(email, username, password, referral ,req, res) {
       res.status(200).render('user/otp',{message:"OTP Send successfuly",email,title:"OTP Varification"});
     return otp;
   } catch (error) {
+    console.log(error);
     res.status(500).send('Failed to send OTP. Please try again later.');
   }
 }
@@ -164,50 +165,55 @@ const otpVerification = async (req, res) => {
   try {
     const { otp } = req.body;
     const email = req.session.email;
+    const { password, username, referralCode: newUserReferredCode } = req.session;
+
     if (!email) return res.status(400).send('Session expired or email not found. Please try again.');
+    if (!password || !username) return res.status(400).send('Incomplete session data. Please start the registration process again.');
+
     const user = await OTP.findOne({ email });
     if (!user) return res.status(404).send('OTP not found for this email.');
-    const currentDate = new Date();
-    if (currentDate > user.expiresAt) {
+
+    if (new Date() > user.expiresAt) {
       await OTP.deleteMany({ email });
       return res.status(400).send('OTP has expired. Please request a new one.');
     }
-    if (user.otp !== otp) return res.status(401).redirect('/user/otp?message=inavlid OTP')
-    const password = req.session.password;
-    const username = req.session.username;
-    const newUserReferredCode = req.session.referralCode
-    if (!password || !username) return res.status(400).send('Incomplete session data. Please start the registration process again.');
+
+    if (user.otp !== otp) {
+      return res.status(401).redirect('/user/otp?message=invalid+OTP');
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-    });
-    await newUser.save();
-    const rNewUser = await User.findOne({email});
-    const rNewUserId = rNewUser._id;
+    const newUser = await new User({ username, email, password: hashedPassword }).save();
     const referralCode = await generateUniqueReferralCode();
-    const newRefferal = new Referral({
-       userId : rNewUserId,
-       referralCode,
-    });
-    await newRefferal.save();
-    await Referral.findOneAndUpdate(
-      { referralCode: newUserReferredCode },
-      {
-        $push: { referredUserIds: rNewUserId },
-        $inc: { rewardAmount: 100 }, 
-      },
-      { new: true } 
-    );
+    await new Referral({ userId: newUser._id, referralCode }).save();
+
+    if (newUserReferredCode) {
+      const referral = await Referral.findOneAndUpdate(
+        { referralCode: newUserReferredCode },
+        { $push: { referredUserIds: newUser._id }, $inc: { rewardAmount: 100 } },
+        { new: true }
+      );
+      if (referral) {
+        const trxId = generateTransactionId();
+        const userWallet = await Wallet.findOneAndUpdate(
+          { userId: referral.userId },
+          {
+            $inc: { balance: 100 },
+            $push: {
+              transactions: { transactionId: trxId, type: 'credit', amount: 100, date: new Date() },
+            },
+          },
+          { upsert: true, new: true }
+        );
+      }
+    }
     await Wallet.findOneAndUpdate(
-      { userId: rNewUserId },
-      { $setOnInsert: { balance: 0 ,transactions: []} },
+      { userId: newUser._id },
+      { $setOnInsert: { balance: 0, transactions: [] } },
       { upsert: true, new: true }
     );
     await Cart.findOneAndUpdate(
-      { userId: rNewUserId },
-      { $setOnInsert: {items: []} },
+      { userId: newUser._id },
+      { $setOnInsert: { items: [] } },
       { upsert: true, new: true }
     );
     await OTP.deleteMany({ email });
@@ -216,9 +222,20 @@ const otpVerification = async (req, res) => {
       res.redirect('/user/login?message=Registration successful! Please log in.&err=true');
     });
   } catch (error) {
+    console.error(error);
     res.status(500).send('Internal Server Error. Please try again later.');
   }
 };
+
+
+//function to generate unique transaction id 12 digits
+function generateTransactionId() {
+  const timestamp = Date.now(); 
+  const randomNum = Math.floor(Math.random() * 1000); 
+  const transactionId = `${timestamp.toString().slice(-9)}${randomNum.toString().padStart(3, '0')}`;
+
+  return transactionId;
+}
 
 // generate refferal code
 function generateReferralCode() {
@@ -243,12 +260,18 @@ async function generateUniqueReferralCode() {
 
 // resend password route
 const resendPassword=async(req,res)=>{
-  const email=req.session.email;
-  const username=req.session.username;
-  const password=req.session.password;
-  const user=await OTP.findOne({email});
-  if(!user) return res.status(401).redirect('/user/signUp?message=user not found try again');
-  await sendOTPEmail(email, username, password, req, res);
+  try{
+    const email=req.session.email;
+    const username=req.session.username;
+    const password=req.session.password;
+    const referral = req.session.referralCode;
+    const user=await OTP.findOne({email});
+    if(!user) return res.status(401).redirect('/user/signUp?message=user not found try again');
+    console.log(email,username,password,user);
+    await sendOTPEmail(email, username, password,referral, req, res);
+  }catch(error){
+    console.log(error);
+  }
 }
 
 // validate the enter details of user route

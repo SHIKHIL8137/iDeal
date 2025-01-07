@@ -45,7 +45,7 @@ width: 100%;
 
 #alertBox{
   position: fixed;
-  top: 20px;
+  top: 70px;
   right: -100%;
   transition: all 0.7s ease-in-out;
   z-index: 9999;
