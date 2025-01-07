@@ -110,6 +110,12 @@ const addOffer = async(req,res)=>{
   try {
 const{product,category,title, description,discountValue,discountCap,validFrom,validTill,isActive}=req.body
  console.log(req.body);
+ const customNow = new Date();
+    const validTillDate = new Date(validTill);
+    const validFromDate = new Date(validFrom);
+    if(validTillDate<customNow){
+      isActive = false;
+     }
     if(product!==''){
       const newOffer = new Offer({
         product,
@@ -117,8 +123,8 @@ const{product,category,title, description,discountValue,discountCap,validFrom,va
         title, 
         description,
         discountValue,
-        validFrom,
-        validTill,
+        validFrom : validTillDate,
+        validTill :validTillDate,
         isActive,
         discountCap
       })
@@ -132,13 +138,12 @@ const{product,category,title, description,discountValue,discountCap,validFrom,va
         title, 
         description,
         discountValue,
-        validFrom,
-        validTill,
+        validFrom :validTillDate,
+        validTill : validTillDate,
         isActive,
         discountCap
       })
       await newOffer.save();
-      // await Category.findByIdAndUpdate(category,{$set:{offer : true}});
     }
     res.status(200).redirect('/admin/offer?message=Offer Added SuccessFully&err=true');
   } catch (error) {
@@ -209,17 +214,22 @@ const deleteOffer =async(req,res)=>{
 const editOffer = async (req, res) => {
   try {
     const { offerId } = req.params;
-    const { title, description,discountValue ,discountCap ,minOrderAmount,applicableTo, category, product, validFrom, validTill, isActive } = req.body;
+    const { title, description,discountValue ,discountCap ,applicableTo, category, product, validFrom, validTill, isActive } = req.body;
 
-    const isActiveFlag = isActive === 'true';
-
+    let isActiveFlag = isActive === 'true';
+    const customNow = new Date();
+    const validTillDate = new Date(validTill);
+    const validFromDate = new Date(validFrom);
+    if(validTillDate<customNow){
+      isActiveFlag = false;
+     }
     const updateData = {
       discountValue,
       title,
       description,
       applicableTo,
-      validFrom,
-      validTill,
+      validFrom :validFromDate,
+      validTill :validTillDate,
       isActive: isActiveFlag,
       discountCap
     };
@@ -228,7 +238,6 @@ const editOffer = async (req, res) => {
       updateData.applicableTo = 'Category';
       updateData.category = category
       updateData.product = null;
-      // await Category.findByIdAndUpdate(category, { $set: { offer: isActiveFlag } });
     };
     if (applicableTo === 'Product') {
       updateData.applicableTo = 'Product';

@@ -42,7 +42,7 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
     showError('discountValue', 'Discount value must be a positive number.');
   }
 
-  if (document.getElementById('validFrom').value === "") {
+  if (document.getElementById('validFrom').value === "" ) {
     formIsValid = false;
     showError('validFrom', 'Please select a valid from date.');
   }
@@ -62,6 +62,11 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
   if (document.getElementById('discountCap').value === "" || document.getElementById('discountCap').value < 0) {
     formIsValid = false;
     showError('discountCap', 'Please Enter the Maximum Discount');
+  }
+  if(new Date(document.getElementById('validFrom').value) >new Date(document.getElementById('validTill').value)){
+    formIsValid = false;
+    showError('validFrom', 'Please select a valid from date.');
+    showError('validTill', 'Please select a valid till date.');
   }
 
   if (formIsValid) {
