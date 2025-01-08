@@ -26,11 +26,14 @@ function renderProgressBars(products) {
 
   const container = document.querySelector(".progress-container");
   container.innerHTML = ""; 
-
+console.log(products)
   products.forEach(product => {
     const item = document.createElement("div");
     item.className = "item";
     const percentage = Math.round((product.actualQuantity / largestQuantity) * 100);
+    console.log('hrllo',percentage);
+    console.log(product.actualQuantity);
+    console.log(largestQuantity);
     item.innerHTML = `<span>${product.productName}</span><span>${percentage}%</span>`;
     const progressBar = document.createElement("div");
     progressBar.className = "progress-bar";
@@ -180,23 +183,60 @@ async function feachSales(){
 
 feachSales();
 
+function toggleMonthInput() {
+  const filterType = document.getElementById("filterType").value;
+  const monthInput = document.getElementById("monthInput");
+  const monthLabel = document.querySelector("label[for='monthInput']");
+
+  if (filterType === "monthly") {
+    monthInput.style.display = "inline"; 
+    monthLabel.style.display = "inline"; 
+  } else {
+    monthInput.style.display = "none"; 
+    monthLabel.style.display = "none"; 
+    renderRevenueChart(); 
+  }
+}
 
 async function renderRevenueChart() {
   try {
+    const filterType = document.getElementById("filterType").value;
+    const monthInput = document.getElementById("monthInput");
+    const month = monthInput.value; 
 
-    const response = await fetch("/admin/getChartData");
-    const data = await response.json();
+    let query = `?filter=${filterType}`;
+    if (filterType === "monthly") {
+      if (!month) {
+        alert("Please select a valid month.");
+        return;
+      }
+      query += `&month=${month}`;
+    }
 
-    if (data.success) {
+    const response = await fetch(`/admin/getChartData${query}`);
+    const result = await response.json();
+
+    if (result.success) {
+      const labels = result.data.map((item) => item.label);
+      const chartData = result.data.map((item) => item.totalRevenue);
+
+      console.log("Initializing chart with data:", labels, chartData);
+
       const ctx = document.getElementById("revenueChart").getContext("2d");
-      const revenueChart = new Chart(ctx, {
+
+
+      if (window.revenueChart instanceof Chart) {
+        window.revenueChart.destroy();
+      }
+
+      window.revenueChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          labels,
           datasets: [
             {
-              label: "Revenue",
-              data: data.data, 
+              label: filterType === "yearly" ? "Monthly Revenue" : "Daily Revenue",
+              data: chartData,
               backgroundColor: "#3b82f6",
             },
           ],
@@ -206,20 +246,24 @@ async function renderRevenueChart() {
           scales: {
             y: {
               beginAtZero: true,
-              ticks: { callback: (value) => value + "k" },
+              ticks: {
+                callback: (value) => `₹${value.toLocaleString()}`,
+              },
             },
           },
         },
       });
     } else {
-      console.error("Error fetching revenue data:", data.message);
+      console.error("Error fetching revenue data:", result.message);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
-
+toggleMonthInput();
 renderRevenueChart();
+
+
 
 
 

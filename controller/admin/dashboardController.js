@@ -8,6 +8,7 @@ const {ReturnCancel} = require('../../model/user/returnCancelModel');
 const getTopSellingProduct = async(req,res)=>{
   try {
     const salesData = await Orders.aggregate([
+      {$match : {status : 'Delivered'}},
      {$unwind : "$products"},
      {
       $group: {
@@ -51,6 +52,7 @@ const getTopSellingProduct = async(req,res)=>{
 const getMostSoldCategories = async (req, res) => {
   try {
     const soldCategories = await Orders.aggregate([
+      {$match : {status : 'Delivered'}},
       { $unwind: "$products" }, 
       {
         $lookup: {
@@ -217,18 +219,38 @@ const getSalesCount = async (req, res) => {
 
 const getChartData = async (req, res) => {
   try {
-    const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-    const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
+    const { filter = "yearly", month } = req.query;
+console.log(month,filter)
+    let matchStage = { status: "Delivered" };
+    let labels = [];
+    let groupByField;
+
+    if (filter === "yearly") {
+      const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+      const endOfYear = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
+      matchStage.orderDate = { $gte: startOfYear, $lte: endOfYear };
+
+      labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      groupByField = { $month: "$orderDate" };
+    } else if (filter === "monthly" && month) {
+      const year = new Date().getFullYear();
+      const startOfMonth = new Date(year, month - 1, 1);
+      const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999);
+      matchStage.orderDate = { $gte: startOfMonth, $lte: endOfMonth };
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+      labels = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
+      groupByField = { $dayOfMonth: "$orderDate" };
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid filter or missing month for monthly filter.",
+      });
+    }
+
     const revenueData = await Orders.aggregate([
-      {
-        $match: {
-          status: "Delivered", 
-          orderDate: { $gte: startOfYear, $lte: endOfYear },
-        },
-      },
-      {
-        $unwind: "$products",
-      },
+      { $match: matchStage },
+      { $unwind: "$products" },
       {
         $addFields: {
           "products.price": { $ifNull: ["$products.price", 0] },
@@ -237,37 +259,35 @@ const getChartData = async (req, res) => {
       },
       {
         $group: {
-          _id: { $month: "$orderDate" },
+          _id: groupByField,
           totalRevenue: {
-            $sum: {
-              $multiply: ["$products.price", "$products.quantity", 0.1],
-            },
+            $sum: { $multiply: ["$products.price", "$products.quantity"] },
           },
         },
       },
       {
         $project: {
-          month: "$_id",
+          label: "$_id", 
           totalRevenue: { $round: ["$totalRevenue", 2] },
           _id: 0,
         },
       },
       {
-        $sort: { month: 1 },
+        $sort: { label: 1 },
       },
     ]);
 
-    const monthlyRevenue = Array(12).fill(0);
-    revenueData.forEach((item) => {
-      if (item.month >= 1 && item.month <= 12) {
-        monthlyRevenue[item.month - 1] = item.totalRevenue;
-      }
+    const result = labels.map((label, index) => {
+      const found = revenueData.find((item) => item.label === index + 1);
+      return {
+        label: filter === "yearly" ? labels[index] : label,
+        totalRevenue: found ? found.totalRevenue : 0,
+      };
     });
-
-
+console.log(result)
     res.status(200).json({
       success: true,
-      data: monthlyRevenue,
+      data: result,
     });
   } catch (error) {
     console.error("Error fetching revenue data:", error);
@@ -278,6 +298,9 @@ const getChartData = async (req, res) => {
     });
   }
 };
+
+
+
 
 
 
