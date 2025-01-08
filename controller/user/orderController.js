@@ -7,6 +7,7 @@ const {PendingOrder} = require('../../model/user/pendingModel');
 const { Product} = require('../../model/admin/ProductModel');
 const {Coupon } = require('../../model/admin/couponModel');
 const mongoose = require('mongoose');
+const PDFDocument = require('pdfkit');
 require('dotenv').config()
 
 
