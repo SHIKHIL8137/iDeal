@@ -123,7 +123,7 @@ const{product,category,title, description,discountValue,discountCap,validFrom,va
         title, 
         description,
         discountValue,
-        validFrom : validTillDate,
+        validFrom : validFromDate,
         validTill :validTillDate,
         isActive,
         discountCap
@@ -138,7 +138,7 @@ const{product,category,title, description,discountValue,discountCap,validFrom,va
         title, 
         description,
         discountValue,
-        validFrom :validTillDate,
+        validFrom :validFromDate,
         validTill : validTillDate,
         isActive,
         discountCap
