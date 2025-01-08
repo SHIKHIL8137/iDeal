@@ -281,8 +281,11 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
       const result = await response.json();
 
       if (response.ok) {
-        showAlert(result.message, 'success');
+        showAlert(result.message, 'success');     
         getUserDetails();
+          document.getElementById('currentPassword').value='';
+          document.getElementById('newPassword').value='';
+          document.getElementById('confirmPassword').value='';
       } else {
         showAlert(result.message || 'Failed to update password. Please try again.', 'danger');
       }
