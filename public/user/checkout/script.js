@@ -189,7 +189,8 @@ function selectDeliveryAddress(addressId) {
 
 document.getElementById('placeOrder').addEventListener('click', async (e) => {
   e.preventDefault();
-
+  document.getElementById('placeOrder').disabled = true;
+  document.getElementById('placeOrder').textContent = 'checkouting.....'
   if (!validateForm()) return;
 
   try {

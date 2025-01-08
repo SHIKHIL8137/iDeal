@@ -2,6 +2,7 @@
 const {User} = require('../../model/user/userModel')
 const {Address} = require('../../model/user/addressModel')
 require('dotenv').config()
+const bcrypt = require('bcrypt');
 
 
 // rendering the route for profile
