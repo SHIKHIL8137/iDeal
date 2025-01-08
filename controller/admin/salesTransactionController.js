@@ -53,7 +53,7 @@ const getFilteredSalesTable = async (req, res) => {
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
           return res.status(400).json({ status: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
       }
-      end.setHours(23, 59, 59, 999);
+      end.setHours(0, 0, 0, 0);
       if (start > end) {
           return res.status(400).json({ status: false, message: 'Start date cannot be after end date.' });
       }
