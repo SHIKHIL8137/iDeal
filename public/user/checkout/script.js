@@ -189,10 +189,9 @@ function selectDeliveryAddress(addressId) {
 
 document.getElementById('placeOrder').addEventListener('click', async (e) => {
   e.preventDefault();
-  document.getElementById('placeOrder').disabled = true;
-  document.getElementById('placeOrder').textContent = 'checkouting.....'
   if (!validateForm()) return;
-
+   document.getElementById('placeOrder').disabled = true;
+  document.getElementById('placeOrder').textContent = 'checkouting.....'
   try {
     const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id || "COD";
     const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
