@@ -208,18 +208,18 @@ const saveUpdatedAddress = async (req, res) => {
     const addressId = req.params.addressId;
 
     if (!mongoose.Types.ObjectId.isValid(addressId)) {
-      return res.status(400).send('Invalid address ID');
+      return res.status(400).json({status : false,message :'Invalid address ID'});
     }
 
     const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(404).json({status : false,message :'User not found'});
     }
 
     const address = await Address.findById(addressId);
     if (!address) {
-      return res.status(404).send('Address not found');
+      return res.status(404).json({status : false,message :'Address not found'});
     }
 
     address.fname = fname;
@@ -243,10 +243,10 @@ const saveUpdatedAddress = async (req, res) => {
 
     await user.save();
     
-    res.status(200).redirect('/user/checkOut?message=Address updation SuccessFully&err=true');
+    res.status(200).json({status : true ,message:'Address updation SuccessFully',data :address});
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({status : true ,message :'Internal Server Error'});
   }
 };
 
