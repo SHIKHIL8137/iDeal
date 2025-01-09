@@ -191,7 +191,7 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
   e.preventDefault();
   if (!validateForm()) return;
    document.getElementById('placeOrder').disabled = true;
-  document.getElementById('placeOrder').textContent = 'checkouting.....'
+  document.getElementById('placeOrder').textContent = 'Placing Order...'
   try {
     const paymentMethod = document.querySelector('input[name="payment"]:checked')?.id || "COD";
     const selectedAddressRadio = document.querySelector('input[name="address"]:checked');
