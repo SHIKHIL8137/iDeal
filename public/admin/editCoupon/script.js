@@ -69,7 +69,6 @@ function validation(coupenId){
       confirmSaveBtn.addEventListener(
           'click',
           function () {
-              // Create the data object
               const data = {
                   code: couponCode.value,
                   description: description.value,
@@ -101,6 +100,8 @@ function errorMessage(errorElement) {
 
 async function submitData(data,coupenId) {
   try {
+    document.getElementById('submitbtn').disabled=true;
+    document.getElementById('submitbtn').textContent='Saving...';
       const response = await fetch(`/admin/editCoupon/${coupenId}`, {
           method: "POST",
           headers: {
@@ -119,6 +120,9 @@ async function submitData(data,coupenId) {
       }
   } catch (error) {
       showAlert('An error occurred, please try again later', 'danger');
+  }finally{
+    document.getElementById('submitbtn').disabled=false;
+    document.getElementById('submitbtn').textContent='Save Changes';
   }
 }
 
