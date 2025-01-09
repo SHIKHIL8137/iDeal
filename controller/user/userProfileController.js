@@ -3,7 +3,7 @@ const {User} = require('../../model/user/userModel')
 const {Address} = require('../../model/user/addressModel')
 require('dotenv').config()
 const bcrypt = require('bcrypt');
-
+const mongoose = require('mongoose');
 
 // rendering the route for profile
 
