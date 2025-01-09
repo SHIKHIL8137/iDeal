@@ -1,5 +1,7 @@
 
+const { json } = require('express');
 const {Coupon} = require('../../model/admin/couponModel');
+const { fillAndStroke } = require('pdfkit');
 
 // Load Coupon 
 
@@ -59,9 +61,11 @@ const addCoupon = async(req,res)=>{
       validTill,
       usageLimit,
     } = req.body;
-console.log(req.body);
+    const coupenCodeFromClient = code.trim().toUpperCase();
+    const coupenCode = await Coupon.findOne({code:coupenCodeFromClient});
+    if(coupenCode) return res.status(400).json({status:false,message:"Copen code already exist try another code"});
     if (!code || !discountPercentage || !validFrom || !validTill) {
-      return res.status(400).json({ status: 'error', message: 'All required fields must be provided.' });
+      return res.status(400).json({ status: false, message: 'All required fields must be provided.' });
     }
     const newCoupon = new Coupon({
       code : code.trim().toUpperCase(),
@@ -75,7 +79,7 @@ console.log(req.body);
     });
 
     await newCoupon.save();
-    res.status(200).redirect('/admin/Coupon?message=Coupon added successFully&err=true');
+    res.status(200).json({message:'Coupon added successFully',status :true});;
   } catch (error) {
     console.error('Error adding coupon:', error);
     res.status(500).send('Internal server Error');
@@ -88,7 +92,6 @@ console.log(req.body);
 const editCoupon = async (req, res) => {
   try {
     const {
-      couponId,
       code,
       description,
       discountPercentage,
@@ -99,27 +102,26 @@ const editCoupon = async (req, res) => {
       usageLimit,
       status,
     } = req.body;
-
+    const  couponId =req.params.couponId;
     console.log('Edit Coupon Request:', req.body);
 
     if (!couponId || !code || !discountPercentage || !validFrom || !validTill) {
-      return res.redirect('/admin/Coupon?message=All fields are require&err=false'); 
+      return res.status(400).json({status : false,message:'All fields are require'}); 
     }
 
     if (discountPercentage < 0 || discountPercentage > 100) {
-      return res.redirect('/admin/Coupon?message=Invalid input dicount percentage exied or less than 0&err=false');
+      return res.status(400).json({message:'Invalid input dicount percentage exied or less than 0',status:false});
     }
 
     const validFromDate = new Date(validFrom);
     const validTillDate = new Date(validTill);
 
     if (validFromDate > validTillDate) {
-      return res.redirect('/admin/Coupon?message=Invalid end date&err=false');
+      return res.status(400).json({message:'Invalid end date',status:false});
     }
-
     const coupon = await Coupon.findById(couponId);
     if (!coupon) {
-      return res.redirect('/admin/Coupon?message=Invalid Coupon ID&err=false');
+      return res.status(400).json({message:'Invalid Coupon ID',status:false});
     }
 
     coupon.code = code.trim().toUpperCase();
@@ -133,11 +135,11 @@ const editCoupon = async (req, res) => {
     coupon.isActive = status === 'true';
 
     await coupon.save();
-   console.log(coupon);
-    res.redirect('/admin/Coupon?message=Coupen Added SuccessFully&err=true');
+    console.log(coupon)
+    res.status(200).json({status :true ,message:'Coupen Added SuccessFully',data :coupon});
   } catch (error) {
     console.error('Error editing coupon:', error);
-    res.redirect('/admin/Coupon?message=Internal Server Error Please try again later&err=false');
+    res.status(500).json({status:false,message:'Internal Server Error Please try again later'});
   }
 };
 

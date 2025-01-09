@@ -3,6 +3,8 @@
   </head>
 
   <body>
+    <div id="alertBox">
+    </div>
     <div class="container-fluid">
       <div class="row flex-nowrap">
         <!-- Sidebar -->
@@ -107,7 +109,6 @@
           <div class="container mt-5">
             <div class="card">
               <div class="card-body">
-                <form action="/admin/addCoupon" method="post" id="couponForm">
                   <div class="row g-3">
                     <!-- Coupon Code -->
                     <div class="col-md-6">
@@ -180,10 +181,8 @@
 
                   <!-- Submit Button -->
                   <div class="mt-4 text-end">
-                    <button type="submit" class="btn btn-primary">Add Coupon</button>
+                    <button id="submitButton" onclick="validation()" class="btn btn-primary">Add Coupon</button>
                   </div>
-                </form>
-
               </div>
             </div>
           </div>

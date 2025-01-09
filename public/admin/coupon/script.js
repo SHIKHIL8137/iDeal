@@ -174,41 +174,6 @@ function editCoupon(couponId) {
   window.location.href = `/admin/editCoupon/${couponId}`;
 }
 
-// Delete a coupon
-
-// let couponIdToDelete = null; 
-
-// function deleteCoupon(couponId) {
-//   couponIdToDelete = couponId;
-//   const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-//   deleteModal.show();
-// }
-// document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-//   if (couponIdToDelete) {
-//     fetch(`/admin/deleteCoupon/${couponIdToDelete}`, {
-//       method: 'DELETE',
-//     })
-//       .then((response) => response.json())
-//       .then((data) => {
-//         if (data.status === 'success') {
-//           window.location.href = '/admin/Coupon?message=Coupon deleted Successfully.&err=true';
-//         } else {
-//           window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
-//         }
-//       })
-//       .catch((error) => {
-//         window.location.href = '/admin/Coupon?message=Error deleting coupon.&err=false';
-//       });
-      
-//     const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-//     deleteModal.hide(); 
-//   }
-// });
-
-
-
-
-
 
 // alert box
 const alertBox = document.getElementById("alertBox");

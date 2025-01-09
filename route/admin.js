@@ -115,7 +115,7 @@ router.get('/editCoupon/:couponId' ,adminAuth.isLoggedIn ,couponController.loadE
 router.get('/coupon-data',adminAuth.isLoggedIn ,couponController.getCoupons);
 router.get('/search-coupons',adminAuth.isLoggedIn ,couponController.searchCoupon);
 
-router.post('/editCoupon',couponController.editCoupon);
+router.post('/editCoupon/:couponId',couponController.editCoupon);
 router.post('/addCoupon',couponController.addCoupon);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
