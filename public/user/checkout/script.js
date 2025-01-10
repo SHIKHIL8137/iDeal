@@ -236,6 +236,8 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
 
     const result = await response.json();
     if (response.ok) {
+      document.getElementById('placeOrder').disabled = false;
+      document.getElementById('placeOrder').textContent = 'Place Order'
       if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
         const rzp = new Razorpay({
           key: result.razorPayKey,
