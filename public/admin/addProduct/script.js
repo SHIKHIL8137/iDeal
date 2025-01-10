@@ -48,56 +48,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Base Price Validation
     const basePrice = document.getElementById("basePrice");
-    if (!basePrice.value.trim() || isNaN(basePrice.value) || Number(basePrice.value) <= 0) {
+    if (!basePrice.value.trim() || isNaN(basePrice.value.trim()) || Number(basePrice.value.trim()) <= 0) {
       setError(basePrice, "Base price must be a valid positive number.");
       isValid = false;
     }
 
     // Discount Validation
     const discount = document.getElementById("discountPercentage");
-    if (!discount.value.trim() || isNaN(discount.value) || Number(discount.value) < 0) {
+    if (!discount.value.trim() || isNaN(discount.value.trim()) || Number(discount.value.trim()) < 0) {
       setError(discount, "Discount must be a valid number (0 or higher).");
       isValid = false;
     }
 
     // Storage Validation
     const storage = document.getElementById("storageStatus");
-    if (!storage.value) {
+    if (!storage.value.trim()) {
       setError(storage, "Please select a storage option.");
       isValid = false;
     }
 
     // Color Validation
     const color = document.getElementById("colorStatus");
-    if (!color.value) {
+    if (!color.value.trim()) {
       setError(color, "Please select a color.");
       isValid = false;
     }
 
     // Quantity Validation
     const quantity = document.getElementById("productQuantity");
-    if (!quantity.value.trim() || isNaN(quantity.value) || Number(quantity.value) < 0) {
+    if (!quantity.value.trim() || isNaN(quantity.value.trim()) || Number(quantity.value.trim()) < 0) {
       setError(quantity, "Quantity must be a valid positive number.");
       isValid = false;
     }
 
     // Category Validation
     const category = document.getElementById("productCategory");
-    if (!category.value) {
+    if (!category.value.trim()) {
       setError(category, "Please select a category.");
       isValid = false;
     }
 
     // Condition Validation
     const condition = document.getElementById("productStatus");
-    if (!condition.value) {
+    if (!condition.value.trim()) {
       setError(condition, "Please select a condition.");
       isValid = false;
     }
 
     // Connectivity Validation
     const connectivity = document.querySelector("select[name='connectivity']");
-    if (!connectivity.value) {
+    if (!connectivity.value.trim()) {
       setError(connectivity, "Please select a connectivity type.");
       isValid = false;
     }

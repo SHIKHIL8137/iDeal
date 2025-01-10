@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-//show ing the images in the data base
+
 function viewImage(event, index) {
   const input = event.target;
   const reader = new FileReader();
@@ -50,12 +50,12 @@ function viewImage(event, index) {
   reader.onload = function () {
     const dataURL = reader.result;
 
-    // Show the preview image
+
     const image = document.getElementById(`imgView${index}`);
     image.src = dataURL;
     image.style.display = 'block';
 
-    // Initialize Cropper.js
+
     const cropper = new Cropper(image, {
       aspectRatio: NaN, 
       viewMode: 1,
@@ -65,11 +65,10 @@ function viewImage(event, index) {
       zoomable: true,
     });
 
-    // Show crop container
     const cropperContainer = document.getElementById(`croppedImg${index}`).parentNode;
     cropperContainer.style.display = 'block';
     
-    // Save cropped image
+
     const saveButton = document.getElementById(`saveButton${index}`);
     saveButton.addEventListener('click', async function () {
       image.style.display = 'none';
@@ -77,7 +76,6 @@ function viewImage(event, index) {
       const croppedImage = document.getElementById(`croppedImg${index}`);
       croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
 
-      // Create a new file from the cropped image
       const timestamp = new Date().getTime();
       const fileName = `cropped-img-${timestamp}-${index}.png`;
 
@@ -97,12 +95,109 @@ function viewImage(event, index) {
   reader.readAsDataURL(input.files[0]);
 }
 
-// code modal conforming the change
 
-document.getElementById('submitButton').addEventListener('click', function () {
+const errorMessages = document.querySelectorAll(".error-message");
+document.getElementById('submitButton').addEventListener('click', function (e) {
 
-  const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-  confirmationModal.show();
+
+  e.preventDefault(); 
+      let isValid = true;
+      errorMessages.forEach((error) => {
+        error.textContent = "";
+      });
+
+
+      const productName = document.getElementById("productName");
+      if (!productName.value.trim()) {
+        setError(productName, "Product Name is required.");
+        isValid = false;
+      } 
+
+      let imageCount = 0;
+      const displayedImages = document.querySelectorAll(".uploaded-images .image-item").length;
+      const fileInputs = document.querySelectorAll("input[type='file']");
+    
+
+    fileInputs.forEach(input => {
+      if (input.files.length > 0) {
+        imageCount++;
+      }
+    });
+    const newimages = document.getElementById("new-images");
+    if (displayedImages + imageCount !== 4) {
+      setError(newimages, "You must upload exactly 4 images.")
+      isValid = false;
+    } 
+
+      const productDescription = document.getElementById("productDescription");
+      if (!productDescription.value.trim()) {
+        setError(productDescription, "Description is required.");
+        isValid = false;
+      } 
+
+
+      const basePrice = document.getElementById("basePrice");
+      if (!basePrice.value.trim() || basePrice.value <= 0) {
+        setError(basePrice, "Base price must be a positive number.");
+        isValid = false;
+      } 
+
+
+      const discountPercentage = document.getElementById("discountPercentage");
+      if (
+        !discountPercentage.value.trim() ||
+        discountPercentage.value < 0 ||
+        discountPercentage.value > 100
+      ) {
+        setError(discountPercentage, "Discount must be between 0 and 100.");
+        isValid = false;
+      }
+
+      const storageStatus = document.getElementById("storageStatus");
+      if (!storageStatus.value.trim()) {
+        setError(storageStatus, "Please select a storage option.");
+        isValid = false;
+      } 
+
+
+      const colorStatus = document.getElementById("colorStatus");
+      if (!colorStatus.value.trim()) {
+        setError(colorStatus, "Please select a color.");
+        isValid = false;
+      } 
+
+
+      const productQuantity = document.getElementById("productQuantity");
+      if (!productQuantity.value.trim() || productQuantity.value <= 0) {
+        setError(productQuantity, "Quantity must be a positive number.");
+        isValid = false;
+      }
+
+
+      const productCategory = document.getElementById("productCategory");
+      if (!productCategory.value.trim()) {
+        setError(productCategory, "Please select a category.");
+        isValid = false;
+      }
+
+
+      const productCondition = document.getElementById("productStatus");
+      if (!productCondition.value.trim()) {
+        setError(productCondition, "Please select a condition.");
+        isValid = false;
+      }
+
+
+      const connectivity = document.getElementById("productStatus");
+      if (!connectivity.value.trim()) {
+        setError(connectivity, "Please select a connectivity option.");
+        isValid = false;
+      }
+
+      if (isValid) {
+        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        confirmationModal.show();
+      }
 });
 
 document.getElementById('confirmSubmit').addEventListener('click', function () {
@@ -115,6 +210,17 @@ document.getElementById('cancelbtn').addEventListener('click',(e)=>{
   e.preventDefault()
   window.location.href = '/admin/product'
 })
+
+function setError(input, message) {
+  const errorContainer = input.nextElementSibling;
+  if (errorContainer && errorContainer.classList.contains("error-message")) {
+    errorContainer.style.color = 'red';
+    errorContainer.textContent = message;
+    setTimeout(()=>{
+      errorContainer.textContent='';
+    },5000);
+  }
+}
 
 
 

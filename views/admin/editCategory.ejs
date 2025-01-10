@@ -120,12 +120,14 @@
                   <div class="mb-3">
                     <label for="categoryName" class="form-label">Category Name</label>
                     <input type="text" class="form-control" id="categoryName" value="<%= category.name %>"
-                      name="categoryName">
+                      name="categoryName" readonly>
+                      <div class="error-message"></div>
                   </div>
                   <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
                     <textarea class="form-control" id="description" rows="4"
                       name="description"><%= category.description %></textarea>
+                      <div class="error-message"></div>
                   </div>
                 </div>
               </div>
@@ -136,6 +138,7 @@
                   <option value="true" <%=category.status ? "selected" : "" %>>List</option>
                   <option value="false" <%=!category.status ? "selected" : "" %>>Unlist</option>
                 </select>
+                <div class="error-message"></div>
               </div>
               <!-- Action Buttons -->
               <div class="action-buttons">

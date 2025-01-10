@@ -68,7 +68,6 @@ function renderTable() {
         <td>${new Date(val.createdAt).toLocaleDateString('en-IN')}</td>
         <td>
           <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('${val._id}')">Edit</button>
-          <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('${val._id}')">Delete</button>
         </td>
       </tr>
     `;
@@ -120,7 +119,6 @@ function handleSearch(event) {
           <td>${new Date(val.createdAt).toLocaleDateString('en-IN')}</td>
           <td>
             <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('${val._id}')">Edit</button>
-            <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('${val._id}')">Delete</button>
           </td>
         </tr>
       `;

@@ -115,11 +115,13 @@
                     <div class="mb-3">
                       <label for="productName" class="form-label">Product Name</label>
                       <input type="text" class="form-control" id="productName" value="<%= productDetails.name %>">
+                      <div class="error-message"></div>
                     </div>
                     <div class="mb-3">
                       <label for="productDescription" class="form-label">Description</label>
                       <textarea class="form-control" id="productDescription"
                         rows="3"><%= productDetails.description %></textarea>
+                        <div class="error-message"></div>
                     </div>
                   </div>
 
@@ -140,7 +142,7 @@
                         <% for (let i=productDetails.images.length; i < 4; i++) { %>
                           <div>
                             <label for="image<%= i %>">Upload Image:</label>
-                            <input type="file" id="image<%= i %>" name="images" accept="image/*"
+                            <input class="form-control" type="file" id="image<%= i %>" name="images" accept="image/*"
                               onchange="viewImage(event, '<%= i %>')">
 
                             <!-- Image preview -->
@@ -157,6 +159,7 @@
                           </div>
                           <% } %>
                       </div>
+                      <div class="error-message"></div>
                     </div>
 
                   </div>
@@ -230,6 +233,7 @@
                         <label for="productQuantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="productQuantity" name="quantity"
                           value="<%= productDetails.stock %>" required>
+                          <div class="error-message"></div>
                       </div>
                     </div>
                   </div>
@@ -248,6 +252,7 @@
                           </option>
                           <% }); %>
                       </select>
+                      <div class="error-message"></div>
                     </div>
 
                     <div class="mb-3">
@@ -278,9 +283,9 @@
                   </div>
                 </div>
               </div>
-
+            </form>
           </div>
-          </form>
+
         </div>
       </div>
     </div>
