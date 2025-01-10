@@ -1,7 +1,7 @@
 const express=require('express');
 const mainController=require('../controller/main/mainController');
 const router=express.Router();
-
+const userMiddleWare = require('../middleware/userAuth');
 
 router.get('/',mainController.loadHome);
 router.get('/shop',mainController.loadShop);

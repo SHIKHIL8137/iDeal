@@ -80,7 +80,7 @@ router.post('/addToWallet',userMiddleWare.isLoggedIn,walletController.addMoneyTo
 router.get('/wishlist',userMiddleWare.isLoggedIn,wishListController.loadWishlist);
 router.get('/getWishListData',userMiddleWare.isLoggedIn,wishListController.getWishlistData);
 
-router.post('/addToWishlist/:id',userMiddleWare.isLoggedIn,wishListController.addtoWishlist);
+router.post('/addToWishlist/:id',userMiddleWare.isLoggedInForCart,userMiddleWare.isLoggedIn,wishListController.addtoWishlist);
 
 router.delete('/deleteFromWishlist/:id',userMiddleWare.isLoggedIn,wishListController.deleteFromWishlist);
 /////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ router.get('/cart',userMiddleWare.isLoggedIn,cartController.loadCart)
 router.get('/getCartDetails',userMiddleWare.isLoggedIn,cartController.getCartDetails);
 router.get('/cartSummary',userMiddleWare.isLoggedIn,cartController.cartSummery);
 
-router.post('/addtoCartProduct',userMiddleWare.isLoggedIn,cartController.addProductToCart)
+router.post('/addtoCartProduct',userMiddleWare.isLoggedInForCart,userMiddleWare.isLoggedIn,cartController.addProductToCart)
 router.post('/updateCartQuantity',userMiddleWare.isLoggedIn,cartController.updateCartQuantity);
 router.post('/removeFromCart',userMiddleWare.isLoggedIn,cartController.removeFromCart);
 router.post('/checkout',userMiddleWare.isLoggedIn,cartController.checkoutDataStore);

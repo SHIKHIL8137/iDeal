@@ -29,6 +29,20 @@ const isLoggedIn =async (req, res, next) => {
  
 }
 
+const isLoggedInForCart =async (req, res, next) => {
+  try {
+    const email = req.session.isLoggedEmail;
+    const user = await User.findOne({email});
+    if (!req.session.isUser || user.block === true) {
+      req.session.destroy();
+      return res.status(200).json({status:true,message : 'Please Login'});
+    }next(); 
+  } catch (error) {
+    console.log(error)
+  } 
+}
+
+
 const logOut=async (req,res,next)=>{
   req.session.destroy((err) => {
     if (err) {
@@ -68,5 +82,6 @@ module.exports ={
   checkSession,
   isLoggedIn,
   storeSessionEmail,
-  checkOutPageUserValid
+  checkOutPageUserValid,
+  isLoggedInForCart
 }
