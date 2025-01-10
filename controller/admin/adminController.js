@@ -119,19 +119,6 @@ const loadEditCustomer=async(req,res)=>{
   }
 }
 
-// render the add customer Page
-
-const loadAddCustomer=async(req,res)=>{
-  try {
-    const username=req.session.username;
-    const message = req.query.message
-    res.status(200).render('admin/addCustomer',{message,username,title:"Add Customer"});
-  } catch (error) {
-    res.status(500).send('Internal server error');
-  }
-}
-
-
 // add new admin route
 
 const addAdmin=async(req,res)=>{
@@ -161,24 +148,6 @@ res.status(200).redirect('/admin/login')
   res.status(500).send("Internal Server eroor");
  }
 }
-
-
-
-
-
-
-// Delete users route
-
-const deleteUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await User.findByIdAndDelete(id); 
-    res.status(200).json({status : true , message :"Customer deleted successfully"});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({status:false,message :'Internal Server Error'});
-  }
-};
 
 
 // check the email exist or not in the db after that edit the email
@@ -228,30 +197,6 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-
-
-// add new customer route
-
-const addCustomer=async(req,res)=>{
-try {
-  const newCustomerDetails=req.body;
-const {name, email ,phone , password} = newCustomerDetails;
-const userExist=await User.findOne({email:email});
-if(userExist) return res.redirect('/admin/addCustomer?message=The User exists');
-const hashedPassword =await bcrypt.hash(password,10);
-const newUser=new User({
-  username:name.trim(),
-  email:email.trim(),
-  phone:phone,
-  password:hashedPassword
-})
-
-await newUser.save();
-res.redirect('/admin/customers?message=User added successfuly')
-} catch (error) {
-  res.status(500).send("Internal server error");
-}
-}
 
 
 // admin logOut route
@@ -471,14 +416,11 @@ module.exports={
   loadLogin,
   loadforgotPassword,
   loadCustomers,
-  loadAddCustomer,
   loadEditCustomer,
  addAdmin,
  adminValidation,
- deleteUser,
  checkEmail,
  updateCustomer,
- addCustomer,
  logOut,
  forgotPassword,
  resetPasswordPage,

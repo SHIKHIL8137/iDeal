@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function isValidPhone(phone){
-  const phoneRegex = /^[0-9]{10}$/
+  const phoneRegex = /^[1-9]\d{9}$/
   return phoneRegex.test(phone);
  }
 

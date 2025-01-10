@@ -20,7 +20,6 @@ router.get('/changePassword/:id',adminAuth.checkSessionResetPassword,adminContro
 router.get('/check-email',adminAuth.isLoggedIn,adminController.checkEmail);
 router.get('/logOut',adminAuth.logOut,adminController.logOut) 
 router.get('/customers',adminAuth.isLoggedIn,adminController.loadCustomers);
-router.get('/addCustomer',adminAuth.isLoggedIn,adminController.loadAddCustomer);
 router.get('/editCustomer/:id',adminAuth.isLoggedIn,adminController.loadEditCustomer)
 router.get('/getCustomersDetails',adminAuth.isLoggedIn,adminController.getCustomersDetails);
 router.get('/banner',adminAuth.isLoggedIn,adminController.loadBanner);
@@ -29,11 +28,9 @@ router.get('/getbanners',adminAuth.isLoggedIn,adminController.getbanners);
 router.post('/addAdmin',adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
 router.post('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
-router.post('/addCustomer',adminAuth.isLoggedIn ,adminController.addCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
 router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 
-router.delete('/deleteUser/:id',adminAuth.isLoggedIn,adminController.deleteUser);
 router.post('/upload-banners', uploads.single('banner_image'), adminController.uploadBanner);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

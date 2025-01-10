@@ -44,7 +44,7 @@ function validateForm(addressId) {
   }
 
 
-  const phoneRegex = /^\d{10}$/;
+  const phoneRegex = /^[1-9]\d{9}$/;
   if (phone === '' || !phoneRegex.test(phone)) {
     displayError('phone', 'Please enter a valid phone number (10 digits)');
     isValid = false;

@@ -64,7 +64,6 @@ function renderTable(data) {
       <td>${new Date(val.createdAt).toLocaleDateString('en-IN')}</td>
       <td>
         <button class="btn btn-sm btn-outline-secondary" onclick="showEdit('${val._id}')">Edit</button>
-        <button class="btn btn-sm btn-outline-danger" onclick="showDeleteModal('${val._id}')">Delete</button>
       </td>
     `;
     fragment.appendChild(row);
@@ -120,39 +119,6 @@ function getFilteredData() {
   return [];
 }
 
-// Show delete modal
-let userToDelete = null;
-function showDeleteModal(userId) {
-  userToDelete = userId;
-  const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-  modal.show();
-}
-
-// Confirm delete action
-document.getElementById('confirmDeleteButton').addEventListener('click', async function () {
-  try {
-    const response = await fetch(`/admin/deleteUser/${userToDelete}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const result = await response.json();
-    if (result.status) {
-      const modal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
-      modal.hide();
-      showAlert(result.message, 'success');
-      getCustomersData();
-    } else {
-      showAlert(result.message || 'An error occurred while deleting the user', 'danger');
-    }
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    showAlert('A network error occurred. Please try again later.', 'danger');
-  }
-});
-
 
 // Redirect to edit page
 function showEdit(userId) {
@@ -161,10 +127,6 @@ function showEdit(userId) {
   }
 }
 
-// Redirect to add customer page
-document.getElementById('addCustomerBtn').addEventListener('click', function () {
-  window.location.href = `/admin/addCustomer`;
-});
 
 // Show alert message
 function showAlert(message, type = 'success') {
