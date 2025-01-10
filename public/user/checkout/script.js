@@ -236,8 +236,6 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
 
     const result = await response.json();
     if (response.ok) {
-      document.getElementById('placeOrder').disabled = false;
-      document.getElementById('placeOrder').textContent = 'Place Order'
       if (paymentMethod === 'razorPay' && result.razorPayOrderId) {
         const rzp = new Razorpay({
           key: result.razorPayKey,
@@ -284,6 +282,8 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
         window.location.href = '/user/cart';
       }
     } else {
+      document.getElementById('placeOrder').disabled = false;
+      document.getElementById('placeOrder').textContent = 'Place Order'
       showAlert(`Failed to place order: ${result.message}`,'danger');
     }
   } catch (error) {
