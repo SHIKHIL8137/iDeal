@@ -113,7 +113,7 @@
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="applicableTo" class="form-label">Select Offer Type</label>
-                  <select class="form-select" id="applicableTo" name="applicableTo" onchange="toggleOfferFields()">
+                  <select class="form-select" id="applicableTo" name="applicableTo" onchange="toggleOfferFields()" disabled>
                     <option value="Product" <%=offerProduct?.applicableTo==='Product' ? 'selected' : '' %>>Product
                     </option>
                     <option value="Category" <%=offerProduct?.applicableTo==='Category' ? 'selected' : '' %>>Category
@@ -127,7 +127,7 @@
               <div id="productFields" class="col-md-6" style="display:none;">
                 <div class="mb-3">
                   <label for="productSelect" class="form-label">Select Product</label>
-                  <select class="form-select" id="productSelect" name="product">
+                  <select class="form-select" id="productSelect" name="product" disabled>
                     <option value="">Choose a product</option>
                     <% availableProducts.forEach(product=> { %>
                       <option value="<%= product._id %>" <%=offerProduct?.product?.equals(product._id) ? 'selected' : ''
@@ -145,7 +145,7 @@
               <div id="categoryFields" class="col-md-6" style="display:none;">
                 <div class="mb-3">
                   <label for="categorySelect" class="form-label">Select Category</label>
-                  <select class="form-select" id="categorySelect" name="category">
+                  <select class="form-select" id="categorySelect" name="category" disabled>
                     <option value="">Choose a category</option>
                     <% category.forEach(category=> { %>
                       <option value="<%= category._id %>" <%=offerProduct?.category?.equals(category._id) ? 'selected'
