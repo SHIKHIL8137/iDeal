@@ -143,7 +143,7 @@ function renderCart(userCart) {
             <img src="${item.productId.images[0]}" alt="${item.productId.name}" class="me-3"
               style="width: 60px; height: 60px; object-fit: contain;">
             <div>
-              <h6 class="mb-1">${item.productId.name}</h6>
+              <h6 class="mb-1"><a href="/productDetails/${item.productId._id}" style="text-decoration: none; color : black">${item.productId.name}</a></h6>
               <small class="text-muted">Price: ₹${item.price.toLocaleString()}</small>
             </div>
           </div>

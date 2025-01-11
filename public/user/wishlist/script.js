@@ -103,7 +103,7 @@ function renderTable(wishlist) {
             <div class="d-flex align-items-center">
               <img src="${item.productId.images[0]}" alt="${item.productId.name}" class="me-3" width="50" height="50" style="object-fit: contain;">
               <div class="d-flex flex-column">
-                <strong>${item.productId.name}</strong>
+                <strong><a href="/productDetails/${item.productId._id}" style="text-decoration: none; color : white">${item.productId.name}</a></strong>
                 <small>${item.productId.storage}GB(${item.productId.color})</small>
               </div>
             </div>
