@@ -12,7 +12,8 @@ async function transactionTable(){
 
     if(result.status){
       renderTransactions(result.transactions,result.balance);
-
+      window.transactions = result.transactions;
+      window.balance = result.balance;
     }else{
 
       showAlert('An Error occure to fetch the transaction details','danger');
@@ -62,7 +63,6 @@ async function transactionTable(){
     });
 
     showingText.textContent = `Showing ${startIndex + 1}-${endIndex} of ${transactions.length}`;
-    console.log('8')
     prevPageBtn.disabled = currentPage === 1;
     nextPageBtn.disabled = currentPage === Math.ceil(transactions.length / rowsPerPage);
   }
@@ -70,14 +70,14 @@ async function transactionTable(){
   prevPageBtn.addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
-      renderTransactions();
+      renderTransactions(window.transactions, window.balance);
     }
   });
-
+  
   nextPageBtn.addEventListener('click', () => {
-    if (currentPage < Math.ceil(transactions.length / rowsPerPage)) {
+    if (currentPage < Math.ceil(window.transactions.length / rowsPerPage)) {
       currentPage++;
-      renderTransactions();
+      renderTransactions(window.transactions, window.balance);
     }
   });
 
