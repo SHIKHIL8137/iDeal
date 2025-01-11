@@ -26,7 +26,7 @@ router.get('/referral',userMiddleWare.isLoggedIn,userController.loadReferral);
 router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
 router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 router.get('/pendingDetails',userMiddleWare.isLoggedIn,userController.loadPending);
-router.get('/getbanners',userMiddleWare.isLoggedIn,userController.getbanners);
+router.get('/getbanners',userController.getbanners);
 router.get('/getCheckOutData',userMiddleWare.isLoggedIn,userController.getCheckOutData);
 
 router.post('/productReview/:id',userMiddleWare.isLoggedIn,userController.productReview);
