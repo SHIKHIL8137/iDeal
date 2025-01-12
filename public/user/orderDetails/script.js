@@ -71,7 +71,9 @@ function renderOrderDetails(order, returnStatusMap) {
                         </div>
                         <div class="text-center mt-2">
                           ${
-                            order.status === 'Delivered'
+                            product.cancelStatus || order.status === 'Cancelled'
+                              ? `<p class="text-danger">Order is cancelled</p>`
+                              : order.status === 'Delivered'
                               ? returnRequest
                                 ? `
                                   <p class="${
@@ -88,8 +90,8 @@ function renderOrderDetails(order, returnStatusMap) {
                                   <button type="button" data-bs-toggle="modal" data-bs-target="#returnModal" class="btn btn-outline-success return-btn" data-product-id="${product.productId}">Return Order</button>
                                 `
                               : `
-                                <button type="button" class="btn btn-outline-secondary" disabled>Write a Review</button>
-                                <button type="button" class="btn btn-outline-secondary" disabled>Return Order</button>
+                                <button type="button" class="btn btn-outline-danger" 
+                                onclick="openCancelProductModal('${product.productId}','${order._id}')">Cancel Product</button>
                               `
                           }
                         </div>
@@ -408,8 +410,58 @@ document.querySelector('#orderDetailsCard').addEventListener('click', (event) =>
       showAlert('An error occurred while processing your return.', 'danger');
     }
   }
+
+  async function sendCancelProductRequest(orderId, productId) {
+    try {
+
+        const reason = document.getElementById('cancelProductReason').value.trim();
+        const reasonError = document.getElementById('productReasonError');
+
+        if (reason==='') {
+          reasonError.textContent = 'Please provide a reason for cancellation.';
+          reasonError.classList.remove('d-none');
+          return;
+        } else {
+          reasonError.classList.add('d-none');
+        }
+      const userConfirmed = confirm('Are you sure you want to cancel this product?');
+      if (!userConfirmed) {
+        return;
+      }
   
+      const response = await fetch(`/user/cancelProductOrder?orderId=${orderId}&productId=${productId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ reason }),
+      });
   
+      const result = await response.json();
+  
+      if (result.status) {
+        const cancelProductModal = document.getElementById('cancelProductModal');
+        const modalInstance = bootstrap.Modal.getInstance(cancelProductModal);
+        modalInstance.hide();
+
+        getOrderedData();
+        showAlert('Product cancellation request submitted successfully.', 'success');
+      } else {
+        showAlert('Failed to submit the product cancellation request.', 'danger');
+      }
+    } catch (error) {
+      console.error(error);
+      showAlert('An error occurred while processing your product cancellation request.', 'danger');
+    }
+  }
+  
+  document.getElementById('confirmProductCancelBtn').addEventListener('click', function () {
+    const orderId = this.getAttribute('data-order-id');
+    const productId = this.getAttribute('data-product-id');
+    sendCancelProductRequest(orderId, productId);
+  });
+  
+ 
 });
 
 
@@ -443,6 +495,20 @@ async function getInvoice(orderId) {
 }
 
 
+ function openCancelProductModal(productId,orderId) {
+  const confirmProductCancelBtn = document.getElementById('confirmProductCancelBtn');
+  confirmProductCancelBtn.setAttribute('data-order-id', orderId);
+  confirmProductCancelBtn.setAttribute('data-product-id', productId);
+
+  // Clear the previous input and error message
+  document.getElementById('cancelProductReason').value = '';
+  document.getElementById('productReasonError').classList.add('d-none');
+
+  // Show the modal
+  const cancelProductModal = new bootstrap.Modal(document.getElementById('cancelProductModal'));
+  cancelProductModal.show();
+}
+
 
 
 
@@ -457,17 +523,17 @@ async function getInvoice(orderId) {
   }
 
 
-function showError(fieldId, message) {
-  const field = document.getElementById(fieldId);
-  const errorElement = document.getElementById(`${fieldId}Error`);
-  
-  if (errorElement) {
-    errorElement.classList.remove('d-none');
-    errorElement.innerText = message;
+  function showError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const errorElement = document.getElementById(`${fieldId}Error`);
+    
+    if (errorElement) {
+      errorElement.classList.remove('d-none');
+      errorElement.innerText = message;
+    }
+    
+    field.classList.add('is-invalid');
   }
-  
-  field.classList.add('is-invalid');
-}
 
 
 function showErrorMessage(errorElement,message) {

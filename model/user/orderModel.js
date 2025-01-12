@@ -149,6 +149,10 @@ const orderSchema = new mongoose.Schema({
       returnStatus:{
         type : Boolean,
         default : false,
+      },
+      cancelStatus:{
+        type : Boolean,
+        default : false,
       }
     }
   ],

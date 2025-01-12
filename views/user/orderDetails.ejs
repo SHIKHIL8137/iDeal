@@ -147,6 +147,33 @@
 </div>
 
 
+<div class="modal fade" id="cancelProductModal" tabindex="-1" aria-labelledby="cancelProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelProductModalLabel">Cancel Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="cancelProductForm">
+          <div class="mb-3">
+            <label for="cancelProductReason" class="form-label">Cancellation Reason</label>
+            <textarea class="form-control" id="cancelProductReason" rows="4" placeholder="Enter reason for cancellation"></textarea>
+            <div id="productReasonError" class="text-danger d-none"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-danger" id="confirmProductCancelBtn" data-order-id="" data-product-id="">Confirm Product Cancellation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

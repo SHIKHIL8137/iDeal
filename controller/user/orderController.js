@@ -6,6 +6,7 @@ const {ReturnCancel} = require('../../model/user/returnCancelModel');
 const {PendingOrder} = require('../../model/user/pendingModel');
 const { Product} = require('../../model/admin/ProductModel');
 const {Coupon } = require('../../model/admin/couponModel');
+const {Transaction} =require('../../model/admin/transactionModel');
 const mongoose = require('mongoose');
 const PDFDocument = require('pdfkit');
 require('dotenv').config()
@@ -264,16 +265,18 @@ const cancelOreder = async (req, res) => {
 
     console.log(orderId, reason);
 
-    const order = await Orders.findById(orderId);
+    const order = await Orders.findById(orderId).populate('userId');
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
     for (const productItem of order.products) {
-      const product = await Product.findById(productItem.productId);
-      if (product) {
-        product.stock += productItem.quantity;
-        await product.save();
+      if(!productItem.cancelStatus){
+        const product = await Product.findById(productItem.productId);
+        if (product) {
+          product.stock += productItem.quantity;
+          await product.save();
+        }
       }
     }
 
@@ -322,6 +325,18 @@ const cancelOreder = async (req, res) => {
       });
 
       await userWallet.save();
+
+      const newTransaction = new Transaction({
+        userId : newUserReason.userId,
+        customer : order.userId.email,
+        transactionType : 'debit',
+        amount : newUserReason.refundAmount,
+        transactionId : trxId,
+        paymentMethod : newUserReason.paymentMethod,    
+       })
+       await newTransaction.save();
+
+
     }
     res.json({ message: "Order canceled successfully", order });
   } catch (err) {
@@ -416,6 +431,109 @@ const returnOrder = async(req,res)=>{
   }
 }
 
+// cnceled individual product 
+
+const cancelIndiProduct = async(req,res)=>{
+  try {
+    const {reason} = req.body;
+    const productId = req.query.productId
+    const orderId = req.query.orderId;
+    if(!req.session.isLoggedEmail) return res.status(400).json({status:false,message:"user not found"})
+    if (!reason || !orderId || !productId) {
+      return res.status(400).json({
+        status: false,
+        message: 'All fields are required (reason, orderId, userId)',
+      });
+    }
+    const order = await Orders.findById(orderId);
+     
+    const product = order.products.find(p => p.productId.toString() === productId);
+
+    if(!order) return res.status(400).json({status:false,message:'Order Not Find'})
+
+    const cancelledOrderData = new ReturnCancel({
+      orderId:order._id,
+      userId : order.userId,
+      productId : productId,
+      productQauntity : product.quantity,
+      reason,
+      isReturn: false,
+      paymentMethod : order.paymentMethod,
+      paymentStatus : order.paymentStatus, 
+      refundAmount : product.total,
+    });
+    await cancelledOrderData.save();
+    product.cancelStatus = true;
+    await order.save();
+
+
+    const user = await User.findById(cancelledOrderData.userId);
+    if (!user) return res.status(404).json({ status: false, message: "User not found" });
+    const products = await Product.findById(cancelledOrderData.productId);
+    if (!products) return res.status(404).json({ status: false, message: "Product not found" });
+    const orders = await Orders.findByIdAndUpdate(
+      cancelledOrderData.orderId,
+      {
+        $inc: {
+          totalAmount: -cancelledOrderData.refundAmount,
+          total_Amt_WOT_Discount: -products.Dprice,
+        },
+      },
+      { new: true }
+    );
+    if (orders) {
+      await Orders.findByIdAndUpdate(
+        cancelledOrderData.orderId,
+        {
+          $max: {
+            totalAmount: 0,
+            total_Amt_WOT_Discount: 0,
+          },
+        },
+        { new: true }
+      );
+    }
+
+    if (!order) return res.status(404).json({ status: false, message: "Order not found" });
+    await Product.findByIdAndUpdate(
+      cancelledOrderData.productId,
+      { $inc: { stock: cancelledOrderData.productQauntity } },
+      { new: true }
+    );
+    if (order.paymentStatus === "Paid" && order.paymentMethod !== "COD") {
+          const trxId = generateTransactionId();
+          let userWallet = await Wallet.findOne({ userId : cancelledOrderData.userId });
+          if(!userWallet) return res.status(404).json({ status: false, message: "Wallet not found" });
+          userWallet.balance += cancelledOrderData.refundAmount;
+          userWallet.transactions.push({
+            transactionId: trxId,
+            type: "credit",
+            amount : cancelledOrderData.refundAmount,
+            date: new Date(),
+          });
+          await userWallet.save();
+          const newTransaction = new Transaction({
+            userId : user._id,
+            customer : user.email,
+            transactionType : 'debit',
+            amount : cancelledOrderData.refundAmount,
+            transactionId : trxId,
+            paymentMethod : cancelledOrderData.paymentMethod,    
+          })
+          await newTransaction.save();
+    }
+    res.status(201).json({
+      status: true,
+      message: 'Cancel Product Order successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({status:false,message:"Internal Server Error"});
+  }
+}
+
+
+
 // get the ordered product details
 
 const orderDetails = async(req,res)=>{
@@ -463,4 +581,5 @@ module.exports = {
   changeOrderConformationStatus,
   returnOrder,
   orderDetails,
+  cancelIndiProduct
 }

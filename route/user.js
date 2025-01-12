@@ -51,7 +51,8 @@ router.get('/getOrderDetails/:id',userMiddleWare.isLoggedIn,orderController.orde
 
 router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,orderController.cancelOreder);
 router.post('/expireOrder/:orderId',userMiddleWare.isLoggedIn,orderController.changeOrderConformationStatus);
-router.post('/return-order/',userMiddleWare.isLoggedIn,orderController.returnOrder);
+router.post('/return-order',userMiddleWare.isLoggedIn,orderController.returnOrder);
+router.post('/cancelProductOrder',userMiddleWare.isLoggedIn,orderController.cancelIndiProduct);
 /////////////////////////////////////////////////////////////
 
 
