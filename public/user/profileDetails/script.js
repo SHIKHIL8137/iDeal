@@ -156,7 +156,6 @@ document.getElementById('cropImage').addEventListener('click', function() {
 
 document.getElementById('userDetailsForm').addEventListener('submit', function (event) {
   event.preventDefault(); 
-
   const phone = document.getElementById('phone').value.trim();
   const semail = document.getElementById('secondaryEmail').value.trim();
   const semailmessage = document.getElementById('Semailmessage');
@@ -181,6 +180,8 @@ document.getElementById('userDetailsForm').addEventListener('submit', function (
 });
 
 document.getElementById('confirmSaveButton').addEventListener('click', async function () {
+    document.getElementById('saveChange').disabled = true
+  document.getElementById('saveChange').textContent = 'Saving...'
   const formData = new FormData(document.getElementById('userDetailsForm'));
   const confirmSaveModal = bootstrap.Modal.getInstance(document.getElementById('confirmSaveModal'));
   confirmSaveModal.hide();
@@ -204,6 +205,9 @@ document.getElementById('confirmSaveButton').addEventListener('click', async fun
   } catch (error) {
     console.error('Error submitting the form:', error);
     alert('An error occurred while submitting the form.');
+  }finally{
+      document.getElementById('saveChange').disabled = false
+      document.getElementById('saveChange').textContent = 'Save Changes'
   }
 });
 
@@ -266,6 +270,8 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
   confirmSaveModal.show();
 
   document.getElementById('confirmPasswordButton').addEventListener('click', async function () {
+    document.getElementById('passwordChangingbtn').disabled = true
+    document.getElementById('passwordChangingbtn').textContent = 'Saving...'
     const confirmSaveModal = bootstrap.Modal.getInstance(document.getElementById('confirmSavePasswordModal'));
     confirmSaveModal.hide();
 
@@ -292,6 +298,9 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
     } catch (error) {
       console.error('Error submitting the form:', error);
       showAlert('An error occurred while updating the password.', 'danger');
+    }finally{
+      document.getElementById('passwordChangingbtn').disabled = false
+    document.getElementById('passwordChangingbtn').textContent = 'Change Password'
     }
   });
 });

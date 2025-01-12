@@ -36,7 +36,7 @@ async function transactionTable(){
 
   function renderTransactions(transactions,balance) {
     const balanceField = document.getElementById('walletBalance');
-    balanceField.textContent = `₹${balance}` ;
+    balanceField.textContent = `₹${balance.toFixed(2)}` ;
     console.log(transactions)
     transactionTableBody.innerHTML = '';
     const startIndex = (currentPage - 1) * rowsPerPage;

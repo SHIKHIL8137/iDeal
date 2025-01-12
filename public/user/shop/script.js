@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
               const productId = this.dataset.productId;  
               console.log(productId); 
               if (productId) {
-                window.location.href = `/user/productDetails/${productId}`;
+                window.location.href = `/productDetails/${productId}`;
               } else {
                 console.error('Product ID is missing!');
               }

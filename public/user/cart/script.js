@@ -72,10 +72,9 @@ document.getElementById('btnCheckout').addEventListener('click', async (e) => {
     categoryDiscount,
   };
 
-console.log(checkOutData);
-
-
   try {
+    document.getElementById('btnCheckout').disabled = true;
+    document.getElementById('btnCheckout').textContent = 'Checkouting...';
     const response = await fetch('/user/checkout', {
       method: 'POST',
       headers: {
@@ -96,6 +95,9 @@ console.log(checkOutData);
   } catch (error) {
     console.error('Error:', error);
     alert('An error occurred while sending the order data.');
+  }finally{
+    document.getElementById('btnCheckout').disabled = false;
+    document.getElementById('btnCheckout').textContent = 'Check Out';
   }
 });
 

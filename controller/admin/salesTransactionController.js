@@ -155,7 +155,7 @@ function generatePDFReport(data, res) {
   doc.font('Helvetica');
   data.forEach(order => {
     doc
-      .text(new Date(order.orderDate).toLocaleDateString(), 50,currentY)
+      .text(new Date(order.orderDate).toLocaleDateString('en-IN'), 50,currentY)
       .text(order.orderId || 'N/A', 150,currentY)
       .text(`${(order.total_Amt_WOT_Discount || 0).toFixed(2)}`, 300,currentY)
       .text(`${(order.discount || 0).toFixed(2)}`, 400,currentY)
@@ -258,7 +258,7 @@ function generateExcelReport(data, res) {
   worksheet.getCell('A1').alignment = { horizontal: 'center' };
 
   worksheet.mergeCells('A2:E2');
-  worksheet.getCell('A2').value = `Generated on: ${new Date().toLocaleString()}`;
+  worksheet.getCell('A2').value = `Generated on: ${new Date().toLocaleString('en-IN')}`;
   worksheet.getCell('A2').font = { italic: true };
   worksheet.getCell('A2').alignment = { horizontal: 'center' };
 
@@ -285,7 +285,7 @@ function generateExcelReport(data, res) {
     const net = order.totalAmount || 0;
 
     worksheet.addRow([
-      new Date(order.orderDate).toLocaleDateString(),
+      new Date(order.orderDate).toLocaleDateString('en-IN'),
       order.orderId || 'N/A',
       amount,
       discount,
