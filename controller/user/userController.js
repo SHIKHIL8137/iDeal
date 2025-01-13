@@ -565,8 +565,12 @@ const submitOrder = async (req, res) => {
         return res.status(200).json({ message: 'Invalid or inactive coupon.' });
       }
     }
-    const discount = couponDiscount + (checkout.categoryDiscount || 0);
-    const appliedDiscountPercentage = ((discount / checkout.totalAmount) * 100).toFixed(2);
+    const discount = (couponDiscount || 0) + (checkout.categoryDiscount || 0);
+    const totalAmountValid = typeof checkout.totalAmount === 'number' && checkout.totalAmount > 0;
+    let appliedDiscountPercentage = 0; 
+    if (totalAmountValid) {
+      appliedDiscountPercentage = ((discount / checkout.totalAmount) * 100).toFixed(2);
+    } 
     const productIds = cart.items.map((item) => item.productId);
     const productDetails = await Product.find({ _id: { $in: productIds } });
     const productMap = productDetails.reduce((map, product) => {
