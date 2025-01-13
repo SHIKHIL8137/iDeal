@@ -41,7 +41,7 @@ const loadOrderHistory = async (req, res) => {
     res.status(200).render('user/orderHistory', { Pending ,orders ,title:"Order History"});
   } catch (error) {
     console.log(error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -81,7 +81,7 @@ const loadOrderDetails = async (req, res) => {
     });
   } catch (error) {
     console.error('Error loading order details:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -101,7 +101,7 @@ const loadOrderConformation = async (req, res) => {
     res.status(200).render('user/orderConformation', { orderDetails ,title:"Order Conformation"});
   } catch (error) {
     console.error('Error in loadOrderConformation:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 

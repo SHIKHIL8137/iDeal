@@ -207,7 +207,7 @@ const loadCart = async (req, res) => {
     });
   } catch (error) {
     console.error('Error loading cart:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 

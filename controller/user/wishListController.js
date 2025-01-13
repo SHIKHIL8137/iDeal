@@ -17,7 +17,7 @@ const offer = await Offer.find({applicableTo : 'Product'});
     });
   } catch (error) {
     console.error("Error loading wishlist:", error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 

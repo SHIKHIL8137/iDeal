@@ -15,7 +15,7 @@ const loadWallet = async (req, res) => {
       title: 'Wallet'});
   } catch (error) {
     console.error('Error loading wallet:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 

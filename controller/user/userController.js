@@ -52,7 +52,7 @@ try {
   return res.status(200).redirect('/');
   }
 } catch (error) {
-  res.status(500).send('Internal Server Error')
+  res.status(500).render('user/internalError');
 }
 }
 
@@ -63,7 +63,7 @@ const loadsignUp=async(req,res)=>{
       req.session.message=null;
       res.status(200).render('user/signUp',{message,title:"Sign Up"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -73,7 +73,7 @@ const loadForgotPassword= async(req,res)=>{
     const message = req.query.message;
     res.status(200).render('user/forgotPassword',{message,title:"Forgot Password"});
   } catch (error) {
-    res.status(200).send('Internal server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -82,7 +82,7 @@ const loadChangePassword=async(req,res)=>{
   try {
     res.status(200).render('user/changePassword',{title:"Change Password"})
   } catch (err) {
-    res.status(500).send('Internal server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -133,7 +133,7 @@ async function sendOTPEmail(email, username, password, referral ,req, res) {
     return otp;
   } catch (error) {
     console.log(error);
-    res.status(500).send('Failed to send OTP. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -156,7 +156,7 @@ const registerUserNormal = async (req, res) => {
     await sendOTPEmail(email, username, password, referral ,req, res);
   } catch (error) {
     console.error('Error during registration:', error);
-    res.status(500).send('Internal Server Error. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -223,7 +223,7 @@ const otpVerification = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -271,6 +271,7 @@ const resendPassword=async(req,res)=>{
     await sendOTPEmail(email, username, password,referral, req, res);
   }catch(error){
     console.log(error);
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -297,7 +298,7 @@ const loginVelidation=async(req,res)=>{
       })
     }   
   } catch (error) {
-    res.status(500).send('Inernal server error please try again later.')
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -323,7 +324,7 @@ const productReview=async(req,res)=>{
   });
   res.status(200).send('saved success fully');
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 
 }
@@ -337,7 +338,7 @@ const forgotPassword = async (req, res) => {
     await sendResetPasswordLink(email, req, res);
   } catch (error) {
     console.error('Error during forgot password process:', error);
-    res.status(500).send('Internal Server Error. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -372,7 +373,7 @@ async function sendResetPasswordLink(email, req, res) {
     res.status(200).render('user/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox." ,title:'Forgot Password'});
   } catch (error) {
     console.error('Error sending password reset email:', error);
-    res.status(500).send('Failed to send password reset email. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -384,7 +385,7 @@ const resetPasswordPage = async (req, res) => {
     res.render('user/changePassword',{token,title:"Change password"});
   } catch (error) {
     console.error('Error during reset password page access:', error);
-    res.status(500).send('Internal Server Error. Please try again later.');
+    res.status(500).render('user/internalError');
   }};
 
 // validate the token and after that redirect the change password page and update the password
@@ -404,7 +405,7 @@ const changePassword = async (req, res) => {
     res.status(200).redirect('/user/login?message=Reset password successful&err=true')
   } catch (error) {
     console.error('Error during password reset:', error);
-    res.status(500).send('Internal Server Error. Please try again later.');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -413,7 +414,7 @@ const logOut=async(req,res)=>{
   try {
     res.status(200).redirect('/');
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(500).render('user/internalError');
   } 
 }
 
@@ -423,7 +424,7 @@ const googleLogin = async(req,res)=>{
     req.session.isUser=true
     res.redirect('/Shop')
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -437,7 +438,7 @@ try {
   const user = await User.findOne({ email: userEmail }).populate('addresses');
   res.status(200).render('user/checkOut',{user,message,errBoolean ,coupons,title:"Check Out"});
 } catch (error) {
-  res.status(500).send('Internal Server Error')
+  res.status(500).render('user/internalError');
 }}
 
 // load checkout data
@@ -815,25 +816,18 @@ const loadReferral = async(req,res)=>{
     const referral = await Referral.findOne({userId : user._id}).populate('referredUserIds', 'username email createdAt');
     res.status(200).render('user/referral',{title : "referral",referral});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 }
  
-// load payment success page
-const loadSuccess = async(req,res)=>{
-  try {
-    res.status(200).render('user/paymentSuccess',{title:'Payment Success'})
-  } catch (error) {
-    res.status(500).send('Internal Server Error');
-  }
-}
+
 
 //load payment faild page
 const loadFaild = async(req,res)=>{
   try {
     res.status(200).render('user/paymentFaild',{title:'Payment Faild'})
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -845,7 +839,7 @@ const pendings = await PendingOrder.findOne({orderId});
 const razorPayKey = process.env.RAZORPAY_KEY_ID;
 res.status(200).render('user/pendingDetails',{pendings,title :"Pending Orders",razorPayKey})
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -887,7 +881,6 @@ module.exports={
   getCheckoutSummery,
   submitOrder,
   loadReferral,
-  loadSuccess,
   loadFaild,
   verifyPayment,
   loadPending,

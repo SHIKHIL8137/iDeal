@@ -11,7 +11,7 @@ const loadProfile = async(req,res)=>{
   try {
     res.status(200).render('user/profileDetails',{title:"Profile"})
   } catch (error) {
-    res.status(401).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
   }
   
@@ -43,7 +43,7 @@ const checkEmail=async(req,res)=>{
   
   res.json({ exists }); 
   } catch (error) {
-    res.status(500).send("Internal server error");
+    res.status(500).render('user/internalError');
   }
 } 
 
@@ -79,7 +79,7 @@ const userDetailsSave = async (req, res) => {
     res.status(200).json({ message: 'Data saved successfully!' });
   } catch (error) {
     console.error('Error saving user details:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 
@@ -137,7 +137,7 @@ const loadAddress = async(req,res)=>{
     const message = req.query.message;
     res.status(200).render('user/address',{message,errBoolean,title:"Address"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 }
 
@@ -158,7 +158,7 @@ const loadEditAddress = async (req, res) => {
 
     res.status(200).render('user/editAddress', { message, errBoolean, editedAddress,title:"Edit Address"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).render('user/internalError');
   }
 };
 

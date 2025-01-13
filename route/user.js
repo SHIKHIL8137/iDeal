@@ -23,7 +23,6 @@ router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getChecko
 router.get('/logOut',userMiddleWare.logOut,userController.logOut);
 router.get('/checkOut',userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
 router.get('/referral',userMiddleWare.isLoggedIn,userController.loadReferral);
-router.get('/success',userMiddleWare.isLoggedIn,userController.loadSuccess);
 router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 router.get('/pendingDetails',userMiddleWare.isLoggedIn,userController.loadPending);
 router.get('/getbanners',userController.getbanners);
