@@ -174,7 +174,8 @@ document.getElementById('userDetailsForm').addEventListener('submit', function (
 
   console.log(emailValid)
   if(!emailValid) return
-
+  phonemessage.innerHTML='';
+  semailmessage.innerHTML = '';
   const confirmSaveModal = new bootstrap.Modal(document.getElementById('confirmSaveModal'));
   confirmSaveModal.show();
 });
