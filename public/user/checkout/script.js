@@ -282,13 +282,14 @@ document.getElementById('placeOrder').addEventListener('click', async (e) => {
         window.location.href = '/user/cart';
       }
     } else {
-      document.getElementById('placeOrder').disabled = false;
-      document.getElementById('placeOrder').textContent = 'Place Order'
       showAlert(`Failed to place order: ${result.message}`,'danger');
     }
   } catch (error) {
     console.error("Error placing order:", error);
     showAlert("An error occurred while placing the order. Please try again.",danger);
+  }finally{
+          document.getElementById('placeOrder').disabled = false;
+      document.getElementById('placeOrder').textContent = 'Place Order'
   }
 });
 
