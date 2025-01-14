@@ -2,11 +2,12 @@
 const {User} = require('../model/user/userModel');
 
 
-const checkSessionResetPassword=async(req,res,next)=>{
-  if (!req.session.resetTokenPending ) {
-    return res.redirect('/user/login');
-  }next();
-}
+// const checkSessionResetPassword=async(req,res,next)=>{
+//   console.log(req.session.resetTokenPending);
+//   if (!req.session.resetTokenPending ) {
+//     return res.redirect('/user/login');
+//   }next();
+// }
 
 
 const checkSession=async(req,res,next)=>{
@@ -77,7 +78,6 @@ const checkOutPageUserValid = async(req,res,next)=>{
 
 
 module.exports ={
-  checkSessionResetPassword,
   logOut,
   checkSession,
   isLoggedIn,

@@ -77,14 +77,14 @@ const loadForgotPassword= async(req,res)=>{
   }
 }
 
-// rendering the changePassword page
-const loadChangePassword=async(req,res)=>{
-  try {
-    res.status(200).render('user/changePassword',{title:"Change Password"})
-  } catch (err) {
-    res.status(500).render('user/internalError');
-  }
-}
+// // rendering the changePassword page
+// const loadChangePassword=async(req,res)=>{
+//   try {
+//     res.status(200).render('user/changePassword',{title:"Change Password"})
+//   } catch (err) {
+//     res.status(500).render('user/internalError');
+//   }
+// }
 
 // function for generating the otp fo signup
 function generateOtp() {
@@ -369,7 +369,8 @@ async function sendResetPasswordLink(email, req, res) {
     });
     await userResetToken.save();
     req.session.email = email;
-    req.session.resetTokenPending = true; 
+    // req.session.resetTokenPending = true; 
+    console.log(req.session.resetTokenPending)
     res.status(200).render('user/forgotPassword', { message: "Password reset link sent successfully. Please check your inbox." ,title:'Forgot Password'});
   } catch (error) {
     console.error('Error sending password reset email:', error);
@@ -864,7 +865,6 @@ module.exports={
   loadlogin ,
   loadsignUp,
   loadForgotPassword,
-  loadChangePassword,
   registerUserNormal,
   otpVerification,
   resendPassword,

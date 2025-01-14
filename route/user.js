@@ -15,10 +15,10 @@ const uploads= require('../helpers/multer');
 router.get('/logIn',userMiddleWare.checkSession,userController.loadlogin);
 router.get('/signUp',userMiddleWare.checkSession,userController.loadsignUp);
 router.get('/forgotPassword',userMiddleWare.checkSession,userController.loadForgotPassword)
-router.get('/changePassword',userMiddleWare.checkSessionResetPassword,userController.loadChangePassword);
+// router.get('/changePassword',userMiddleWare.checkSessionResetPassword,userController.loadChangePassword);
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/user/signUp'}),userMiddleWare.storeSessionEmail,userController.googleLogin)
-router.get('/changePassword/:id',userMiddleWare.checkSessionResetPassword,userController.resetPasswordPage);
+router.get('/changePassword/:id',userController.resetPasswordPage);
 router.get('/checkoutSummery',userMiddleWare.isLoggedIn,userController.getCheckoutSummery);
 router.get('/logOut',userMiddleWare.logOut,userController.logOut);
 router.get('/checkOut',userMiddleWare.checkOutPageUserValid,userController.loadCheckout)
