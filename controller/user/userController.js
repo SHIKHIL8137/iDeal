@@ -137,7 +137,6 @@ async function sendOTPEmail(email, username, password, referral ,req, res) {
   }
 }
 
-// register the new user route
 const registerUserNormal = async (req, res) => {
   try {
     const { username, email, password, referral } = req.body;
