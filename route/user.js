@@ -28,8 +28,9 @@ router.get('/pendingDetails',userMiddleWare.isLoggedIn,userController.loadPendin
 router.get('/getbanners',userController.getbanners);
 router.get('/getCheckOutData',userMiddleWare.isLoggedIn,userController.getCheckOutData);
 
+
 router.post('/productReview/:id',userMiddleWare.isLoggedIn,userController.productReview);
-router.post('/changePassword/:id', userController.changePassword);
+router.patch('/changePassword/:id', userController.changePassword);
 router.post('/register',userController.registerUserNormal);
 router.post('/otpVarification',userController.otpVerification)
 router.post('/resend-otp',userController.resendPassword)
@@ -38,7 +39,7 @@ router.post('/forgotPassword',userController.forgotPassword);
 router.post('/orderSubmit',userMiddleWare.isLoggedIn,userController.submitOrder);
 router.post('/verify-payment/:orderId',userMiddleWare.isLoggedIn,userController.verifyPayment);
 router.post('/applyCoupon',userMiddleWare.isLoggedIn,userController.couponValidationCheckout);
-router.post('/removeCoupon',userMiddleWare.isLoggedIn,userController.removeCoupon);
+router.delete('/removeCoupon',userMiddleWare.isLoggedIn,userController.removeCoupon);
 /////////////////////////////////////////////////////////////
 
 
@@ -48,7 +49,7 @@ router.get('/loadOrderConformation/:id',userMiddleWare.isLoggedIn,orderControlle
 router.get('/downloadInvoice/:orderId',userMiddleWare.isLoggedIn,orderController.generateSalesInvoice);
 router.get('/getOrderDetails/:id',userMiddleWare.isLoggedIn,orderController.orderDetails);
 
-router.post('/cancel-order/:orderId',userMiddleWare.isLoggedIn,orderController.cancelOreder);
+router.delete('/cancel-order/:orderId',userMiddleWare.isLoggedIn,orderController.cancelOreder);
 router.post('/expireOrder/:orderId',userMiddleWare.isLoggedIn,orderController.changeOrderConformationStatus);
 router.post('/return-order',userMiddleWare.isLoggedIn,orderController.returnOrder);
 router.post('/cancelProductOrder',userMiddleWare.isLoggedIn,orderController.cancelIndiProduct);
@@ -91,8 +92,8 @@ router.get('/getCartDetails',userMiddleWare.isLoggedIn,cartController.getCartDet
 router.get('/cartSummary',userMiddleWare.isLoggedIn,cartController.cartSummery);
 
 router.post('/addtoCartProduct',userMiddleWare.isLoggedInForCart,userMiddleWare.isLoggedIn,cartController.addProductToCart)
-router.post('/updateCartQuantity',userMiddleWare.isLoggedIn,cartController.updateCartQuantity);
-router.post('/removeFromCart',userMiddleWare.isLoggedIn,cartController.removeFromCart);
+router.patch('/updateCartQuantity',userMiddleWare.isLoggedIn,cartController.updateCartQuantity);
+router.delete('/removeFromCart',userMiddleWare.isLoggedIn,cartController.removeFromCart);
 router.post('/checkout',userMiddleWare.isLoggedIn,cartController.checkoutDataStore);
 
 

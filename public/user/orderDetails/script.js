@@ -234,7 +234,7 @@ document.querySelector('#orderDetailsCard').addEventListener('click', (event) =>
   
       try {
         const response = await fetch(`/user/cancel-order/${orderId}`, {
-          method: 'POST',
+          method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ reason }),
         });

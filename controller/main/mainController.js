@@ -85,15 +85,20 @@ const loadHome = async (req, res) => {
 
 const loadShop = async (req, res) => {
   try {
-    const sessionCheck = req.session.isUser || false;
-    const productDetails = await Product.find()
+   const sessionCheck = req.session.isUser || false;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const allProducts = await Product.find()
       .populate({
         path: 'category',
-        match: { status: true }, 
+        match: { status: true },
       })
       .populate('reviews');
 
-    const filteredProducts = productDetails.filter(product => product.category);
+    const filteredProducts = allProducts.filter(product => product.category);
 
     for (let i = filteredProducts.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -102,11 +107,63 @@ const loadShop = async (req, res) => {
 
     const activeCategories = [...new Set(filteredProducts.map(product => product.category.name))];
 
-    res.status(200).render('user/shop', { productDetails: filteredProducts , categories: activeCategories,sessionCheck,title:"Shop"});
+    const totalProducts = filteredProducts.length;
+    const totalPages = Math.ceil(totalProducts / limit);
+    const paginatedProducts = filteredProducts.slice(skip, skip + limit);
+
+    res.status(200).render('user/shop', {
+      productDetails: paginatedProducts,
+      categories: activeCategories,
+      sessionCheck,
+      title: 'Shop',
+      currentPage: page,
+      totalPages,
+    });
   } catch (error) {
     res.status(500).send('Internal server Error');
   }
 };
+
+
+//get product data 
+
+const getProductData = async(req,res)=>{
+try {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const allProducts = await Product.find()
+      .populate({
+        path: 'category',
+        match: { status: true },
+      })
+      .populate('reviews').select('-__v');
+
+    const filteredProducts = allProducts.filter(product => product.category);
+
+    for (let i = filteredProducts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [filteredProducts[i], filteredProducts[j]] = [filteredProducts[j], filteredProducts[i]];
+    }
+
+    const activeCategories = [...new Set(filteredProducts.map(product => product.category.name))];
+
+    const totalProducts = filteredProducts.length;
+    const totalPages = Math.ceil(totalProducts / limit);
+    const paginatedProducts = filteredProducts.slice(skip, skip + limit);
+
+    res.status(200).json({
+      products: paginatedProducts,
+      categories: activeCategories,
+      currentPage: page,
+      totalPages,
+    });
+  } catch (error) {
+    res.status(500).send('Internal server Error');
+  }
+}
 
 // shop product searching
 
@@ -712,5 +769,6 @@ module.exports = {
   sortCategoryProduct,
   categoryShopFilter,
   loadAbout,
-  loadContact
+  loadContact,
+  getProductData
 }

@@ -27,9 +27,9 @@ router.get('/getbanners',adminAuth.isLoggedIn,adminController.getbanners);
 
 router.post('/addAdmin',adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
-router.post('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
+router.patch('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
-router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
+router.patch('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 
 router.post('/upload-banners', uploads.single('banner_image'), adminController.uploadBanner);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ router.get('/editCategory/:id',adminAuth.isLoggedIn,productCategoryController.lo
 router.post('/updateCategory/:id',adminAuth.isLoggedIn,productCategoryController.updateCategory)
 router.post('/addCategory',adminAuth.isLoggedIn ,productCategoryController.addCategory);
 router.post('/addProduct',uploads.array("images",4),productCategoryController.addProducts);
-router.post('/editProduct/:id', uploads.array("images", 4), productCategoryController.editProduct);
+router.patch('/editProduct/:id', uploads.array("images", 4), productCategoryController.editProduct);
 
 router.delete('/deleteProduct/:id',adminAuth.isLoggedIn ,productCategoryController.deleteProduct);
 router.delete('/deleteCategory/:id',adminAuth.isLoggedIn ,productCategoryController.deleteCategory);
@@ -57,7 +57,7 @@ router.delete('/deleteProductImage/:id/:index',adminAuth.isLoggedIn,productCateg
 
 
 
-router.get('/dashboard',adminAuth.isLoggedIn,dashboardController.loadDashboard);
+router.get('/',adminAuth.isLoggedIn,dashboardController.loadDashboard);
 router.get('/getTopSellingProduct',adminAuth.isLoggedIn,dashboardController.getTopSellingProduct);
 router.get('/getMostSoldCategories',adminAuth.isLoggedIn,dashboardController.getMostSoldCategories);
 router.get('/getDailyRevenue',adminAuth.isLoggedIn,dashboardController.getDailyRevenue);
@@ -85,7 +85,7 @@ router.get('/editOffer/:offerId',adminAuth.isLoggedIn ,offerController.loadEditO
 router.get('/getOfferTable',adminAuth.isLoggedIn,offerController.getOfferTable);
 
 router.post('/addOffer',adminAuth.isLoggedIn,offerController.addOffer);
-router.post('/editOffer/:offerId',adminAuth.isLoggedIn,offerController.editOffer);
+router.patch('/editOffer/:offerId',adminAuth.isLoggedIn,offerController.editOffer);
 
 router.delete('/offerDelete/:offerId',adminAuth.isLoggedIn,offerController.deleteOffer);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ router.get('/return-requests' ,adminAuth.isLoggedIn,orderReturnController.getRet
 router.get('/returnOrderDetails/:returnId',adminAuth.isLoggedIn ,orderReturnController.getreturnOrderDetails);
 router.get('/getOrderDetails',adminAuth.isLoggedIn,orderReturnController.getOrderDetails);
 
-router.post('/updateStatusOrder/:orderId',adminAuth.isLoggedIn ,orderReturnController.updateOrderStatus);
+router.patch('/updateStatusOrder/:orderId',adminAuth.isLoggedIn ,orderReturnController.updateOrderStatus);
 router.post('/returnApprove',adminAuth.isLoggedIn,orderReturnController.approveReturn);
 router.post('/returnReject',adminAuth.isLoggedIn,orderReturnController.rejectReturn);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

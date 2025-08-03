@@ -238,7 +238,7 @@ document.addEventListener('click', event => {
     const orderDbid = document.getElementById('orderDbid').value;
     try {
       const response = await fetch(`/admin/updateStatusOrder/${orderDbid}`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });

@@ -1,7 +1,7 @@
 const express=require('express');
 const mainController=require('../controller/main/mainController');
 const router=express.Router();
-const userMiddleWare = require('../middleware/userAuth');
+
 
 router.get('/',mainController.loadHome);
 router.get('/shop',mainController.loadShop);
@@ -11,6 +11,8 @@ router.get('/categoryShop/:id',mainController.loadCategoryShop);
 router.get('/searchCategoryProduct',mainController.categoryProductSearching);
 router.get('/about',mainController.loadAbout);
 router.get('/contact',mainController.loadContact);
+router.get('/getProducts',mainController.getProductData);
+
 
 
 router.post('/sortProduct',mainController.sortedProduct);

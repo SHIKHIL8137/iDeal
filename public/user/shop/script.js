@@ -1,4 +1,6 @@
 // check the session and hide and unhide the button
+let currentPage = 1;
+
 document.addEventListener("DOMContentLoaded", function () {
   const navbar = document.getElementById('checkSession');
   const sessionCheck = navbar.dataset.sessionCheck === 'true'; 
@@ -127,6 +129,7 @@ async function removeFromWishlist(productId, element) {
 
 // product searching
 document.addEventListener("DOMContentLoaded", function () {
+  getProjects(currentPage || 1 );
   const searchInput = document.getElementById('searchInput');
   const productList = document.getElementById('product-list');
   let debounceTimeout = null;
@@ -424,4 +427,130 @@ async function fetchBanners() {
   } catch (error) {
       console.error('Error fetching banners:', error);
   }
+}
+
+
+
+
+async function getProjects(page = 1) {
+  currentPage = page;
+
+  try {
+    const response = await fetch(`/getProducts?page=${currentPage}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch projects");
+
+    const { products, totalPages } = await response.json();
+
+    const productList = document.getElementById("product-list");
+    productList.innerHTML = "";
+
+    products.forEach((product) => {
+      const averageRating = product.reviews.length > 0
+        ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+        : 0;
+
+      const productCard = document.createElement("div");
+      productCard.classList.add("card", "h-100", "shadow", "arrival-card", "m-2");
+      productCard.style.minWidth = "200px";
+      productCard.style.maxWidth = "250px";
+
+      productCard.innerHTML = `
+        <div class="image-container position-relative m-4">
+          <img src="${product.images[0] || '/image/fallback.jpg'}" class="card-img-top img-fluid" alt="${product.name}">
+          <i class="bi bi-heart heart-icon" onclick="toggleHeart(this,'${product._id}')"></i>
+        </div>
+        <div class="card-body text-start product-card" data-product-id="${product._id}">
+          <h6 class="card-title mb-1">${product.name}</h6>
+          <p class="text-muted mb-1 cardPrice">
+            Storage: <strong>${product.storage >= 1000 ? (product.storage / 1024).toFixed(2) + ' TB' : product.storage + ' GB'}</strong>
+          </p>
+          <p class="text-success fw-bold mb-0 cardPrice">Price: ₹${product.price}</p>
+          <p class="text-muted mb-0">
+            ${product.reviews.length > 0
+              ? `<span class="rating-stars filled-star" data-bs-toggle="tooltip" title="${averageRating.toFixed(1)} stars">
+                  ${'★'.repeat(Math.round(averageRating))}
+                  ${'☆'.repeat(5 - Math.round(averageRating))}
+                </span>`
+              : `<span class="rating-stars empty-star" data-bs-toggle="tooltip" title="No reviews yet">${'☆'.repeat(5)}</span>`}
+            (<span data-bs-toggle="tooltip" title="Total reviews">${product.reviews.length}</span> reviews)
+          </p>
+        </div>
+      `;
+
+      productList.appendChild(productCard);
+    });
+
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', function () {
+        const id = this.dataset.productId;
+        if (id) window.location.href = `/productDetails/${id}`;
+      });
+    });
+
+    renderPagination(totalPages, currentPage);
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+
+  } catch (error) {
+    console.error("Error loading products:", error);
+  }
+}
+
+function renderPagination(totalPages, currentPage) {
+  const paginationContainer = document.getElementById("pagination-container");
+  if (!paginationContainer) return;
+
+  paginationContainer.innerHTML = "";
+
+  if (totalPages <= 1) return;
+
+  const paginationUl = document.createElement("ul");
+  paginationUl.classList.add("pagination", "pagination-shop-theme", "justify-content-center", "mt-4");
+  paginationUl.setAttribute("aria-label", "Page navigation");
+
+
+  const prevLi = document.createElement("li");
+  prevLi.classList.add("page-item");
+  if (currentPage === 1) prevLi.classList.add("disabled");
+  const prevLink = document.createElement("span");
+  prevLink.classList.add("page-link");
+  prevLink.textContent = "Previous";
+  if (currentPage > 1) {
+    prevLink.style.cursor = "pointer";
+    prevLink.addEventListener("click", () => getProjects(currentPage - 1));
+  }
+  prevLi.appendChild(prevLink);
+  paginationUl.appendChild(prevLi);
+
+
+  const currentLi = document.createElement("li");
+  currentLi.classList.add("page-item");
+  const currentLink = document.createElement("span");
+  currentLink.classList.add("page-link");
+  currentLink.textContent = currentPage;
+  currentLi.appendChild(currentLink);
+  paginationUl.appendChild(currentLi);
+
+
+  const nextLi = document.createElement("li");
+  nextLi.classList.add("page-item");
+  if (currentPage === totalPages) nextLi.classList.add("disabled");
+  const nextLink = document.createElement("span");
+  nextLink.classList.add("page-link");
+  nextLink.textContent = "Next";
+  if (currentPage < totalPages) {
+    nextLink.style.cursor = "pointer";
+    nextLink.addEventListener("click", () => getProjects(currentPage + 1));
+  }
+  nextLi.appendChild(nextLink);
+  paginationUl.appendChild(nextLi);
+
+  paginationContainer.appendChild(paginationUl);
 }

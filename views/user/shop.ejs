@@ -1,240 +1,224 @@
-<%- include('partials/header') -%>
-  <link rel="stylesheet" href="/user/shop/style.css">
-  </head>
+<%- include('partials/header') %>
+<link rel="stylesheet" href="/user/shop/style.css">
+</head>
 
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <div id="checkSession" data-session-check="<%= sessionCheck %>"></div>
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="/about">About Us</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="/contact">Contact Us</a></li>
-          </ul>
-        </div>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="/user/userProfile"><img src="/image/icons/user-circle.svg"
-                  alt=""></a>
-              <div id="loginMessage">
-                <button class="btn btn-primary btn-sm" onclick="redirectToLogin()">Login</button>
-              </div>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="/user/Cart"><img src="/image/icons/shopping bag.svg"
-                  alt=""></a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <div class="container my-5 bannerMainDiv">
-      <div class="promo-banner bg-dark text-white text-center p-5">
-      </div>
-    </div>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-      <div class="row">
-        <div class="col-md-3 sidebar">
-          <h2 class="filter-title mt-3">Filter by</h2>
-          <hr>
-          <!-- Price Filter -->
-          <div class="filter-section">
-            <div data-bs-toggle="collapse" href="#priceFilter" role="button" aria-expanded="false"
-              aria-controls="priceFilter">
-              <label class="filter-title">Price</label>
+      <a class="navbar-brand" href="#"><img class="logoImag" src="/image/icons/LogoBlack.png" alt="iDeal Logo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div id="checkSession" data-session-check="<%= sessionCheck %>"></div>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/shop">Shop</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/about">About Us</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/contact">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/user/userProfile"><img src="/image/icons/user-circle.svg" alt="User Profile"></a>
+            <div id="loginMessage">
+              <button class="btn btn-primary btn-sm" onclick="redirectToLogin()">Login</button>
             </div>
-            <div class="collapse show" id="priceFilter">
-              <div class="d-flex justify-content-between">
-                <small class="priceFontFilter">Min: ₹1000</small>
-                <small class="priceFontFilter">Max: ₹200000</small>
-              </div>
-              <input type="range" id="priceRange" class="form-range" min="1000" max="200000" value="200000"
-                oninput="updatePriceLabel()">
-              <div class="text-center">
-                <span class="priceFontFilter" id="priceValue">₹200000</span>
-              </div>
-            </div>
-          </div>
-
-
-          <hr>
-          <div class="filter-section">
-            <div data-bs-toggle="collapse" href="#storageFilter" role="button" aria-expanded="false"
-              aria-controls="storageFilter">
-              <label class="filter-title">Storage</label>
-            </div>
-            <div class="collapse" id="storageFilter">
-              <div>
-                <input type="checkbox" class="storage-checkbox" value="64"> 64 GB<br>
-                <input type="checkbox" class="storage-checkbox" value="128"> 128 GB<br>
-                <input type="checkbox" class="storage-checkbox" value="256"> 256 GB<br>
-                <input type="checkbox" class="storage-checkbox" value="512"> 512 GB<br>
-                <input type="checkbox" class="storage-checkbox" value="1"> 1 TB
-              </div>
-            </div>
-          </div>
-
-          <hr>
-          <!-- Connectivity Filter -->
-          <div class="filter-section">
-            <div data-bs-toggle="collapse" href="#connectivityFilter" role="button" aria-expanded="false"
-              aria-controls="connectivityFilter">
-              <label class="filter-title">Connectivity</label>
-            </div>
-            <div class="collapse" id="connectivityFilter">
-              <div>
-                <input type="checkbox" class="connectivity-checkbox" value="4G"> 4G<br>
-                <input type="checkbox" class="connectivity-checkbox" value="5G"> 5G
-              </div>
-            </div>
-          </div>
-          <hr>
-          <div class="filter-section">
-            <div data-bs-toggle="collapse" href="#ratingFilter" role="button" aria-expanded="false"
-              aria-controls="ratingFilter">
-              <label class="filter-title">Rating</label>
-            </div>
-            <div class="collapse" id="ratingFilter">
-              <div>
-                <input type="checkbox" class="rating-checkbox" value="5"> 5 ★<br>
-                <input type="checkbox" class="rating-checkbox" value="4"> 4 ★<br>
-                <input type="checkbox" class="rating-checkbox" value="3"> 3 ★<br>
-                <input type="checkbox" class="rating-checkbox" value="2"> 2 ★<br>
-                <input type="checkbox" class="rating-checkbox" value="1"> 1 ★<br>
-              </div>
-            </div>
-          </div>
-          <hr>
-          <div class="filter-section">
-            <div data-bs-toggle="collapse" href="#conditionFilter" role="button" aria-expanded="false"
-              aria-controls="conditionFilter">
-              <label class="filter-title">Condition</label>
-            </div>
-            <div class="collapse" id="conditionFilter">
-              <div>
-                <input type="checkbox" class="condition-checkbox" value="super"> Super <br>
-                <input type="checkbox" class="condition-checkbox" value="good"> Good <br>
-                <input type="checkbox" class="condition-checkbox" value="fair"> Fair <br>
-              </div>
-            </div>
-          </div>
-
-          <hr>
-
-          <button class="btn btn-primary mt-4" onclick="applyFilters()">Filter</button>
-        </div>
-        <div class="col-md-9 productListShop">
-          <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
-            <h2>Products</h2>
-            <input type="text" class="form-control w-25 searchBarShope" placeholder="Search" id="searchInput">
-            <div class="dropdown">
-              <button class="btn dropdown-toggle dropbtn" type="button" id="sortDropdown" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Sort By
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="sortDropdown">
-                <li><button class="dropdown-item" onclick="sortProduct('acs')">Price (Low-High)</button></li>
-                <li><button class="dropdown-item" onclick="sortProduct('desc')">Price (High-Low)</button></li>
-              </ul>
-            </div>
-          </div>
-          <hr>
-          <div class="d-flex flex-wrap justify-content-center align-items-stretch" id="product-list">
-            <% productDetails.forEach(product=> { %>
-              <div class="card h-100 shadow arrival-card m-2" style="min-width: 200px; max-width: 250px;">
-                <div class="image-container position-relative m-4">
-                  <img src="<%= product.images[0] %>" class="card-img-top img-fluid" alt="<%= product.name %>">
-                  <i class="bi bi-heart heart-icon" onclick="toggleHeart(this,'<%= product._id %>')"></i>
-                </div>
-                <div class="card-body text-start product-card" data-product-id="<%= product._id %>">
-                  <h6 class="card-title mb-1">
-                    <%= product.name %>
-                  </h6>
-                  <p class="text-muted mb-1 cardPrice">
-                    Storage: <strong>
-                      <%= product.storage>= 1000 ? (product.storage / 1024).toFixed(2) + ' TB' : product.storage + ' GB'
-                        %>
-                    </strong>
-                  </p>
-
-                  <p class="text-success fw-bold mb-0 cardPrice">
-                    Price: ₹<%= product.price %>
-                  </p>
-                  <p class="text-muted mb-0">
-                    <!-- Dynamic Star Rating -->
-                    <% if (product.reviews.length> 0) {
-                      const totalRating = product.reviews.reduce((sum, review) => sum + review.rating, 0);
-                      const averageRating = totalRating / product.reviews.length; %>
-                      <span class="rating-stars filled-star" data-bs-toggle="tooltip"
-                        title="<%= averageRating.toFixed(1) %> stars">
-                        <%= '★' .repeat(Math.round(averageRating)) %>
-                          <%= '☆' .repeat(5 - Math.round(averageRating)) %>
-                      </span>
-                      <% } else { %>
-                        <span class="rating-stars empty-star" data-bs-toggle="tooltip" title="No reviews yet">
-                          <%= '☆' .repeat(5) %>
-                        </span>
-                        <% } %>
-                          (<span data-bs-toggle="tooltip" title="Total reviews">
-                            <%= product.reviews.length || 0 %>
-                          </span> reviews)
-                  </p>
-                </div>
-              </div>
-              <% }) %>
-          </div>
-
-        </div>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="/user/Cart"><img src="/image/icons/shopping bag.svg" alt="Cart"></a></li>
+        </ul>
       </div>
     </div>
+  </nav>
+
+  <div class="container my-5 bannerMainDiv">
+    <div class="promo-banner bg-dark text-white text-center p-5">
     </div>
+  </div>
 
-
-    <div class="footer">
-      <div class="container">
-        <div class="row align-items-center">
-          <!-- Logo and Tagline -->
-          <div class="col-md-4 text-center text-md-start">
-            <div class="footer-logo">
-              <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
-              <span>| <span class="footerSpan"> Used iPhone Store</span></span>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 sidebar">
+        <h2 class="filter-title mt-3">Filter by</h2>
+        <hr>
+        <!-- Price Filter -->
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#priceFilter" role="button" aria-expanded="false" aria-controls="priceFilter">
+            <label class="filter-title">Price</label>
+          </div>
+          <div class="collapse show" id="priceFilter">
+            <div class="d-flex justify-content-between">
+              <small class="priceFontFilter">Min: ₹1000</small>
+              <small class="priceFontFilter">Max: ₹200000</small>
+            </div>
+            <input type="range" id="priceRange" class="form-range" min="1000" max="200000" value="200000" oninput="updatePriceLabel()">
+            <div class="text-center">
+              <span class="priceFontFilter" id="priceValue">₹200000</span>
             </div>
           </div>
+        </div>
 
-           <!-- Navigation Links -->
-           <div class="col-md-4 text-center">
-            <a href="/">Home</a>
-            <a href="/shop">Shop</a>
-            <a href="/about">About Us</a>
-            <a href="/contact">Contact Us</a>
+        <hr>
+        <!-- Storage Filter -->
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#storageFilter" role="button" aria-expanded="false" aria-controls="storageFilter">
+            <label class="filter-title">Storage</label>
           </div>
+          <div class="collapse" id="storageFilter">
+            <div>
+              <input type="checkbox" class="storage-checkbox" value="64"> 64 GB<br>
+              <input type="checkbox" class="storage-checkbox" value="128"> 128 GB<br>
+              <input type="checkbox" class="storage-checkbox" value="256"> 256 GB<br>
+              <input type="checkbox" class="storage-checkbox" value="512"> 512 GB<br>
+              <input type="checkbox" class="storage-checkbox" value="1"> 1 TB
+            </div>
+          </div>
+        </div>
 
-          <!-- Social Media Icons -->
-          <div class="col-md-4 text-center text-md-end social-icons pt-3">
-            <a href="#"><img src="/image/icons/instagram.svg" alt=""></a>
-            <a href="#"><img src="/image/icons/facebook.svg" alt=""></a>
-            <a href="#"><img src="/image/icons/youtube.svg" alt=""></a>
+        <hr>
+        <!-- Connectivity Filter -->
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#connectivityFilter" role="button" aria-expanded="false" aria-controls="connectivityFilter">
+            <label class="filter-title">Connectivity</label>
+          </div>
+          <div class="collapse" id="connectivityFilter">
+            <div>
+              <input type="checkbox" class="connectivity-checkbox" value="4G"> 4G<br>
+              <input type="checkbox" class="connectivity-checkbox" value="5G"> 5G
+            </div>
+          </div>
+        </div>
+
+        <hr>
+        <!-- Rating Filter -->
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#ratingFilter" role="button" aria-expanded="false" aria-controls="ratingFilter">
+            <label class="filter-title">Rating</label>
+          </div>
+          <div class="collapse" id="ratingFilter">
+            <div>
+              <input type="checkbox" class="rating-checkbox" value="5"> 5 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="4"> 4 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="3"> 3 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="2"> 2 ★<br>
+              <input type="checkbox" class="rating-checkbox" value="1"> 1 ★
+            </div>
+          </div>
+        </div>
+
+        <hr>
+        <!-- Condition Filter -->
+        <div class="filter-section">
+          <div data-bs-toggle="collapse" href="#conditionFilter" role="button" aria-expanded="false" aria-controls="conditionFilter">
+            <label class="filter-title">Condition</label>
+          </div>
+          <div class="collapse" id="conditionFilter">
+            <div>
+              <input type="checkbox" class="condition-checkbox" value="super"> Super<br>
+              <input type="checkbox" class="condition-checkbox" value="good"> Good<br>
+              <input type="checkbox" class="condition-checkbox" value="fair"> Fair
+            </div>
+          </div>
+        </div>
+
+        <hr>
+        <button class="btn btn-primary mt-4" onclick="applyFilters()">Filter</button>
+      </div>
+
+      <div class="col-md-9 productListShop">
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-4">
+          <h2>Products</h2>
+          <input type="text" class="form-control w-25 searchBarShope" placeholder="Search" id="searchInput">
+          <div class="dropdown">
+            <button class="btn dropdown-toggle dropbtn" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Sort By
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="sortDropdown">
+              <li><button class="dropdown-item" onclick="sortProduct('acs')">Price (Low-High)</button></li>
+              <li><button class="dropdown-item" onclick="sortProduct('desc')">Price (High-Low)</button></li>
+            </ul>
           </div>
         </div>
         <hr>
-        <div class="row">
-          <div class="col text-center text-md-start">
-            <small class="footerSpan">Copyright © 2025 iDeal. All rights reserved.</small>
+        <div class="d-flex flex-wrap justify-content-center align-items-stretch" id="product-list">
+          <% productDetails.forEach(product => { %>
+            <div class="card h-100 shadow arrival-card m-2" style="min-width: 200px; max-width: 250px;">
+              <div class="image-container position-relative m-4">
+                <img src="<%= product.images[0] %>" class="card-img-top img-fluid" alt="<%= product.name %>">
+                <i class="bi bi-heart heart-icon" onclick="toggleHeart(this, '<%= product._id %>')"></i>
+              </div>
+              <div class="card-body text-start product-card" data-product-id="<%= product._id %>">
+                <h6 class="card-title mb-1"><%= product.name %></h6>
+                <p class="text-muted mb-1 cardPrice">
+                  Storage: <strong>
+                    <%= product.storage >= 1000 ? (product.storage / 1024).toFixed(2) + ' TB' : product.storage + ' GB' %>
+                  </strong>
+                </p>
+                <p class="text-success fw-bold mb-0 cardPrice">
+                  Price: ₹<%= product.price %>
+                </p>
+                <p class="text-muted mb-0">
+                  <% if (product.reviews.length > 0) { %>
+                    <% const totalRating = product.reviews.reduce((sum, review) => sum + review.rating, 0); %>
+                    <% const averageRating = totalRating / product.reviews.length; %>
+                    <span class="rating-stars filled-star" data-bs-toggle="tooltip" title="<%= averageRating.toFixed(1) %> stars">
+                      <%= '★'.repeat(Math.round(averageRating)) %><%= '☆'.repeat(5 - Math.round(averageRating)) %>
+                    </span>
+                  <% } else { %>
+                    <span class="rating-stars empty-star" data-bs-toggle="tooltip" title="No reviews yet">
+                      <%= '☆'.repeat(5) %>
+                    </span>
+                  <% } %>
+                  (<span data-bs-toggle="tooltip" title="Total reviews"><%= product.reviews.length || 0 %></span> reviews)
+                </p>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+        <div id="pagination-container">
+    </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Logo and Tagline -->
+        <div class="col-md-4 text-center text-md-start">
+          <div class="footer-logo">
+            <img src="/image/icons/LogoBlack.png" alt="iDeal Logo">
+            <span>| <span class="footerSpan"> Used iPhone Store</span></span>
           </div>
-          <div class="col text-center text-md-end">
-            <a href="#" class="footerSpan">Privacy Policy</a>
-            <a href="#" class="footerSpan">Terms of Use</a>
-          </div>
+        </div>
+        <!-- Navigation Links -->
+        <div class="col-md-4 text-center">
+          <a href="/">Home</a>
+          <a href="/shop">Shop</a>
+          <a href="/about">About Us</a>
+          <a href="/contact">Contact Us</a>
+        </div>
+        <!-- Social Media Icons -->
+        <div class="col-md-4 text-center text-md-end social-icons pt-3">
+          <a href="#"><img src="/image/icons/instagram.svg" alt="Instagram"></a>
+          <a href="#"><img src="/image/icons/facebook.svg" alt="Facebook"></a>
+          <a href="#"><img src="/image/icons/youtube.svg" alt="YouTube"></a>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col text-center text-md-start">
+          <small class="footerSpan">Copyright © 2025 iDeal. All rights reserved.</small>
+        </div>
+        <div class="col text-center text-md-end">
+          <a href="#" class="footerSpan">Privacy Policy</a>
+          <a href="#" class="footerSpan">Terms of Use</a>
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
-    <script src="/user/shop/script.js"></script>
-    <%- include('partials/footer') -%>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
+  <script src="/user/shop/script.js"></script>
+<%- include('partials/footer') %>

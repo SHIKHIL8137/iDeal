@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 async function removeFromCart(productId) {
   try {
     const response = await fetch('/user/removeFromCart', {
-      method: 'POST',
+      method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productId }),
     });
@@ -27,7 +27,7 @@ async function removeFromCart(productId) {
 async function updateQuantity(productId, action) {
   try {
     const response = await fetch('/user/updateCartQuantity', {
-      method: 'POST',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productId, action }),
     });
