@@ -27,6 +27,7 @@ router.get('/faild',userMiddleWare.isLoggedIn,userController.loadFaild);
 router.get('/pendingDetails',userMiddleWare.isLoggedIn,userController.loadPending);
 router.get('/getbanners',userController.getbanners);
 router.get('/getCheckOutData',userMiddleWare.isLoggedIn,userController.getCheckOutData);
+router.get('/cartCount',userMiddleWare.isLoggedIn,userController.cartCount);
 
 
 router.post('/productReview/:id',userMiddleWare.isLoggedIn,userController.productReview);

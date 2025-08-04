@@ -1,3 +1,22 @@
+
+
+document.addEventListener('DOMContentLoaded',getCartCount)
+async function getCartCount(){
+try {
+    const res = await fetch("/user/cartCount");
+    const data = await res.json();
+    const badge = document.getElementById("cartCount");
+
+    if (data.count > 0) {
+      badge.textContent = data.count;
+      badge.style.display = "flex";
+    }
+  } catch (err) {
+    console.error("Cart count load failed:", err);
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded',getWishlistData());
 const offer = JSON.parse(document.getElementById('offerData').textContent);
 
@@ -59,6 +78,7 @@ async function addtoCart(buttonElement) {
 
     if (response.ok) {
       showAlert(result.message, 'success');
+      getCartCount()
     } else {
       showAlert(result.message || 'Failed to add product to cart. Please try again.', 'danger');
     }

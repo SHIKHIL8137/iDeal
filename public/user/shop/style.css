@@ -207,7 +207,7 @@ height: 120px;
   display: none;
   position: absolute;
   top: 36px;
-  right: 190px;
+  right: 140px;
   background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 10px;
@@ -327,4 +327,22 @@ height: 120px;
   color: #adb5bd;
   background-color: #f8f9fa;
   border-color: #e9ecef;
+}
+#cartCount {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: white;
+  color: black;
+  font-weight: 700;
+  font-size: 12px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+  z-index: 100;
 }
