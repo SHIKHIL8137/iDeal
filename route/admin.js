@@ -27,9 +27,9 @@ router.get('/getbanners',adminAuth.isLoggedIn,adminController.getbanners);
 
 router.post('/addAdmin',adminController.addAdmin);  
 router.post('/adminValidation',adminController.adminValidation);
-router.patch('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
+router.post('/editCustomer/:id',adminAuth.isLoggedIn ,adminController.updateCustomer);
 router.post('/forgotPassword',adminController.forgotPassword)
-router.patch('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
+router.post('/changePassword/:id',adminAuth.checkSessionResetPassword,adminController.changePassword);
 
 router.post('/upload-banners', uploads.single('banner_image'), adminController.uploadBanner);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ router.get('/editCategory/:id',adminAuth.isLoggedIn,productCategoryController.lo
 router.post('/updateCategory/:id',adminAuth.isLoggedIn,productCategoryController.updateCategory)
 router.post('/addCategory',adminAuth.isLoggedIn ,productCategoryController.addCategory);
 router.post('/addProduct',uploads.array("images",4),productCategoryController.addProducts);
-router.patch('/editProduct/:id', uploads.array("images", 4), productCategoryController.editProduct);
+router.post('/editProduct/:id', uploads.array("images", 4), productCategoryController.editProduct);
 
 router.delete('/deleteProduct/:id',adminAuth.isLoggedIn ,productCategoryController.deleteProduct);
 router.delete('/deleteCategory/:id',adminAuth.isLoggedIn ,productCategoryController.deleteCategory);
@@ -85,7 +85,7 @@ router.get('/editOffer/:offerId',adminAuth.isLoggedIn ,offerController.loadEditO
 router.get('/getOfferTable',adminAuth.isLoggedIn,offerController.getOfferTable);
 
 router.post('/addOffer',adminAuth.isLoggedIn,offerController.addOffer);
-router.patch('/editOffer/:offerId',adminAuth.isLoggedIn,offerController.editOffer);
+router.post('/editOffer/:offerId',adminAuth.isLoggedIn,offerController.editOffer);
 
 router.delete('/offerDelete/:offerId',adminAuth.isLoggedIn,offerController.deleteOffer);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

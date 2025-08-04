@@ -31,7 +31,7 @@ router.get('/cartCount',userMiddleWare.isLoggedIn,userController.cartCount);
 
 
 router.post('/productReview/:id',userMiddleWare.isLoggedIn,userController.productReview);
-router.patch('/changePassword/:id', userController.changePassword);
+router.post('/changePassword/:id', userController.changePassword);
 router.post('/register',userController.registerUserNormal);
 router.post('/otpVarification',userController.otpVerification)
 router.post('/resend-otp',userController.resendPassword)
