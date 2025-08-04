@@ -7,7 +7,7 @@ const checkSessionResetPassword=async(req,res,next)=>{
 
 const checkSession=async(req,res,next)=>{
   if (req.session.isValidAdmin) {
-    return res.redirect('/admin/dashboard');
+    return res.redirect('/admin');
   }next();
 }
 
