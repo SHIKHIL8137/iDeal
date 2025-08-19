@@ -26,20 +26,26 @@ function validation(coupenId){
   );
 
   const maximumDiscount = document.getElementById('maximumDiscount');
-  const maximumDiscountError = document.getElementById('maximumDiscountError');
-  validateField(
-      maximumDiscount,
-      maximumDiscountError,
-      isNaN(maximumDiscount.value) || maximumDiscount.value <= 0
-  );
+const maximumDiscountError = document.getElementById('maximumDiscountError');
+const discountValue = Number(maximumDiscount.value.trim());
 
-  const minimumPurchase = document.getElementById('minimumPurchase');
-  const minimumPurchaseError = document.getElementById('minimumPurchaseError');
-  validateField(
-      minimumPurchase,
-      minimumPurchaseError,
-      isNaN(minimumPurchase.value) || minimumPurchase.value <= 0
-  );
+validateField(
+  maximumDiscount,
+  maximumDiscountError,
+  isNaN(discountValue) || discountValue <= 0 || discountValue > 100000
+);
+
+
+const minimumPurchase = document.getElementById('minimumPurchase');
+const minimumPurchaseError = document.getElementById('minimumPurchaseError');
+const purchaseValue = Number(minimumPurchase.value.trim());
+
+validateField(
+  minimumPurchase,
+  minimumPurchaseError,
+  isNaN(purchaseValue) || purchaseValue <= 0 || purchaseValue > 100000
+);
+
 
   const startDate = document.getElementById('startDate');
   const startDateError = document.getElementById('startDateError');
@@ -55,7 +61,7 @@ function validation(coupenId){
 
   const usageLimit = document.getElementById('usageLimit');
   const usageLimitError = document.getElementById('usageLimitError');
-  validateField(usageLimit, usageLimitError, isNaN(usageLimit.value) || usageLimit.value <= 0);
+  validateField(usageLimit, usageLimitError, isNaN(usageLimit.value) || usageLimit.value <= 0 || usageLimit.value > 1000 );
 
   const statusField = document.getElementById('couponStatus');
   const statusError = document.getElementById('couponStatusError');

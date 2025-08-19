@@ -6,6 +6,8 @@ const {Wallet} = require('../../model/user/walletModel');
 const {Product} = require('../../model/admin/ProductModel');
 const {Coupon} = require('../../model/admin/couponModel');
 const {Transaction} = require('../../model/admin/transactionModel');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 
 
@@ -21,10 +23,10 @@ const loadOrder = async (req, res) => {
       .populate('userId', 'firstName lastName email')
       .populate('products.productId', 'name price')
       .exec();
-    res.status(200).render('admin/orders', { username, message, orders , title:"Orders"});
+    res.status(STATUS_CODES.OK).render('admin/orders', { username, message, orders , title:"Orders"});
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -37,9 +39,9 @@ const getOrderDetails = async (req,res)=>{
     .populate('products.productId', 'name price')
     .sort({orderDate : -1})
     .exec();
-    res.status(200).json({status : true , orders});
+    res.status(STATUS_CODES.OK).json({status : true , orders});
   } catch (error) {
-    res.status(500).json({status : false , message :'Internal Server error'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message :RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 }
 
@@ -63,7 +65,7 @@ const loadDetails = async(req,res)=>{
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -75,14 +77,11 @@ const updateOrderStatus = async (req, res) => {
   const orderId = req.params.orderId;
   const { status } = req.body;
 
-  console.log('Received orderId:', orderId);
-  console.log('Received new status:', status);
-
   try {
     const order = await Orders.findById(orderId).populate('products.productId').populate('userId','email'); 
 
     if (!order) {
-      return res.status(404).json({ success: false, message: 'Order not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: 'Order not found' });
     }
     if (status === 'Cancelled') {
       for (const item of order.products) {
@@ -123,10 +122,10 @@ const updateOrderStatus = async (req, res) => {
   
       await newTransaction.save();
     }   
-    res.status(200).json({ success: true, order: updatedOrder });
+    res.status(STATUS_CODES.OK).json({ success: true, order: updatedOrder });
   } catch (error) {
     console.error('Error updating order status:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -137,9 +136,9 @@ const updateOrderStatus = async (req, res) => {
 const loadReturn = async(req,res)=>{
   try {
     const username=req.session.username;
-    res.status(200).render('admin/return',{title : "Returns",username});
+    res.status(STATUS_CODES.OK).render('admin/return',{title : "Returns",username});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -156,20 +155,20 @@ const getReturnData = async (req, res) => {
   .sort({ createdAt: -1 }); 
 
     if (!returnData.length) {
-      return res.status(404).json({
+      return res.status(STATUS_CODES.NOT_FOUND).json({
         status: false,
         message: 'No return requests found.',
       });
     }
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       status: true,
       data: returnData,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: false,
-      message: 'Internal Server Error',
+      message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   }
 };
@@ -179,17 +178,17 @@ const getReturnData = async (req, res) => {
 const approveReturn = async (req, res) => {
   try {
     const { returnCancelId } = req.body; 
-    if (!returnCancelId) return res.status(400).json({ status: false, message: "returnCancelId is required" });
+    if (!returnCancelId) return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "returnCancelId is required" });
     const returnCancel = await ReturnCancel.findByIdAndUpdate(
       returnCancelId, 
       { $set: { adminStatus: 'Approved' ,pickupStatus : 'Completed',refundStatus : 'Completed'} }, 
       { new: true } 
     );
-    if (!returnCancel) return res.status(404).json({ status: false, message: "Return request not found" });
+    if (!returnCancel) return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Return request not found" });
     const user = await User.findById(returnCancel.userId);
-    if (!user) return res.status(404).json({ status: false, message: "User not found" });
+    if (!user) return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "User not found" });
     const product = await Product.findById(returnCancel.productId);
-    if (!product) return res.status(404).json({ status: false, message: "Product not found" });
+    if (!product) return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Product not found" });
     const order = await Orders.findByIdAndUpdate(
       returnCancel.orderId,
       {
@@ -212,10 +211,10 @@ const approveReturn = async (req, res) => {
         { new: true }
       );
     }
-    if (!order) return res.status(404).json({ status: false, message: "Order not found" });
+    if (!order) return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Order not found" });
     const trxId = generateTransactionId();
     let userWallet = await Wallet.findOne({ userId : returnCancel.userId });
-    if(!userWallet) return res.status(404).json({ status: false, message: "Wallet not found" });
+    if(!userWallet) return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Wallet not found" });
     userWallet.balance += returnCancel.refundAmount;
     userWallet.transactions.push({
       transactionId: trxId,
@@ -239,10 +238,10 @@ const approveReturn = async (req, res) => {
       paymentMethod : returnCancel.paymentMethod,    
      })
      await newTransaction.save();
-    res.status(200).json({ status: true, message: "Return request approved", data: returnCancel });
+    res.status(STATUS_CODES.OK).json({ status: true, message: "Return request approved", data: returnCancel });
   } catch (error) {
     console.error("Error approving return:", error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal Server Error" });
   }
 };
 
@@ -255,7 +254,7 @@ const rejectReturn = async (req,res)=>{
   try {
     const { returnCancelId, reason } = req.body;
     if (!returnCancelId) {
-      return res.status(400).json({
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
         status: false,
         message: 'ReturnCancel ID is required.',
       });
@@ -278,7 +277,7 @@ const rejectReturn = async (req,res)=>{
     );
 
     if (!updateOrderStatus) {
-      return res.status(404).json({
+      return res.status(STATUS_CODES.NOT_FOUND).json({
         status: false,
         message: 'Order associated with this return request not found.',
       });
@@ -286,22 +285,22 @@ const rejectReturn = async (req,res)=>{
 
 
     if (!updatedRequest) {
-      return res.status(404).json({
+      return res.status(STATUS_CODES.NOT_FOUND).json({
         status: false,
         message: 'ReturnCancel request not found.',
       });
     }
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       status: true,
       message: 'The return request has been successfully rejected.',
       data: updatedRequest,
     });
   } catch (error) {
     console.error('Error rejecting return request:', error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: false,
-      message: 'Internal Server Error',
+      message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   }
 }
@@ -328,13 +327,13 @@ const getreturnOrderDetails = async (req, res) => {
       const returnOrder = await ReturnCancel.findById(returnid).populate('userId', 'firstName lastName email phone').populate('productId','name');
 
       if (!returnOrder) {
-          return res.status(404).send('Return Order Not Found');
+          return res.status(STATUS_CODES.NOT_FOUND).send('Return Order Not Found');
       }
 
-      res.status(200).render('admin/returnOrderDetails', { returnOrder,title:"Return Order Details",username:'shikhil'});
+      res.status(STATUS_CODES.OK).render('admin/returnOrderDetails', { returnOrder,title:"Return Order Details",username:'shikhil'});
   } catch (error) {
       console.error('Error fetching return order details:', error);
-      res.status(500).send('Internal Server Error');
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 

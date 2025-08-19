@@ -57,9 +57,9 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
   }
 
 
-  if (document.getElementById('discountValue').value === "" || document.getElementById('discountValue').value < 0) {
+  if (document.getElementById('discountValue').value === "" || document.getElementById('discountValue').value < 0 || document.getElementById('discountValue').value > 100) {
     formIsValid = false;
-    showError('discountValue', 'Discount value must be a positive number.');
+    showError('discountValue', 'Discount value must be a positive number an in between 0 to 100');
   }
 
 
@@ -80,9 +80,10 @@ document.getElementById('offerForm').addEventListener('submit', function(event) 
     formIsValid = false;
     showError('isActive', 'Please select whether the offer is active or not.');
   }
-  if (document.getElementById('discountCap').value === "" || document.getElementById('discountCap').value < 0) {
+  if (document.getElementById('discountCap').value === "" || document.getElementById('discountCap').value < 0 
+|| document.getElementById('discountCap').value > 100000) {
     formIsValid = false;
-    showError('discountCap', 'Please Enter the Maximum Discount');
+    showError('discountCap', 'Please Enter the Maximum Discount up to 100000');
   }
   if(new Date(document.getElementById('validFrom').value) >new Date(document.getElementById('validTill').value)){
     formIsValid = false;

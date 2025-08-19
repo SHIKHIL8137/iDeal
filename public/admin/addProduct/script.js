@@ -1,9 +1,8 @@
 // cancel teh adding product process
-document.getElementById('cancelbtn').addEventListener('click',(e)=>{
-  e.preventDefault()
-  window.location.href = '/admin/product'
-})
-
+document.getElementById("cancelbtn").addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.href = "/admin/product";
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector("form");
@@ -33,30 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Image Validation (at least one image required)
     const imageInputs = [
-      document.getElementById('input1'),
-      document.getElementById('input2'),
-      document.getElementById('input3'),
-      document.getElementById('input4'),
+      document.getElementById("input1"),
+      document.getElementById("input2"),
+      document.getElementById("input3"),
+      document.getElementById("input4"),
     ];
-    imageInputs.forEach((input,ind)=>{
-      if(input.files.length === 0){
-        setError(imageInputs[ind],'This field is require')
+    imageInputs.forEach((input, ind) => {
+      if (input.files.length === 0) {
+        setError(imageInputs[ind], "This field is require");
         isValid = false;
       }
-    })
-    
+    });
 
     // Base Price Validation
     const basePrice = document.getElementById("basePrice");
-    if (!basePrice.value.trim() || isNaN(basePrice.value.trim()) || Number(basePrice.value.trim()) <= 0) {
+    const priceValue = Number(basePrice.value.trim());
+    if (!basePrice.value.trim() || isNaN(priceValue) || priceValue <= 0) {
       setError(basePrice, "Base price must be a valid positive number.");
       isValid = false;
+    } else if (priceValue > 1000000) {
+      setError(basePrice, "Base price cannot exceed 10 lakhs.");
+      isValid = false;
     }
-
     // Discount Validation
     const discount = document.getElementById("discountPercentage");
-    if (!discount.value.trim() || isNaN(discount.value.trim()) || Number(discount.value.trim()) < 0) {
+    const discountValue = Number(discount.value.trim());
+    if (!discount.value.trim() || isNaN(discountValue) || discountValue < 0) {
       setError(discount, "Discount must be a valid number (0 or higher).");
+      isValid = false;
+    } else if (discountValue > 100) {
+      setError(discount, "Discount cannot exceed 100%.");
       isValid = false;
     }
 
@@ -76,8 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Quantity Validation
     const quantity = document.getElementById("productQuantity");
-    if (!quantity.value.trim() || isNaN(quantity.value.trim()) || Number(quantity.value.trim()) < 0) {
+    const quantityValue = Number(quantity.value.trim());
+    if (!quantity.value.trim() || isNaN(quantityValue) || quantityValue < 0) {
       setError(quantity, "Quantity must be a valid positive number.");
+      isValid = false;
+    } else if (quantityValue > 1000) {
+      setError(quantity, "Quantity cannot exceed 1000.");
       isValid = false;
     }
 
@@ -112,73 +121,82 @@ document.addEventListener("DOMContentLoaded", () => {
   function setError(input, message) {
     const errorContainer = input.nextElementSibling;
     if (errorContainer && errorContainer.classList.contains("error-message")) {
-      errorContainer.style.color = 'red';
+      errorContainer.style.color = "red";
       errorContainer.textContent = message;
-      setTimeout(()=>{
-        errorContainer.textContent='';
-      },5000);
+      setTimeout(() => {
+        errorContainer.textContent = "";
+      }, 5000);
     }
   }
 });
 
-
 // crop the images after uploading
 
-function viewImage1(event){
-  document.getElementById('imgView1').src=URL.createObjectURL(event.target.files[0])
+function viewImage1(event) {
+  document.getElementById("imgView1").src = URL.createObjectURL(
+    event.target.files[0]
+  );
 }
-function viewImage2(event){
-  document.getElementById('imgView2').src=URL.createObjectURL(event.target.files[0])
+function viewImage2(event) {
+  document.getElementById("imgView2").src = URL.createObjectURL(
+    event.target.files[0]
+  );
 }
-function viewImage3(event){
-  document.getElementById('imgView3').src=URL.createObjectURL(event.target.files[0])
+function viewImage3(event) {
+  document.getElementById("imgView3").src = URL.createObjectURL(
+    event.target.files[0]
+  );
 }
-function viewImage4(event){
-  document.getElementById('imgView4').src=URL.createObjectURL(event.target.files[0])
+function viewImage4(event) {
+  document.getElementById("imgView4").src = URL.createObjectURL(
+    event.target.files[0]
+  );
 }
 
-function viewImage(event,index){
-  let input=event.target;
-  let reader=new FileReader();
-  reader.onload=function(){
-    let dataURL =reader.result;
-    let image=document.getElementById('imgView'+index);
-    image.src=dataURL;
-    let cropper=new Cropper(image,{
-      aspectRatio:NaN,
-      viewMode:1,
-      guides:true,
-      background:false,
-      autoCropArea:1,
-      Zoomable:true
+function viewImage(event, index) {
+  let input = event.target;
+  let reader = new FileReader();
+  reader.onload = function () {
+    let dataURL = reader.result;
+    let image = document.getElementById("imgView" + index);
+    image.src = dataURL;
+    let cropper = new Cropper(image, {
+      aspectRatio: NaN,
+      viewMode: 1,
+      guides: true,
+      background: false,
+      autoCropArea: 1,
+      zoomable: true,
     });
 
-    let cropperContainer = document.querySelector('#croppedImg'+index).parentNode;
-    cropperContainer.style.width='100px'
-    cropperContainer.style.display='block';
+    let cropperContainer = document.querySelector(
+      "#croppedImg" + index
+    ).parentNode;
+    cropperContainer.style.width = "100px";
+    cropperContainer.style.display = "block";
 
-    let saveButton = document.querySelector('#saveButton'+index);
-   
-    saveButton.addEventListener('click',async function (){
-       document.getElementById('imgView1').style.display='none'
-        document.getElementById('imgView2').style.display='none'
-         document.getElementById('imgView3').style.display='none'
-          document.getElementById('imgView4').style.display='none'
-      let croppedCanvas=cropper.getCroppedCanvas();
-      let croppedImage = document.getElementById('croppedImg'+index);
-      croppedImage.src = croppedCanvas.toDataURL('image/jpeg',1.0);
+    let saveButton = document.querySelector("#saveButton" + index);
+
+    saveButton.addEventListener("click", async function () {
+      document.getElementById("imgView1").style.display = "none";
+      document.getElementById("imgView2").style.display = "none";
+      document.getElementById("imgView3").style.display = "none";
+      document.getElementById("imgView4").style.display = "none";
+      let croppedCanvas = cropper.getCroppedCanvas();
+      let croppedImage = document.getElementById("croppedImg" + index);
+      croppedImage.src = croppedCanvas.toDataURL("image/jpeg", 1.0);
 
       let timestamp = new Date().getTime();
       let fileName = `cropped-img-${timestamp}-${index}.png`;
 
-      await croppedCanvas.toBlob(blob=>{
-        let input = document.getElementById('input'+index);
-        let imgFile = new File([blob],fileName,blob)
+      await croppedCanvas.toBlob((blob) => {
+        let input = document.getElementById("input" + index);
+        let imgFile = new File([blob], fileName, blob);
         const fileList = new DataTransfer();
         fileList.items.add(imgFile);
-        input.files = fileList.files
+        input.files = fileList.files;
       });
-      cropperContainer.style.display = 'none';
+      cropperContainer.style.display = "none";
       cropper.destroy();
     });
   };
@@ -187,23 +205,17 @@ function viewImage(event,index){
 
 // alert box
 const alertBox = document.getElementById("alertBox");
-  alertBox.classList.add("show");
+alertBox.classList.add("show");
+setTimeout(() => {
+  alertBox.classList.remove("show");
+  alertBox.classList.add("hide");
   setTimeout(() => {
-    alertBox.classList.remove("show");
-    alertBox.classList.add("hide");
-    setTimeout(() => {
-      alertBox.style.display = "none";
-    }, 500); 
-  }, 3000); 
+    alertBox.style.display = "none";
+  }, 500);
+}, 3000);
 
-
-
-  // remove the params from the url
-  if (window.location.search) {
-    const url = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, url);
-  }
-
-
-
-
+// remove the params from the url
+if (window.location.search) {
+  const url = window.location.origin + window.location.pathname;
+  window.history.replaceState({}, document.title, url);
+}

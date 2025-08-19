@@ -140,8 +140,10 @@
                       <label for="maximumDiscount" class="form-label">Maximum Discount (₹)</label>
                       <input name="maxDiscountAmount" type="number" class="form-control" id="maximumDiscount"
                         placeholder="Enter maximum discount amount">
-                      <small class="text-danger d-none" id="maximumDiscountError">Maximum discount is required and must
-                        be positive.</small>
+                      <small class="text-danger d-none" id="maximumDiscountError">
+  Maximum discount is required, must be positive, and cannot exceed 1,00,000.
+</small>
+
                     </div>
 
                     <!-- Minimum Purchase -->
@@ -149,8 +151,10 @@
                       <label for="minimumPurchase" class="form-label">Minimum Purchase (₹)</label>
                       <input name="minOrderAmount" type="number" class="form-control" id="minimumPurchase"
                         placeholder="Enter minimum purchase amount">
-                      <small class="text-danger d-none" id="minimumPurchaseError">Minimum purchase amount is required
-                        and must be positive.</small>
+                      <small class="text-danger d-none" id="minimumPurchaseError">
+  Minimum purchase amount is required, must be positive, and cannot exceed 1,00,000.
+</small>
+
                     </div>
 
                     <!-- Start Date -->

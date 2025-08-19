@@ -136,12 +136,15 @@ document.getElementById('submitButton').addEventListener('click', function (e) {
       } 
 
 
-      const basePrice = document.getElementById("basePrice");
-      if (!basePrice.value.trim() || basePrice.value <= 0) {
-        setError(basePrice, "Base price must be a positive number.");
-        isValid = false;
-      } 
-
+       const basePrice = document.getElementById("basePrice");
+    const priceValue = Number(basePrice.value.trim());
+    if (!basePrice.value.trim() || isNaN(priceValue) || priceValue <= 0) {
+      setError(basePrice, "Base price must be a valid positive number.");
+      isValid = false;
+    } else if (priceValue > 1000000) {
+      setError(basePrice, "Base price cannot exceed 10 lakhs.");
+      isValid = false;
+    }
 
       const discountPercentage = document.getElementById("discountPercentage");
       if (
@@ -167,11 +170,17 @@ document.getElementById('submitButton').addEventListener('click', function (e) {
       } 
 
 
-      const productQuantity = document.getElementById("productQuantity");
-      if (!productQuantity.value.trim() || productQuantity.value <= 0) {
-        setError(productQuantity, "Quantity must be a positive number.");
-        isValid = false;
-      }
+ const productQuantity = document.getElementById("productQuantity");
+const quantityValue = Number(productQuantity.value.trim());
+
+if (!productQuantity.value.trim() || quantityValue <= 0) {
+  setError(productQuantity, "Quantity must be a positive number.");
+  isValid = false;
+} else if (quantityValue > 1000) {
+  setError(productQuantity, "Quantity cannot exceed 1000.");
+  isValid = false;
+}
+
 
 
       const productCategory = document.getElementById("productCategory");

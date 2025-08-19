@@ -3,6 +3,8 @@ const {Transaction} = require('../../model/admin/transactionModel');
 const {Orders} = require('../../model/user/orderModel');
 const PDFDocument = require('pdfkit');
 const ExcelJS = require('exceljs');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 
 
@@ -13,9 +15,9 @@ const ExcelJS = require('exceljs');
 const loadSales = async(req,res)=>{
   try {
     const username=req.session.username;
-    res.status(200).render('admin/sales',{username,title:"Sales"});
+    res.status(STATUS_CODES.OK).render('admin/sales',{username,title:"Sales"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -25,15 +27,15 @@ const loadSales = async(req,res)=>{
 const getSalesTable = async(req,res)=>{
   try {
     const orderData = await Orders.find({status : 'Delivered'}).sort({orderDate : -1});
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       status: true,
       data: orderData,
     });
   } catch (error) {
     console.error('Error fetching sales table data:', error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       status: false,
-      message: 'Internal Server Error',
+      message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR,
     });
   }
 }
@@ -45,17 +47,17 @@ const getFilteredSalesTable = async (req, res) => {
   try {
       const { startDate, endDate } = req.query;
       if (!startDate || !endDate) {
-          return res.status(400).json({ status: false, message: 'Start date and end date are required.' });
+          return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Start date and end date are required.' });
       }
       const start = new Date(startDate);
       const end = new Date(endDate);
 
       if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-          return res.status(400).json({ status: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
+          return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
       }
       end.setHours(0, 0, 0, 0);
       if (start > end) {
-          return res.status(400).json({ status: false, message: 'Start date cannot be after end date.' });
+          return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Start date cannot be after end date.' });
       }
 
       console.log(start,end);
@@ -65,14 +67,14 @@ const getFilteredSalesTable = async (req, res) => {
       }).sort({ orderDate: -1 });
       
 
-      return res.status(200).json({ 
+      return res.status(STATUS_CODES.OK).json({ 
           status: true, 
           orderData, 
           totalOrders: orderData.length 
       });
   } catch (error) {
       console.error('Error fetching filtered sales table:', error);
-      return res.status(500).json({ status: false, message: 'Internal Server Error' });
+      return res.status(500).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -224,7 +226,7 @@ const reportPDF = async (req, res) => {
       end.setHours(23, 59, 59, 999);
 
       if (start > end) {
-          return res.status(400).json({ status: false, message: 'Start date cannot be after end date.' });
+          return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Start date cannot be after end date.' });
       }
 
       const data = await Orders.find({
@@ -234,13 +236,13 @@ const reportPDF = async (req, res) => {
     
 
       if (data.length === 0) {
-          return res.status(404).json({ status: false, message: 'No data found for the specified date range.' });
+          return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: 'No data found for the specified date range.' });
       }
 
       generatePDFReport(data, res);
   } catch (error) {
       console.error('Error generating PDF report:', error);
-      return res.status(500).json({ status: false, message: 'Internal Server Error' });
+      return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -325,7 +327,7 @@ function generateExcelReport(data, res) {
     res.end();
   }).catch(err => {
     console.error('Error generating Excel report:', err);
-    res.status(500).send('Error generating report');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   });
 }
 
@@ -339,20 +341,20 @@ const reportExcel = async (req,res)=>{
     const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
-      return res.status(400).json({ status: false, message: 'Start date and end date are required.' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Start date and end date are required.' });
     }
 
     const start = new Date(startDate);
     const end = new Date(endDate);
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return res.status(400).json({ status: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Invalid date format. Use YYYY-MM-DD.' });
     }
 
     end.setHours(23, 59, 59, 999);
 
     if (start > end) {
-      return res.status(400).json({ status: false, message: 'Start date cannot be after end date.' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: 'Start date cannot be after end date.' });
     }
 
     const data = await Orders.find({
@@ -362,13 +364,13 @@ const reportExcel = async (req,res)=>{
   
 
     if (data.length === 0) {
-      return res.status(404).json({ status: false, message: 'No data found for the specified date range.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: 'No data found for the specified date range.' });
     }
 
     generateExcelReport(data, res);
   } catch (error) {
     console.error('Error generating Excel report:', error);
-    return res.status(500).json({ status: false, message: 'Internal Server Error' });
+    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 
 
@@ -379,13 +381,13 @@ const reportExcel = async (req,res)=>{
 const loadTransctions = async(req,res)=>{
   try{
     const username=req.session.username;
-    res.status(200).render('admin/transaction',{
+    res.status(STATUS_CODES.OK).render('admin/transaction',{
   username,
   title:'Transaction'
 });
 
   }catch(error){
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -395,10 +397,10 @@ const loadTransctions = async(req,res)=>{
 const getTransactionDetails = async(req,res)=>{
   try {
     const transactions = await Transaction.find().sort({createdAt : -1}); 
-    res.status(200).json(transactions); 
+    res.status(STATUS_CODES.OK).json(transactions); 
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 

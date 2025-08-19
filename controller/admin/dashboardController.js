@@ -2,6 +2,8 @@
 const {User}  = require('../../model/user/userModel');
 const {Orders} = require('../../model/user/orderModel')
 const {ReturnCancel} = require('../../model/user/returnCancelModel');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 // get the top Saling product
 
@@ -40,10 +42,10 @@ const getTopSellingProduct = async(req,res)=>{
 
     const top5Products =  actualSales.sort((a, b) => b.actualQuantity - a.actualQuantity).slice(0,5);
     
- res.status(200).json({message :"Data featch successFull" ,top5Products});
+ res.status(STATUS_CODES.OK).json({message :"Data featch successFull" ,top5Products});
   } catch (error) {
     console.log(error);
-    res.status(500).json({message : 'Internal Server Error'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message : RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 }
 
@@ -103,13 +105,13 @@ const getMostSoldCategories = async (req, res) => {
 
     const sortedCategories = finalData.sort((a, b) => b.actualSold - a.actualSold).slice(0, 5);
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       message: "Successfully fetched sold categories considering returns",
       data: sortedCategories,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
   }
 };
 
@@ -136,14 +138,14 @@ const getDailyRevenue = async (req, res) => {
     }, 0);
 
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       message: "Today's revenue calculated successfully.",
       totalRevenue: `₹${totalRevenue.toFixed(2)}`,
     });
   } catch (error) {
     console.error('Error calculating today\'s revenue:', error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Error calculating today\'s revenue.',
       error: error.message,
@@ -156,14 +158,14 @@ const getDailyRevenue = async (req, res) => {
 const getUserCount = async (req, res) => {
   try {
     const userCount = await User.countDocuments(); 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       message: "User count fetched successfully.",
       userCount,
     });
   } catch (error) {
     console.error('Error fetching user count:', error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Error fetching user count.',
       error: error.message,
@@ -199,7 +201,7 @@ const getSalesCount = async (req, res) => {
       },
       { totalSalesCount: 0, totalAmount: 0 }
     );
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       message: "Sales data fetched successfully.",
       totalSalesCount,
@@ -207,7 +209,7 @@ const getSalesCount = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching sales data:', error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Error fetching sales data.',
       error: error.message,
@@ -284,14 +286,13 @@ console.log(month,filter)
         totalRevenue: found ? found.totalRevenue : 0,
       };
     });
-console.log(result)
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       data: result,
     });
   } catch (error) {
     console.error("Error fetching revenue data:", error);
-    res.status(500).json({
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Error fetching revenue data.",
       error: error.message,
@@ -310,9 +311,9 @@ const loadDashboard=async(req,res)=>{
   try {
     const username=req.session.username;
     const message=req.query.message;
-    res.status(200).render('admin/dashboard',{message,username,title:"Dashboard"});
+    res.status(STATUS_CODES.OK).render('admin/dashboard',{message,username,title:"Dashboard"});
   } catch (error) {
-    res.status(500).send('internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
   }
 

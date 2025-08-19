@@ -258,7 +258,7 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
   const newPassword = document.getElementById('newPassword').value.trim();
   const confirmPassword = document.getElementById('confirmPassword').value.trim();
   const message = document.getElementById('passwordMessage');
-
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{8,}$/;
 
   if (!newPassword || !confirmPassword) {
     message.innerHTML = 'All fields are required.';
@@ -267,8 +267,8 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
   }
 
 
-  if (newPassword.length < 8) {
-    message.innerHTML = 'New password must be at least 8 characters long.';
+  if (!passwordRegex.test(newPassword)) {
+    message.innerHTML = 'Password must be at least 8 characters long and include at least one letter and one number';
     message.style.color = 'red';
     return;
   }
@@ -306,7 +306,7 @@ document.getElementById('updatePassword').addEventListener('submit', async funct
       });
 
       const result = await response.json();
-
+console.log(result)
       if (response.ok) {
         showAlert(result.message, 'success');     
         getUserDetails();

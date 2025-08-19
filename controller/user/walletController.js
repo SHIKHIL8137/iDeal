@@ -1,8 +1,10 @@
 
 const {User} = require('../../model/user/userModel');
 const {Wallet} = require('../../model/user/walletModel');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
+const STATUS_CODES = require('../../util/statusCode');
 require('dotenv').config();
-const mongoose = require('mongoose');
+
 
 
 
@@ -11,11 +13,11 @@ const mongoose = require('mongoose');
 
 const loadWallet = async (req, res) => {
   try {
-    res.status(200).render('user/wallet', {
+    res.status(STATUS_CODES.OK).render('user/wallet', {
       title: 'Wallet'});
   } catch (error) {
     console.error('Error loading wallet:', error);
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 };
 
@@ -27,12 +29,12 @@ const addMoneyToWallet = async (req, res) => {
     const email = req.session.isLoggedEmail; 
     const parsedAmount = Number(amount);
     if (!parsedAmount || parsedAmount <= 0) {
-      return res.status(400).json({ status: false, message: "Invalid amount" });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Invalid amount" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: RESPONSE_MESSAGES.USER_NOT_FOUND });
     }
 
     const userId = user._id;
@@ -64,7 +66,7 @@ const addMoneyToWallet = async (req, res) => {
     }
     await wallet.save();
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       status: true,
       message: "Amount added to wallet successfully",
       transactionId: trxId,
@@ -72,7 +74,7 @@ const addMoneyToWallet = async (req, res) => {
     });
   } catch (error) {
     console.error("Error adding money to wallet:", error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -95,7 +97,7 @@ const getTransactionDetails = async(req,res)=>{
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).send('User not found');
+      return res.status(STATUS_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.USER_NOT_FOUND);
     }
 
     const wallet = await Wallet.findOne({ userId: user._id }).lean();
@@ -111,7 +113,7 @@ const getTransactionDetails = async(req,res)=>{
       deposit: transaction.type === 'credit' ? `₹${transaction.amount}` : '-',
     }));
 
-    res.status(200).json({status : true , transactions:formattedTransactions ,balance: wallet ? wallet.balance : 0})
+    res.status(STATUS_CODES.OK).json({status : true , transactions:formattedTransactions ,balance: wallet ? wallet.balance : 0})
   } catch (error) {
     
   }

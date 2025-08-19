@@ -25,6 +25,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
   const checkBox = document.getElementById('agreeCheckBox');
   const agreeText = document.getElementById('agreetxt');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{8,}$/;
 
   // Reusable function to show error messages
   const showError = (message) => {
@@ -41,7 +42,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
 
   if (username === "") return showError('Enter a valid username');
   if (!emailRegex.test(email)) return showError('Enter a valid email address');
-  if (password.length < 8) return showError('The password should be at least 8 characters');
+  if (!passwordRegex.test(password)) return showError('Password must be at least 8 characters long and include at least one letter and one number');
   if (password !== confirmPassword) return showError('The password and confirm password do not match');
   if (referralCodeInput && referralCodeInput.length !==10) return showError('The refferal code shoud be length of 10');
   if (!checkBox.checked) {

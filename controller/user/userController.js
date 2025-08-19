@@ -8,7 +8,6 @@ const { Referral } = require("../../model/user/referralModel");
 const { PendingOrder } = require("../../model/user/pendingModel");
 
 const bcrypt = require("bcrypt");
-const passport = require("passport");
 const nodeMailer = require("nodemailer");
 const { Product } = require("../../model/admin/ProductModel");
 const { Review } = require("../../model/admin/reviewModel");
@@ -18,26 +17,8 @@ const { Banner } = require("../../model/admin/bannerModel");
 require("dotenv").config();
 const crypto = require("crypto");
 const razorpayInstance = require("../../config/razorPay");
-const validColors = {
-  pink: "#FFC0CB",
-  yellow: "#FFFF00",
-  green: "#008000",
-  blue: "#0000FF",
-  black: "#000000",
-  white: "#FFFFFF",
-  titanium: "#BEBEBE",
-  purple: "#800080",
-  midnight: "#191970",
-  starlight: "#F5F5F5",
-  red: "#FF0000",
-  gold: "#FFD700",
-  spaceGray: "#4B4B4B",
-  jetBlack: "#343434",
-  alpineGreen: "#355E3B",
-  spaceBlue: "#1A1F71",
-  cosmicSilver: "#C0C0C0",
-  starlightGold: "#FFD700",
-};
+const STATUS_CODES = require("../../util/statusCode");
+
 
 // rendering the login page
 const loadlogin = async (req, res) => {
@@ -47,13 +28,13 @@ const loadlogin = async (req, res) => {
       const err = req.query.err;
       const errBoolean = err === "true";
       res
-        .status(200)
+        .status(STATUS_CODES.OK)
         .render("user/login", { message, errBoolean, title: "Login" });
     } else {
-      return res.status(200).redirect("/");
+      return res.status(STATUS_CODES.OK).redirect("/");
     }
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -62,9 +43,9 @@ const loadsignUp = async (req, res) => {
   try {
     const message = req.session.message;
     req.session.message = null;
-    res.status(200).render("user/signUp", { message, title: "Sign Up" });
+    res.status(STATUS_CODES.OK).render("user/signUp", { message, title: "Sign Up" });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -73,19 +54,19 @@ const loadForgotPassword = async (req, res) => {
   try {
     const message = req.query.message;
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .render("user/forgotPassword", { message, title: "Forgot Password" });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
 // // rendering the changePassword page
 // const loadChangePassword=async(req,res)=>{
 //   try {
-//     res.status(200).render('user/changePassword',{title:"Change Password"})
+//     res.status(STATUS_CODES.OK).render('user/changePassword',{title:"Change Password"})
 //   } catch (err) {
-//     res.status(500).render('user/internalError');
+//     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
 //   }
 // }
 
@@ -133,7 +114,7 @@ async function sendOTPEmail(email, username, password, referral, req, res) {
     req.session.referralCode = referral;
     req.session.otpPending = true;
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .render("user/otp", {
         message: "OTP Send successfuly",
         email,
@@ -142,7 +123,7 @@ async function sendOTPEmail(email, username, password, referral, req, res) {
     return otp;
   } catch (error) {
     console.log(error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 }
 
@@ -166,7 +147,7 @@ const registerUserNormal = async (req, res) => {
     await sendOTPEmail(email, username, password, referral, req, res);
   } catch (error) {
     console.error("Error during registration:", error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -252,14 +233,14 @@ const otpVerification = async (req, res) => {
     );
     await OTP.deleteMany({ email });
     req.session.destroy((err) => {
-      if (err) return res.status(500).send("Internal server error");
+      if (err) return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Internal server error");
       res.redirect(
         "/user/login?message=Registration successful! Please log in.&err=true"
       );
     });
   } catch (error) {
     console.error(error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -311,7 +292,7 @@ const resendPassword = async (req, res) => {
     await sendOTPEmail(email, username, password, referral, req, res);
   } catch (error) {
     console.log(error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -340,7 +321,7 @@ const loginVelidation = async (req, res) => {
         if (isMatch) {
           req.session.isLoggedEmail = email;
           req.session.isUser = true;
-          res.status(200).redirect("/");
+          res.status(STATUS_CODES.OK).redirect("/");
         } else {
           return res
             .status(401)
@@ -349,7 +330,7 @@ const loginVelidation = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -362,7 +343,7 @@ const productReview = async (req, res) => {
     const userId = user._id;
     const { rating, reviewText } = req.body;
     const existingReview = await Review.findOne({ productId, userId });
-    if (existingReview) return res.status(200).send("user already exist");
+    if (existingReview) return res.status(STATUS_CODES.OK).send("user already exist");
     const newReview = new Review({
       productId: productId,
       userId: userId,
@@ -373,9 +354,9 @@ const productReview = async (req, res) => {
     await Product.findByIdAndUpdate(productId, {
       $push: { reviews: savedReview._id },
     });
-    res.status(200).send("saved success fully");
+    res.status(STATUS_CODES.OK).send("saved success fully");
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -389,7 +370,7 @@ const forgotPassword = async (req, res) => {
     await sendResetPasswordLink(email, req, res);
   } catch (error) {
     console.error("Error during forgot password process:", error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -423,7 +404,7 @@ async function sendResetPasswordLink(email, req, res) {
     // req.session.resetTokenPending = true;
     console.log(req.session.resetTokenPending);
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .render("user/forgotPassword", {
         message:
           "Password reset link sent successfully. Please check your inbox.",
@@ -431,7 +412,7 @@ async function sendResetPasswordLink(email, req, res) {
       });
   } catch (error) {
     console.error("Error sending password reset email:", error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 }
 
@@ -447,7 +428,7 @@ const resetPasswordPage = async (req, res) => {
     res.render("user/changePassword", { token, title: "Change password" });
   } catch (error) {
     console.error("Error during reset password page access:", error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -470,20 +451,20 @@ const changePassword = async (req, res) => {
     await OTP.deleteOne({ otp: token });
     req.session.destroy();
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .redirect("/user/login?message=Reset password successful&err=true");
   } catch (error) {
     console.error("Error during password reset:", error);
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
 // route for log out user
 const logOut = async (req, res) => {
   try {
-    res.status(200).redirect("/");
+    res.status(STATUS_CODES.OK).redirect("/");
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -493,7 +474,7 @@ const googleLogin = async (req, res) => {
     req.session.isUser = true;
     res.redirect("/Shop");
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -508,7 +489,7 @@ const loadCheckout = async (req, res) => {
     });
     const user = await User.findOne({ email: userEmail }).populate("addresses");
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .render("user/checkOut", {
         user,
         message,
@@ -517,7 +498,7 @@ const loadCheckout = async (req, res) => {
         title: "Check Out",
       });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -526,9 +507,9 @@ const getCheckOutData = async (req, res) => {
   try {
     const userEmail = req.session.isLoggedEmail || "shikhilks02@gmail.com";
     const user = await User.findOne({ email: userEmail }).populate("addresses");
-    res.status(200).json({ status: true, user });
+    res.status(STATUS_CODES.OK).json({ status: true, user });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Internal server error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal server error" });
   }
 };
 
@@ -572,7 +553,7 @@ const couponValidationCheckout = async (req, res) => {
       coupon.maxDiscountAmount
     );
     const newPrice = Math.floor(currentTotal - discount);
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       message: "Coupon is valid.",
       discount: discount,
@@ -581,7 +562,7 @@ const couponValidationCheckout = async (req, res) => {
   } catch (error) {
     console.error("Error validating coupon:", error);
     res
-      .status(500)
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({
         success: false,
         message: "An error occurred while validating the coupon.",
@@ -602,7 +583,7 @@ const removeCoupon = async (req, res) => {
         .json({ success: false, message: "Cart not found." });
     const originalTotal = checkOut.totalAmount;
     await checkOut.save();
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       message: "Coupon removed successfully.",
       originalTotal: originalTotal,
@@ -610,7 +591,7 @@ const removeCoupon = async (req, res) => {
   } catch (error) {
     console.error("Error removing coupon:", error);
     res
-      .status(500)
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({
         success: false,
         message: "An error occurred while removing the coupon.",
@@ -625,9 +606,9 @@ const getCheckoutSummery = async (req, res) => {
     const user = await User.findOne({ email });
     const userId = user._id;
     const userSummeryDetails = await CheckOut.findOne({ userId });
-    res.status(200).json(userSummeryDetails);
+    res.status(STATUS_CODES.OK).json(userSummeryDetails);
   } catch (error) {
-    res.status(500).json({ message: "Internal server error." });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Internal server error." });
   }
 };
 
@@ -676,7 +657,7 @@ const submitOrder = async (req, res) => {
         coupon.usageCount += 1;
         await coupon.save();
       } else {
-        return res.status(200).json({ message: "Invalid or inactive coupon." });
+        return res.status(STATUS_CODES.OK).json({ message: "Invalid or inactive coupon." });
       }
     }
     const discount = (couponDiscount || 0) + (checkout.categoryDiscount || 0);
@@ -744,7 +725,7 @@ const submitOrder = async (req, res) => {
       });
       if (!razorPayOrder || !razorPayOrder.id)
         return res
-          .status(500)
+          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
           .json({ message: "Failed to create Razorpay order" });
       razorPayOrderId = razorPayOrder.id;
       const pendingOrder = new PendingOrder({
@@ -780,7 +761,7 @@ const submitOrder = async (req, res) => {
         }
       );
       const razorPayKey = process.env.RAZORPAY_KEY_ID;
-      return res.status(200).json({
+      return res.status(STATUS_CODES.OK).json({
         message: "Pending order created, awaiting payment",
         orderId,
         razorPayOrderId,
@@ -824,7 +805,7 @@ const submitOrder = async (req, res) => {
           return res.status(400).json({ message: finalizeError.message });
         }
         return res
-          .status(200)
+          .status(STATUS_CODES.OK)
           .json({ message: "Order placed successfully", orderId });
       } else {
         return res.status(400).json({ message: "Insufficient Balance" });
@@ -857,12 +838,12 @@ const submitOrder = async (req, res) => {
       return res.status(400).json({ message: finalizeError.message });
     }
     return res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .json({ message: "Order placed successfully", orderId });
   } catch (error) {
     console.error(error);
     return res
-      .status(500)
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error", error: error.message });
   }
 };
@@ -930,7 +911,7 @@ const verifyPayment = async (req, res) => {
   } catch (error) {
     console.error(error);
     res
-      .status(500)
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
       .json({ message: "Internal server error", error: error.message });
   }
 };
@@ -979,18 +960,18 @@ const loadReferral = async (req, res) => {
       "referredUserIds",
       "username email createdAt"
     );
-    res.status(200).render("user/referral", { title: "referral", referral });
+    res.status(STATUS_CODES.OK).render("user/referral", { title: "referral", referral });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
 //load payment faild page
 const loadFaild = async (req, res) => {
   try {
-    res.status(200).render("user/paymentFaild", { title: "Payment Faild" });
+    res.status(STATUS_CODES.OK).render("user/paymentFaild", { title: "Payment Faild" });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -1001,14 +982,14 @@ const loadPending = async (req, res) => {
     const pendings = await PendingOrder.findOne({ orderId });
     const razorPayKey = process.env.RAZORPAY_KEY_ID;
     res
-      .status(200)
+      .status(STATUS_CODES.OK)
       .render("user/pendingDetails", {
         pendings,
         title: "Pending Orders",
         razorPayKey,
       });
   } catch (error) {
-    res.status(500).render("user/internalError");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
 };
 
@@ -1019,13 +1000,13 @@ const getbanners = async (req, res) => {
     if (!banner) {
       return res.status(404).json({ error: "No banners found." });
     }
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       success: true,
       data: banner,
     });
   } catch (error) {
     console.error("Error fetching banners:", error);
-    res.status(500).json({ error: "Failed to fetch banners." });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch banners." });
   }
 };
 
@@ -1044,10 +1025,10 @@ const cartCount = async (req, res) => {
       },
     ]);
     const count = result.length > 0 ? result[0].count : 0;
-    res.status(200).json({count});
+    res.status(STATUS_CODES.OK).json({count});
   } catch (error) {
     console.error("Error fetching banners:", error);
-    res.status(500).json({ error: "Failed to fetch banners." });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch banners." });
   }
 };
 

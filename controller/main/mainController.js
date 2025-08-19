@@ -2,6 +2,8 @@
 const mongoose = require('mongoose');
 const {Product} = require('../../model/admin/ProductModel');
 const {Offer} = require('../../model/admin/offerModel');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 require('dotenv').config();
 
 
@@ -66,7 +68,7 @@ const loadHome = async (req, res) => {
     });
 
     const sessionCheck = req.session.isUser || false;
-    res.status(200).render('user/home', { 
+    res.status(STATUS_CODES.OK).render('user/home', { 
       productDetails: filteredProducts, 
       categoryImages, 
       categories, 
@@ -76,7 +78,7 @@ const loadHome = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -111,7 +113,7 @@ const loadShop = async (req, res) => {
     const totalPages = Math.ceil(totalProducts / limit);
     const paginatedProducts = filteredProducts.slice(skip, skip + limit);
 
-    res.status(200).render('user/shop', {
+    res.status(STATUS_CODES.OK).render('user/shop', {
       productDetails: paginatedProducts,
       categories: activeCategories,
       sessionCheck,
@@ -120,7 +122,7 @@ const loadShop = async (req, res) => {
       totalPages,
     });
   } catch (error) {
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -154,14 +156,14 @@ try {
     const totalPages = Math.ceil(totalProducts / limit);
     const paginatedProducts = filteredProducts.slice(skip, skip + limit);
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       products: paginatedProducts,
       categories: activeCategories,
       currentPage: page,
       totalPages,
     });
   } catch (error) {
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -186,7 +188,7 @@ const productSearching = async (req, res) => {
     res.json({ products: filteredProducts });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'An error occurred while searching for products' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'An error occurred while searching for products' });
   }
 };
 
@@ -293,10 +295,10 @@ const sortedProduct = async (req, res) => {
       return res.status(404).json({ message: 'No products found' });
     }
 
-    res.status(200).json({ products });
+    res.status(STATUS_CODES.OK).json({ products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -397,10 +399,10 @@ const filterProduct = async (req, res) => {
 
     const products = await Product.aggregate(query);
 
-    res.status(200).json(products);
+    res.status(STATUS_CODES.OK).json(products);
   } catch (error) {
     console.error("Error filtering products:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Internal Server Error");
   }
 };
 
@@ -444,10 +446,10 @@ const loadProductDetails = async (req, res) => {
     const offerCategory = await Offer.findOne({category:product.category._id , isActive : true});
     const categoryOffer = offerCategory || null;
     const sessionCheck = req.session.isUser || false;
-    res.status(200).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts,title:"Product Details",productOffer,categoryOffer});
+    res.status(STATUS_CODES.OK).render('user/productDetails', { product, validColors,sessionCheck ,relatedProducts,title:"Product Details",productOffer,categoryOffer});
   } catch (error) {
     console.log(error);
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -473,9 +475,9 @@ const loadCategoryShop = async (req, res) => {
     }
 
 
-    res.status(200).render('user/categoryShop', { productDetails: filteredProducts ,sessionCheck,title:"Shop Category"});
+    res.status(STATUS_CODES.OK).render('user/categoryShop', { productDetails: filteredProducts ,sessionCheck,title:"Shop Category"});
   } catch (error) {
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -503,7 +505,7 @@ const categoryProductSearching = async (req, res) => {
     res.json({ products: filteredProducts });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'An error occurred while searching for products' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'An error occurred while searching for products' });
   }
 };
 
@@ -616,10 +618,10 @@ const sortCategoryProduct = async (req, res) => {
       return res.status(404).json({ message: "No products found" });
     }
 
-    res.status(200).json({ products });
+    res.status(STATUS_CODES.OK).json({ products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Internal Server Error" });
   }
 };
 
@@ -726,10 +728,10 @@ const categoryShopFilter = async(req,res)=>{
 
     const products = await Product.aggregate(query);
 
-    res.status(200).json(products);
+    res.status(STATUS_CODES.OK).json(products);
   } catch (error) {
     console.error("Error filtering products:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Internal Server Error");
   }
 }
 
@@ -738,9 +740,9 @@ const categoryShopFilter = async(req,res)=>{
 
 const loadAbout = async(req,res)=>{
   try {
-    res.status(200).render('user/about',{title:"About"});
+    res.status(STATUS_CODES.OK).render('user/about',{title:"About"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -748,9 +750,9 @@ const loadAbout = async(req,res)=>{
 
 const loadContact = async(req,res)=>{
   try {
-    res.status(200).render('user/contact',{title:"Contact"});
+    res.status(STATUS_CODES.OK).render('user/contact',{title:"Contact"});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 

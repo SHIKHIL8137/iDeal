@@ -38,23 +38,26 @@ function validation() {
       'Discount percentage must be between 1 and 100.'
   );
 
-  const maximumDiscount = document.getElementById('maximumDiscount');
-  const maximumDiscountError = document.getElementById('maximumDiscountError');
-  isValid &= validateField(
-      maximumDiscount,
-      maximumDiscountError,
-      isNaN(maximumDiscount.value) || maximumDiscount.value <= 0,
-      'Maximum discount must be greater than 0.'
-  );
+// Maximum Discount Validation
+const maximumDiscount = document.getElementById('maximumDiscount');
+const maximumDiscountError = document.getElementById('maximumDiscountError');
+isValid &= validateField(
+    maximumDiscount,
+    maximumDiscountError,
+    isNaN(maximumDiscount.value) || maximumDiscount.value <= 0 || maximumDiscount.value > 100000,
+    'Maximum discount must be greater than 0 and cannot exceed 1,00,000.'
+);
 
-  const minimumPurchase = document.getElementById('minimumPurchase');
-  const minimumPurchaseError = document.getElementById('minimumPurchaseError');
-  isValid &= validateField(
-      minimumPurchase,
-      minimumPurchaseError,
-      isNaN(minimumPurchase.value) || minimumPurchase.value <= 0,
-      'Minimum purchase amount must be greater than 0.'
-  );
+// Minimum Purchase Validation
+const minimumPurchase = document.getElementById('minimumPurchase');
+const minimumPurchaseError = document.getElementById('minimumPurchaseError');
+isValid &= validateField(
+    minimumPurchase,
+    minimumPurchaseError,
+    isNaN(minimumPurchase.value) || minimumPurchase.value <= 0 || minimumPurchase.value > 100000,
+    'Minimum purchase amount must be greater than 0 and cannot exceed 1,00,000.'
+);
+
 
   const startDate = document.getElementById('startDate');
   const startDateError = document.getElementById('startDateError');
@@ -80,8 +83,8 @@ function validation() {
   isValid &= validateField(
       usageLimit,
       usageLimitError,
-      isNaN(usageLimit.value) || usageLimit.value <= 0,
-      'Usage limit must be greater than 0.'
+      isNaN(usageLimit.value) || usageLimit.value <= 0 || usageLimit.value > 1000,
+      'Usage limit must be greater than 0 and less than 1000'
   );
 
   if (isValid) {

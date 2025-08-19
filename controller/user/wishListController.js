@@ -2,6 +2,8 @@
 const {Offer} = require('../../model/admin/offerModel');
 const {User} = require('../../model/user/userModel');
 const {WishList} = require('../../model/user/wishlistModel');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
+const STATUS_CODES = require('../../util/statusCode');
 
 require('dotenv').config();
 
@@ -11,13 +13,13 @@ require('dotenv').config();
 const loadWishlist = async (req, res) => {
   try {
 const offer = await Offer.find({applicableTo : 'Product'});
-    res.status(200).render('user/wishlist', {
+    res.status(STATUS_CODES.OK).render('user/wishlist', {
       title: "Wish List",
       offer
     });
   } catch (error) {
     console.error("Error loading wishlist:", error);
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 };
 
@@ -32,7 +34,7 @@ const getWishlistData = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ status: "false", message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: "false", message:RESPONSE_MESSAGES.USER_NOT_FOUND });
     }
 
     const wishlist = await WishList.findOne({ userId: user._id })
@@ -43,13 +45,13 @@ const getWishlistData = async (req, res) => {
       wishlist.items.sort((a, b) => b.addedAt - a.addedAt); 
     }
 
-    res.status(200).json({
+    res.status(STATUS_CODES.OK).json({
       status: "true",
       wishlist: wishlist ? wishlist.items : [],
     });
   } catch (error) {
     console.error("Error loading wishlist:", error);
-    res.status(500).json({ status: "false", message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: "false", message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 };
 
@@ -64,7 +66,7 @@ const addtoWishlist = async (req, res) => {
     const user = await User.findOne({ email });
     console.log(user);
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: RESPONSE_MESSAGES.USER_NOT_FOUND });
     }
 
     const userId = user._id;
@@ -76,10 +78,10 @@ const addtoWishlist = async (req, res) => {
         items: [{ productId }],
       });
       await wishlist.save();
-      return res.status(201).json({ status: true, message: "Product added to wishlist" });
+      return res.status(STATUS_CODES.CREATE).json({ status: true, message: "Product added to wishlist" });
     }
     if (wishlist.items.length >= 20) {
-      return res.status(400).json({ status: false, message: "Wishlist is full. You can only have 20 items." });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Wishlist is full. You can only have 20 items." });
     }
 
     const itemExists = wishlist.items.some(
@@ -87,16 +89,16 @@ const addtoWishlist = async (req, res) => {
     );
 
     if (itemExists) {
-      return res.status(404).json({ status: false, message: "Product already in wishlist" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Product already in wishlist" });
     }
 
     wishlist.items.push({ productId });
     await wishlist.save();
 
-    res.status(200).json({ status: true, message: "Product added to wishlist" });
+    res.status(STATUS_CODES.OK).json({ status: true, message: "Product added to wishlist" });
   } catch (error) {
     console.error("Error adding to wishlist:", error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -111,7 +113,7 @@ const deleteFromWishlist = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: RESPONSE_MESSAGES.USER_NOT_FOUND });
     }
 
     const updatedWishlist = await WishList.findOneAndUpdate(
@@ -121,13 +123,13 @@ const deleteFromWishlist = async (req, res) => {
     );
 
     if (updatedWishlist) {
-      res.status(200).json({ status: true, message: "Item removed from wishlist" });
+      res.status(STATUS_CODES.OK).json({ status: true, message: "Item removed from wishlist" });
     } else {
-      res.status(400).json({ status: false, message: "Wishlist not found" });
+      res.status(STATUS_CODES.BAD_REQUEST).json({ status: false, message: "Wishlist not found" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 

@@ -231,7 +231,7 @@ function updateCartSummary(userCart, discountCategoryOffer, totalCategoryDiscoun
 
   // Calculate totals
   const totalAmount = userCart.totalAmount || 0;
-  const shippingFee = totalAmount > 5000 ? 0 : 40;
+const shippingFee = (totalAmount > 5000 || totalAmount === 0) ? 0 : 40;
   const finalTotal = totalAmount - totalCategoryDiscount + shippingFee;
 
   // Update DOM elements

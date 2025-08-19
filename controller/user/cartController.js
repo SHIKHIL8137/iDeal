@@ -5,6 +5,8 @@ const { Product} = require('../../model/admin/ProductModel');
 const {Offer } = require('../../model/admin/offerModel');
 require('dotenv').config()
 const mongoose = require('mongoose');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 // add the product from product details to cart
 
@@ -15,22 +17,31 @@ const addProductToCart = async (req, res) => {
     const email = req.session.isLoggedEmail ;
 
     if (!productId || !price || !actualPrice) {
-      return res.status(400).json({ status: 'error', message: 'Product ID and price are required.' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ status: 'error', message: RESPONSE_MESSAGES.PRODUCT_ID_PRICE_REQUIRED });
     }
 
     if (!email) {
-      return res.status(401).json({ status: 'error', message: 'User is not logged in.' });
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({ status: 'error', message: RESPONSE_MESSAGES.USER_NOT_LOGGED_IN });
     }
 
 
     const validProduct = await Product.findById(productId);
     if (!validProduct) {
-      return res.status(404).json({ status: 'error', message: 'Invalid product ID.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: 'error', message: RESPONSE_MESSAGES.INVALID_PRODUCT_ID });
     }
+
+      if (validProduct.stock <= 0) {
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        status: 'error',
+        message: 'Product is out of stock',
+      });
+    }
+
+
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ status: 'error', message: 'User not found.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: 'error', message: RESPONSE_MESSAGES.USER_NOT_FOUND });
     }
 
     let cart = await Cart.findOne({ userId: user._id });
@@ -38,9 +49,9 @@ const addProductToCart = async (req, res) => {
     if (cart) {
 
       if (cart.items.length >= 10 && !cart.items.some((item) => item.productId.toString() === productId)) {
-        return res.status(400).json({
+        return res.status(STATUS_CODES.BAD_REQUEST).json({
           status: 'error',
-          message: 'Cart limit reached. You can only have 10 products in the cart.',
+          message: RESPONSE_MESSAGES.CART_LIMIT_REACHED,
         });
       }
 
@@ -53,10 +64,17 @@ const addProductToCart = async (req, res) => {
 
         const newQuantity = cart.items[existingItemIndex].quantity + quantity;
 
-        if (newQuantity > 10) {
-          return res.status(400).json({
+        if (newQuantity > validProduct.stock) {
+          return res.status(STATUS_CODES.BAD_REQUEST).json({
             status: 'error',
-            message: 'Maximum quantity for a product is 10.',
+            message: 'Insufficient stock available',
+          });
+        }
+
+        if (newQuantity > 10) {
+          return res.status(STATUS_CODES.BAD_REQUEST).json({
+            status: 'error',
+            message: RESPONSE_MESSAGES.MAX_QUANTITY_REACHED,
           });
         }
 
@@ -102,10 +120,10 @@ const addProductToCart = async (req, res) => {
 
     await cart.save();
 
-    res.status(200).json({ status: 'success', message: 'Product updated in cart successfully.' });
+    res.status(STATUS_CODES.OK).json({ status: 'success', message: RESPONSE_MESSAGES.PRODUCT_UPDATED_IN_CART });
   } catch (error) {
     console.error('Error updating product in cart:', error);
-    res.status(500).json({ status: 'error', message: 'Internal server error.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: 'error', message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -119,25 +137,25 @@ const updateCartQuantity = async (req, res) => {
     const cart = await Cart.findOne({ userId: user._id });
 
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.CART_NOT_FOUND });
     }
     const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
 
     if (itemIndex === -1) {
-      return res.status(404).json({ message: 'Product not found in cart.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.PRODUCT_NOT_IN_CART });
     }
 
     const item = cart.items[itemIndex];
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found in the inventory.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.PRODUCT_NOT_IN_INVENTORY });
     }
     if (action === 'increment') {
       if (item.quantity >= 10) {
-        return res.status(400).json({ message: 'Maximum quantity reached (10).' });
+        return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.MAX_QUANTITY_REACHED });
       }
       if (item.quantity + 1 > product.stock) {
-        return res.status(400).json({ message: 'Insufficient stock available.' });
+        return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.INSUFFICIENT_STOCK });
       }
       item.quantity += 1;
       item.totalPrice = item.quantity * item.price;
@@ -145,7 +163,7 @@ const updateCartQuantity = async (req, res) => {
 
     } else if (action === 'decrement') {
       if (item.quantity <= 1) {
-        return res.status(400).json({ message: 'Minimum quantity is 1.' });
+        return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.MIN_QUANTITY_REACHED });
       }
       item.quantity -= 1;
       item.totalPrice = item.quantity * item.price;
@@ -156,10 +174,10 @@ const updateCartQuantity = async (req, res) => {
     cart.totalActualAmount = cart.items.reduce((total, item) => total + item.totalActualPrice, 0);
     await cart.save();
 
-    res.status(200).json({ message: 'Cart updated successfully.' });
+    res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.CART_UPDATED_SUCCESSFULLY });
   } catch (error) {
     console.error('Error updating cart quantity:', error);
-    res.status(500).json({ message: 'Internal server error.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -175,13 +193,13 @@ const removeFromCart = async (req, res) => {
     const cart = await Cart.findOne({ userId: user._id });
 
     if (!cart) {
-      return res.status(404).json({ message: 'Cart not found.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.CART_NOT_FOUND });
     }
 
     const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId);
 
     if (itemIndex === -1) {
-      return res.status(404).json({ message: 'Product not found in cart.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.PRODUCT_NOT_IN_CART });
     }
 
     cart.items.splice(itemIndex, 1); 
@@ -189,10 +207,10 @@ const removeFromCart = async (req, res) => {
     cart.totalActualAmount = cart.items.reduce((total, item) => total + item.totalActualPrice, 0);
     await cart.save();
 
-    res.status(200).json({ message: 'Item removed from cart successfully.' });
+    res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.ITEM_REMOVED_FROM_CART });
   } catch (error) {
     console.error('Error removing item from cart:', error);
-    res.status(500).json({ message: 'Internal server error.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -202,12 +220,12 @@ const removeFromCart = async (req, res) => {
 
 const loadCart = async (req, res) => {
   try {
-    res.status(200).render('user/cart', {
+    res.status(STATUS_CODES.OK).render('user/cart', {
       title: "Cart",
     });
   } catch (error) {
     console.error('Error loading cart:', error);
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 };
 
@@ -222,20 +240,20 @@ const getCartDetails = async(req,res)=>{
       const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(404).send('User not found');
+        return res.status(STATUS_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.USER_NOT_FOUND);
       }
 
       const userId = user._id;
 
       const userCart = await Cart.findOne({ userId }).populate('items.productId');
-      if(!userCart) return res.status(200).json({status:false,message : 'Cart items Not found'});
+      if(!userCart) return res.status(STATUS_CODES.OK).json({status:false,message : RESPONSE_MESSAGES.CART_ITEMS_NOT_FOUND});
 
-       res.status(200).json({
+       res.status(STATUS_CODES.OK).json({
         data: { userCart },status:true
       });
   } catch (error) {
     console.error('Error fetching cart details:', error);
-    res.status(500).json({ status: false, message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
      
@@ -247,13 +265,13 @@ const cartSummery = async(req,res)=>{
       const user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(404).send('User not found');
+        return res.status(STATUS_CODES.NOT_FOUND).send('User not found');
       }
 
       const userId = user._id;
 
       const userCart = await Cart.findOne({ userId }).populate('items.productId');
-      if(!userCart) return res.status(200).json({status:false,message : 'Cart items Not found'});
+      if(!userCart) return res.status(STATUS_CODES.OK).json({status:false,message : 'Cart items Not found'});
 
       let discountCategoryOffer = null; 
       let totalCategoryDiscount = 0; 
@@ -291,7 +309,7 @@ const cartSummery = async(req,res)=>{
         }
       } 
 
-      res.status(200).json({
+      res.status(STATUS_CODES.OK).json({
         status: true,
         data: {
           userCart,
@@ -301,7 +319,7 @@ const cartSummery = async(req,res)=>{
       });
   } catch (error) {
     console.error('Error fetching cart details:', error);
-    res.status(500).json({ status: false, message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 
@@ -311,10 +329,10 @@ const checkoutDataStore = async (req, res) => {
   try {
     const  checkOutData  = req.body;
     const email = req.session.isLoggedEmail;
-    // Find the user
+
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: 'User not found' });
     }
     const userId = new mongoose.Types.ObjectId(user._id);
 
@@ -329,17 +347,17 @@ const checkoutDataStore = async (req, res) => {
       );
       if (result.matchedCount === 0) {
         console.error('No matching record found for update.');
-        return res.status(404).json({ message: 'Record not found for update' });
+        return res.status(STATUS_CODES.NOT_FOUND).json({ message: RESPONSE_MESSAGES.RECORD_NOT_FOUND_FOR_UPDATE });
       }
     } else {
       const newCheckOut = new CheckOut({ userId, ...checkOutData });
       await newCheckOut.save();
     }
      req.session.checkOutData = true;
-    res.status(200).json({ message: 'Checkout data saved successfully.' });
+    res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.CHECKOUT_DATA_SAVED });
   } catch (error) {
     console.error('Error in checkoutDataStore:', error);
-    res.status(500).json({ message: 'Internal server error.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 

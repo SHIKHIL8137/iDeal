@@ -2,6 +2,8 @@
 const { json } = require('express');
 const {Coupon} = require('../../model/admin/couponModel');
 const { fillAndStroke } = require('pdfkit');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 // Load Coupon 
 
@@ -10,9 +12,9 @@ const loadCoupon = async(req,res)=>{
     const username=req.session.username;
     const message = req.query.message;
     const errBoolean = req.query.err === "true"
-    res.status(200).render('admin/coupon',{title:"Coupon",username,message,errBoolean});
+    res.status(STATUS_CODES.OK).render('admin/coupon',{title:"Coupon",username,message,errBoolean});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -25,9 +27,9 @@ const loadAddCoupon = async(req,res)=>{
 
   try {
     const username=req.session.username;
-    res.status(200).render('admin/addCoupon',{title:"Add Coupon",username});
+    res.status(STATUS_CODES.OK).render('admin/addCoupon',{title:"Add Coupon",username});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -40,9 +42,9 @@ const loadEditCoupon = async(req,res)=>{
     const id = req.params.couponId;
     const username=req.session.username;
     const coupon = await Coupon.findById(id);
-    res.status(200).render('admin/editCoupon',{title:"Edit Coupon",username,coupon});
+    res.status(STATUS_CODES.OK).render('admin/editCoupon',{title:"Edit Coupon",username,coupon});
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -79,10 +81,10 @@ const addCoupon = async(req,res)=>{
     });
 
     await newCoupon.save();
-    res.status(200).json({message:'Coupon added successFully',status :true});;
+    res.status(STATUS_CODES.OK).json({message:'Coupon added successFully',status :true});;
   } catch (error) {
     console.error('Error adding coupon:', error);
-    res.status(500).send('Internal server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -136,10 +138,10 @@ const editCoupon = async (req, res) => {
 
     await coupon.save();
     console.log(coupon)
-    res.status(200).json({status :true ,message:'Coupen Added SuccessFully',data :coupon});
+    res.status(STATUS_CODES.OK).json({status :true ,message:'Coupen Added SuccessFully',data :coupon});
   } catch (error) {
     console.error('Error editing coupon:', error);
-    res.status(500).json({status:false,message:'Internal Server Error Please try again later'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 };
 
@@ -155,9 +157,9 @@ const getCoupons = async (req, res) => {
       }
       return coupon;
     });
-    res.status(200).json({ status: 'success', coupons: updatedCoupons});
+    res.status(STATUS_CODES.OK).json({ status: 'success', coupons: updatedCoupons});
   } catch (error) {
-    res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: 'error', message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -172,7 +174,7 @@ const searchCoupon = async (req, res) => {
     res.json({ status: 'success', coupons });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: 'error', message: 'Failed to fetch coupons' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: 'error', message: 'Failed to fetch coupons' });
   }
 }
 

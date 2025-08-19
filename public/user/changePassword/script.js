@@ -17,7 +17,7 @@ document.getElementById('formId').addEventListener('submit', function (e) {
   const password = document.getElementById('password').value.trim();
   const conformPassword = document.getElementById('conformPassword').value.trim();
   const errMsg = document.getElementById('errorMsg');
-
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&#]{8,}$/;
   // Reset error message
   errMsg.innerHTML = '';
   errMsg.style.display = 'block';
@@ -36,9 +36,9 @@ document.getElementById('formId').addEventListener('submit', function (e) {
   }
 
   // Validation for minimum password length
-  if (password.length < 8) {
+  if (!passwordRegex.test(password)) {
     e.preventDefault();
-    errMsg.innerHTML = 'The password should be a minimum of 8 characters';
+    errMsg.innerHTML = 'Password must be at least 8 characters long and include at least one letter and one number';
     errMsg.classList.add('alert', 'alert-danger', 'text-center');
     errMsg.style.fontSize = '12px';
     setTimeout(() => {

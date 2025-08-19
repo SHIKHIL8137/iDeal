@@ -5,6 +5,8 @@ const fs= require('fs');
 const path = require('path');
 const sharp=require('sharp');
 const mongoose = require('mongoose');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 
 
@@ -15,9 +17,9 @@ const loadProduct=async(req,res)=>{
   try {
     const username=req.session.username;
     const message=req.query.message;
-    res.status(200).render('admin/product',{message,username,title:"Products"})
+    res.status(STATUS_CODES.OK).render('admin/product',{message,username,title:"Products"})
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -27,9 +29,9 @@ const loadProduct=async(req,res)=>{
 const loadProductDetails = async(req,res)=>{
   try {
     const products=await Product.find().populate('category');
-    res.status(200).json({status : true ,products})
+    res.status(STATUS_CODES.OK).json({status : true ,products})
   } catch (error) {
-    res.status(500).json({message : 'Internal server error'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message : RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 }
 
@@ -44,11 +46,11 @@ const loadAddProduct=async(req,res)=>{
     req.query.message=null;
     const category=await Category.find();
 
-    res.status(200).render('admin/addProduct',{message,category,username,title:"Add Product"})
+    res.status(STATUS_CODES.OK).render('admin/addProduct',{message,category,username,title:"Add Product"})
     message=null
   } catch (error) {
     console.log(error)
-    res.status(500).send('Internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -60,9 +62,9 @@ const loadEditProduct=async(req,res)=>{
     const productId=req.query.productId;
     const productDetails = await Product.findById(productId).populate('category');
     const categoryDetails = await Category.find();
-    res.status(200).render('admin/editProduct',{productDetails,categoryDetails,username,title:"Edit Product"});
+    res.status(STATUS_CODES.OK).render('admin/editProduct',{productDetails,categoryDetails,username,title:"Edit Product"});
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -72,9 +74,9 @@ const loadEditProduct=async(req,res)=>{
 const loadCategory=async(req,res)=>{
   try {
     const username=req.session.username;
-    res.status(200).render('admin/category',{username,title:"Category"});
+    res.status(STATUS_CODES.OK).render('admin/category',{username,title:"Category"});
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -84,9 +86,9 @@ const loadCategory=async(req,res)=>{
 const getCategoryDetails = async(req,res)=>{
   try {
     const category=await Category.find();
-    res.status(200).json({status:true ,category});
+    res.status(STATUS_CODES.OK).json({status:true ,category});
   } catch (error) {
-    res.status(500).json({message : 'Internal server error'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({message : RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
   }
 }
 
@@ -98,9 +100,9 @@ const loadAddCategory=async(req,res)=>{
     const message=req.query.message;
     const err=req.query.err;
     const errBoolean = err === 'true';
-    res.status(200).render('admin/addCategory',{message,errBoolean,username,title:"Add Category"});
+    res.status(STATUS_CODES.OK).render('admin/addCategory',{message,errBoolean,username,title:"Add Category"});
   } catch (error) {
-    res.status(500).send('Internal server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -112,11 +114,11 @@ const loadEditCategory=async(req,res)=>{
     const categoryId=req.params.id
     const category = await Category.findById(categoryId);
     if (!category) {
-      return res.status(404).redirect('/admin/category?message=Category not found please try again later');
+      return res.status(STATUS_CODES.NOT_FOUND).redirect('/admin/category?message=Category not found please try again later');
     }
-  res.status(200).render('admin/editCategory',{category,username,title:"Edit Category"});
+  res.status(STATUS_CODES.OK).render('admin/editCategory',{category,username,title:"Edit Category"});
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('Server error');
   }
 }
 
@@ -127,7 +129,7 @@ const addProducts = async (req, res) => {
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
     // const productExists = await Product.findOne({ name : name});
     // if (productExists) {
-    //   return res.status(400).send('Product already exists');
+    //   return res.status(STATUS_CODES.FORBIDDEN).send('Product already exists');
     // }
 
     const images = [];
@@ -152,7 +154,7 @@ const addProducts = async (req, res) => {
     const categoryDoc = await Category.findOne({ name: category });
     const categoryId = categoryDoc._id;
     if (!categoryDoc) {
-      return res.status(400).send('Invalid category');
+      return res.status(STATUS_CODES.FORBIDDEN).send('Invalid category');
     }
     const newProduct = new Product({
       name:name.trim(),
@@ -200,7 +202,7 @@ const addCategory=async(req,res)=>{
   await newCategory.save();
   res.redirect('/admin/category?message=Catagory added Successfully');
  } catch (error) {
-  res.status(500).send('Inernal server error');
+  res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('Inernal server error');
  }
 }
 
@@ -212,12 +214,12 @@ const deleteProduct = async (req, res) => {
   try {
     const deletedProduct = await Product.findByIdAndDelete(id);
     if (!deletedProduct) {
-      return res.status(404).json({ status: false, message: 'Product not found.' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: 'Product not found.' });
     }
-    res.status(200).json({ status: true, message: 'Product deleted successfully.' });
+    res.status(STATUS_CODES.OK).json({ status: true, message: 'Product deleted successfully.' });
   } catch (error) {
     console.error('Error deleting product:', error);
-    res.status(500).json({ status: false, message: 'Server error. Unable to delete product.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Server error. Unable to delete product.' });
   }
 };
 
@@ -240,13 +242,13 @@ const updateCategory = async (req, res) => {
     );
 
     if (!updatedCategory) {
-      return res.status(404).redirect('/admin/category?message=Category not Found');
+      return res.status(STATUS_CODES.NOT_FOUND).redirect('/admin/category?message=Category not Found');
     }
 
-    res.status(200).redirect('/admin/category?message=Category updated successfully');
+    res.status(STATUS_CODES.OK).redirect('/admin/category?message=Category updated successfully');
   } catch (error) {
     console.error("Error updating category:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Internal Server Error" });
   }
 };
 
@@ -258,10 +260,10 @@ const deleteCategory=async(req,res)=>{
     const categoryId = req.params.id;
     await Product.deleteMany({ category: categoryId });
     await Category.findByIdAndDelete(categoryId); 
-    res.status(200).json({ status: true, message: 'Category and its products deleted successfully' });
+    res.status(STATUS_CODES.OK).json({ status: true, message: 'Category and its products deleted successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ status: false, message: 'Server error. Unable to delete category.' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: 'Server error. Unable to delete category.' });
   }
 }
 
@@ -273,19 +275,19 @@ const editProduct = async (req, res) => {
     const productId = req.params.id; 
     const { name, description, price, discount, storage, color, quantity, category, condition, connectivity } = req.body;
     if (!mongoose.Types.ObjectId.isValid(productId)) {
-      return res.status(400).send('Invalid Product ID');
+      return res.status(STATUS_CODES.FORBIDDEN).send('Invalid Product ID');
     }
 
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).send('Product not found');
+      return res.status(STATUS_CODES.NOT_FOUND).send('Product not found');
     }
 
 
     const categoryDoc = await Category.findOne({ name: category });
     if (!categoryDoc) {
-      return res.status(400).send('Invalid category');
+      return res.status(STATUS_CODES.FORBIDDEN).send('Invalid category');
     }
 
     const categoryId = categoryDoc._id;
@@ -346,13 +348,13 @@ const editProduct = async (req, res) => {
     );
 
     if (!updatedProduct) {
-      return res.status(500).send('Product update failed');
+      return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('Product update failed');
     }
 
-    res.status(200).redirect(`/admin/product?message=Product edited Successfully`);
+    res.status(STATUS_CODES.OK).redirect(`/admin/product?message=Product edited Successfully`);
   } catch (error) {
     console.error('Error while editing product:', error);
-    res.status(500).send('An error occurred while updating the product');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('An error occurred while updating the product');
   }
 };
 
@@ -365,7 +367,7 @@ const deleteProductImage = async (req, res) => {
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: 'Product not found' });
     }
 
     const imageToRemove = product.images[index];
@@ -381,7 +383,7 @@ const deleteProductImage = async (req, res) => {
     res.json({ success: true, message: 'Image deleted successfully' });
   } catch (error) {
     console.error('Error deleting image:', error);
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 

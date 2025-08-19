@@ -4,14 +4,16 @@ const {Address} = require('../../model/user/addressModel')
 require('dotenv').config()
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
+const STATUS_CODES = require('../../util/statusCode');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
 
 // rendering the route for profile
 
 const loadProfile = async(req,res)=>{
   try {
-    res.status(200).render('user/profileDetails',{title:"Profile"})
+    res.status(STATUS_CODES.OK).render('user/profileDetails',{title:"Profile"})
   } catch (error) {
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
   }
   
@@ -21,9 +23,9 @@ const loadProfile = async(req,res)=>{
     try {
       const email = req.session.isLoggedEmail;
       const user =await User.findOne({email});
-      res.status(200).json({user,status : true})
+      res.status(STATUS_CODES.OK).json({user,status : true})
     } catch (error) {
-      res.status(401).json({status : false , message :'Internal Server Error'});
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message :RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
     }
   }
 
@@ -36,14 +38,14 @@ const checkEmail=async(req,res)=>{
     const email= req.query.email;
     const userEmail = req.query.userEmail;
     if(!email){
-      return res.status(400).json({error:'Email is required'})
+      return res.status(STATUS_CODES.BAD_REQUEST).json({error:RESPONSE_MESSAGES.EMAIL_REQUIRED})
     }
     const user = await User.findOne({ email });
     const exists = user ? email !== userEmail : false;
   
   res.json({ exists }); 
   } catch (error) {
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 } 
 
@@ -69,17 +71,17 @@ const userDetailsSave = async (req, res) => {
     updateFields.updatedAt = new Date();
 
     if (Object.keys(updateFields).length === 0) {
-      return res.status(400).send('No fields provided for update');
+      return res.status(STATUS_CODES.BAD_REQUEST).send(RESPONSE_MESSAGES.NO_FIELDS_PROVIDED);
     }
     const result = await User.updateOne(
       { email: req.session.isLoggedEmail },
       { $set: updateFields },
       { upsert: true }
     );
-    res.status(200).json({ message: 'Data saved successfully!' });
+    res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.DATA_SAVED_SUCCESSFULLY });
   } catch (error) {
     console.error('Error saving user details:', error);
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 };
 
@@ -92,39 +94,39 @@ const updatePassword = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ message: 'User not found' });
     }
 
     if (!user.password) {
       if (!newPassword) {
-        return res.status(400).json({ message: 'New password is required' });
+        return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.NEW_PASSWORD_REQUIRED });
       }
 
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       await User.updateOne({ email }, { $set: { password: hashedPassword } });
 
-      return res.status(200).json({ message: 'Password set successfully for the first time' });
+      return res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.PASSWORD_SET_SUCCESSFULLY });
     }
 
     if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: 'Both current and new passwords are required' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.BOTH_PASSWORDS_REQUIRED });
     }
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'The current password does not match' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ message: RESPONSE_MESSAGES.CURRENT_PASSWORD_NOT_MATCH });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await User.updateOne({ email }, { $set: { password: hashedPassword } });
 
-    res.status(200).json({ message: 'Password updated successfully' });
+    res.status(STATUS_CODES.OK).json({ message: RESPONSE_MESSAGES.PASSWORD_UPDATED_SUCCESSFULLY });
   } catch (error) {
     console.error('Error updating password:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
   }
 };
 
@@ -135,9 +137,9 @@ const loadAddress = async(req,res)=>{
 
     const errBoolean = req.query.err === 'true'?true:false;
     const message = req.query.message;
-    res.status(200).render('user/address',{message,errBoolean,title:"Address"});
+    res.status(STATUS_CODES.OK).render('user/address',{message,errBoolean,title:"Address"});
   } catch (error) {
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 }
 
@@ -153,12 +155,12 @@ const loadEditAddress = async (req, res) => {
     const editedAddress = await Address.findById(addressId); 
 
     if (!editedAddress) {
-      return res.status(404).send('Address not found');
+      return res.status(STATUS_CODES.NOT_FOUND).send(RESPONSE_MESSAGES.ADDRESS_NOT_FOUND);
     }
 
-    res.status(200).render('user/editAddress', { message, errBoolean, editedAddress,title:"Edit Address"});
+    res.status(STATUS_CODES.OK).render('user/editAddress', { message, errBoolean, editedAddress,title:"Edit Address"});
   } catch (error) {
-    res.status(500).render('user/internalError');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render('user/internalError');
   }
 };
 
@@ -169,9 +171,9 @@ const addAddress = async(req,res)=>{
   try {
     const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
     const userEmail = req.session.isLoggedEmail ;
-    if (!userEmail) return res.status(400).json({ message: 'User ID is required' });
+    if (!userEmail) return res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'User ID is required' });
     const user = await User.findOne({email:userEmail});
-    if(user.addresses.length>=5) return res.status(200).json({status : false , message : 'You can only store up to 5 addresses'});
+    if(user.addresses.length>=5) return res.status(STATUS_CODES.OK).json({status : false , message :RESPONSE_MESSAGES.MAX_ADDRESSES_REACHED});
     const userId = user._id;
     const address = new Address({ 
       user: userId, 
@@ -189,13 +191,13 @@ const addAddress = async(req,res)=>{
 
     await address.save();
   
-    if (!user) return res.status(404).json({status :false});
+    if (!user) return res.status(STATUS_CODES.NOT_FOUND).json({status :false});
     user.addresses.push(address._id);
     await user.save();
-    res.status(200).json({status:true ,message:'New address added successFully'});
+    res.status(STATUS_CODES.OK).json({status:true ,message:RESPONSE_MESSAGES.NEW_ADDRESS_ADDED_SUCCESSFULLY});
   } catch (error) {
     console.error('Error adding address:', error);
-    res.status(500).json({status : false});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false});
   }
 }
 
@@ -208,18 +210,18 @@ const saveUpdatedAddress = async (req, res) => {
     const addressId = req.params.addressId;
 
     if (!mongoose.Types.ObjectId.isValid(addressId)) {
-      return res.status(400).json({status : false,message :'Invalid address ID'});
+      return res.status(STATUS_CODES.BAD_REQUEST).json({status : false,message :RESPONSE_MESSAGES.INVALID_ADDRESS_ID});
     }
 
     const { fname, lname, companyName, houseName, country, state, city, zipCode, email, phone } = req.body;
 
     if (!user) {
-      return res.status(404).json({status : false,message :'User not found'});
+      return res.status(STATUS_CODES.NOT_FOUND).json({status : false,message :RESPONSE_MESSAGES.USER_NOT_FOUND});
     }
 
     const address = await Address.findById(addressId);
     if (!address) {
-      return res.status(404).json({status : false,message :'Address not found'});
+      return res.status(STATUS_CODES.NOT_FOUND).json({status : false,message :RESPONSE_MESSAGES.ADDRESS_NOT_FOUND});
     }
 
     address.fname = fname;
@@ -243,10 +245,10 @@ const saveUpdatedAddress = async (req, res) => {
 
     await user.save();
     
-    res.status(200).json({status : true ,message:'Address updation SuccessFully',data :address});
+    res.status(STATUS_CODES.OK).json({status : true ,message:RESPONSE_MESSAGES.ADDRESS_UPDATED_SUCCESSFULLY,data :address});
   } catch (error) {
     console.error(error);
-    res.status(500).json({status : true ,message :'Internal Server Error'});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : true ,message :'Internal Server Error'});
   }
 };
 
@@ -257,13 +259,13 @@ const deleteAddress = async (req,res)=>{
     const addressId = req.params.id;
 
     if (!addressId.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({status:false, message: 'Invalid address ID' });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({status:false, message: RESPONSE_MESSAGES.INVALID_ADDRESS_ID});
     }
 
     const deletedAddress = await Address.findByIdAndDelete(addressId);
 
     if (!deletedAddress) {
-      return res.status(404).json({ status:false, message: 'Address not found' });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status:false, message: RESPONSE_MESSAGES.ADDRESS_NOT_FOUND});
     }
 
 
@@ -272,10 +274,10 @@ const deleteAddress = async (req,res)=>{
       { $pull: { addresses: addressId } } 
     );
 
-    res.status(200).json({ status: true , message: 'Address deleted successfully' });
+    res.status(STATUS_CODES.OK).json({ status: true , message: RESPONSE_MESSAGES.ADDRESS_DELETED_SUCCESSFULLY });
   } catch (error) {
     console.error('Error deleting address:', error);
-    res.status(500).json({status:false , message: 'Internal server error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false , message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 }
 

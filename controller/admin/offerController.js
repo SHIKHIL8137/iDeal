@@ -2,6 +2,8 @@
 const {Product} = require('../../model/admin/ProductModel');
 const {Category} = require('../../model/admin/categoryModel');
 const {Offer} = require('../../model/admin/offerModel');
+const RESPONSE_MESSAGES = require('../../util/responseMessage');
+const STATUS_CODES = require('../../util/statusCode');
 
 // load offer
 
@@ -11,14 +13,14 @@ const loadOffer = async (req, res) => {
     const message = req.query.message;
     const err=req.query.err
     const errBoolean = err === 'true';
-    res.status(200).render('admin/offer', {
+    res.status(STATUS_CODES.OK).render('admin/offer', {
       title: "Offer",
       username,
       message,
       errBoolean,
     });
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -48,7 +50,7 @@ const loadAddOffer = async (req, res) => {
       product => !offeredProducts.includes(product._id.toString())
     );
 
-    res.status(200).render('admin/addOffer', {
+    res.status(STATUS_CODES.OK).render('admin/addOffer', {
       title: "Add Offer",
       username,
       availableCategories,
@@ -56,7 +58,7 @@ const loadAddOffer = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -78,7 +80,7 @@ const loadEditOffer = async (req, res) => {
       .populate('category');
 
     if (!offerProduct) {
-      return res.status(404).send("Offer not found");
+      return res.status(STATUS_CODES.NOT_FOUND).send("Offer not found");
     }
 
     const productsWithOffers = await Product.find({ 
@@ -90,7 +92,7 @@ const loadEditOffer = async (req, res) => {
       !productsWithOffers.some(offeredProduct => offeredProduct._id.equals(product._id))
     );
 
-    res.status(200).render('admin/editOffer', {
+    res.status(STATUS_CODES.OK).render('admin/editOffer', {
       username,
       title: "Edit Offer",
       category,
@@ -99,7 +101,7 @@ const loadEditOffer = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
@@ -145,11 +147,11 @@ const{product,category,title, description,discountValue,discountCap,validFrom,va
       })
       await newOffer.save();
     }
-    res.status(200).redirect('/admin/offer?message=Offer Added SuccessFully&err=true');
+    res.status(STATUS_CODES.OK).redirect('/admin/offer?message=Offer Added SuccessFully&err=true');
   } catch (error) {
 
     console.log(error)
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -170,10 +172,10 @@ const getOfferTable = async (req, res) => {
       product: offer.product || null,
       category: offer.category || null,
     }));
-    res.status(200).json({ status: true, data: sanitizedOffers });
+    res.status(STATUS_CODES.OK).json({ status: true, data: sanitizedOffers });
   } catch (error) {
     console.error('Error fetching offers:', error);
-    res.status(500).json({ status: false, message: 'Internal Server Error' });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -187,7 +189,7 @@ const deleteOffer =async(req,res)=>{
     const { offerId } = req.params;
     const offeredProduct = await Offer.findById(offerId);
     if (!offeredProduct) {
-      return res.status(404).json({ status: false, message: "Offer not found" });
+      return res.status(STATUS_CODES.NOT_FOUND).json({ status: false, message: "Offer not found" });
     }
     if(offeredProduct.product){
       const productId = offeredProduct.product;
@@ -200,10 +202,10 @@ const deleteOffer =async(req,res)=>{
       );
     }  
     await Offer.findByIdAndDelete(offerId);
-    res.status(200).json({status:true,message:"Offer deleted successfully"});
+    res.status(STATUS_CODES.OK).json({status:true,message:"Offer deleted successfully"});
   } catch (error) {
     console.error(error);
-    res.status(500).json({status:false,message:"Error deleting offer"});
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status:false,message:"Error deleting offer"});
   }
 }
 
@@ -250,7 +252,7 @@ const editOffer = async (req, res) => {
     res.redirect('/admin/offer?message=Offer Updated SuccessFully&err=true');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Internal Server Error');
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 
