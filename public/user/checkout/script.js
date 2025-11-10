@@ -187,6 +187,16 @@ try {
   }else{
     document.querySelector('.cart-summary').innerHTML = '<p>No data available. please try again</p>';
   } 
+if (checkOutData?.finalTotal <= 20000) {
+  document.querySelectorAll('.cashDelevery').forEach(el => {
+    el.style.display = 'block';
+  });
+} else {
+  document.querySelectorAll('.cashDelevery').forEach(el => {
+    el.style.display = 'none';
+  });
+}
+
 } catch (error) {
   console.log(error);
   showAlert('an error occure please try again later','danger');

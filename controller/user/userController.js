@@ -19,7 +19,6 @@ const crypto = require("crypto");
 const razorpayInstance = require("../../config/razorPay");
 const STATUS_CODES = require("../../util/statusCode");
 
-
 // rendering the login page
 const loadlogin = async (req, res) => {
   try {
@@ -43,7 +42,9 @@ const loadsignUp = async (req, res) => {
   try {
     const message = req.session.message;
     req.session.message = null;
-    res.status(STATUS_CODES.OK).render("user/signUp", { message, title: "Sign Up" });
+    res
+      .status(STATUS_CODES.OK)
+      .render("user/signUp", { message, title: "Sign Up" });
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
@@ -113,13 +114,11 @@ async function sendOTPEmail(email, username, password, referral, req, res) {
     req.session.password = password;
     req.session.referralCode = referral;
     req.session.otpPending = true;
-    res
-      .status(STATUS_CODES.OK)
-      .render("user/otp", {
-        message: "OTP Send successfuly",
-        email,
-        title: "OTP Varification",
-      });
+    res.status(STATUS_CODES.OK).render("user/otp", {
+      message: "OTP Send successfuly",
+      email,
+      title: "OTP Varification",
+    });
     return otp;
   } catch (error) {
     console.log(error);
@@ -164,21 +163,26 @@ const otpVerification = async (req, res) => {
 
     if (!email)
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .send("Session expired or email not found. Please try again.");
     if (!password || !username)
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .send(
           "Incomplete session data. Please start the registration process again."
         );
 
     const user = await OTP.findOne({ email });
-    if (!user) return res.status(404).send("OTP not found for this email.");
+    if (!user)
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .send("OTP not found for this email.");
 
     if (new Date() > user.expiresAt) {
       await OTP.deleteMany({ email });
-      return res.status(400).send("OTP has expired. Please request a new one.");
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("OTP has expired. Please request a new one.");
     }
 
     if (user.otp !== otp) {
@@ -233,7 +237,10 @@ const otpVerification = async (req, res) => {
     );
     await OTP.deleteMany({ email });
     req.session.destroy((err) => {
-      if (err) return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send("Internal server error");
+      if (err)
+        return res
+          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+          .send("Internal server error");
       res.redirect(
         "/user/login?message=Registration successful! Please log in.&err=true"
       );
@@ -343,7 +350,8 @@ const productReview = async (req, res) => {
     const userId = user._id;
     const { rating, reviewText } = req.body;
     const existingReview = await Review.findOne({ productId, userId });
-    if (existingReview) return res.status(STATUS_CODES.OK).send("user already exist");
+    if (existingReview)
+      return res.status(STATUS_CODES.OK).send("user already exist");
     const newReview = new Review({
       productId: productId,
       userId: userId,
@@ -403,13 +411,11 @@ async function sendResetPasswordLink(email, req, res) {
     req.session.email = email;
     // req.session.resetTokenPending = true;
     console.log(req.session.resetTokenPending);
-    res
-      .status(STATUS_CODES.OK)
-      .render("user/forgotPassword", {
-        message:
-          "Password reset link sent successfully. Please check your inbox.",
-        title: "Forgot Password",
-      });
+    res.status(STATUS_CODES.OK).render("user/forgotPassword", {
+      message:
+        "Password reset link sent successfully. Please check your inbox.",
+      title: "Forgot Password",
+    });
   } catch (error) {
     console.error("Error sending password reset email:", error);
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
@@ -424,7 +430,9 @@ const resetPasswordPage = async (req, res) => {
       type: "resetPassword",
     });
     if (!tokenRecord || tokenRecord.expiresAt < Date.now())
-      return res.status(400).send("Invalid or expired token");
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("Invalid or expired token");
     res.render("user/changePassword", { token, title: "Change password" });
   } catch (error) {
     console.error("Error during reset password page access:", error);
@@ -442,9 +450,12 @@ const changePassword = async (req, res) => {
       type: "resetPassword",
     });
     if (!tokenRecord || tokenRecord.expiresAt < Date.now())
-      return res.status(400).send("Invalid or expired token1");
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .send("Invalid or expired token1");
     const user = await User.findOne({ email: tokenRecord.email });
-    if (!user) return res.status(400).send("User not found");
+    if (!user)
+      return res.status(STATUS_CODES.BAD_REQUEST).send("User not found");
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
     await user.save();
@@ -488,15 +499,13 @@ const loadCheckout = async (req, res) => {
       createdAt: -1,
     });
     const user = await User.findOne({ email: userEmail }).populate("addresses");
-    res
-      .status(STATUS_CODES.OK)
-      .render("user/checkOut", {
-        user,
-        message,
-        errBoolean,
-        coupons,
-        title: "Check Out",
-      });
+    res.status(STATUS_CODES.OK).render("user/checkOut", {
+      user,
+      message,
+      errBoolean,
+      coupons,
+      title: "Check Out",
+    });
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
@@ -506,10 +515,12 @@ const loadCheckout = async (req, res) => {
 const getCheckOutData = async (req, res) => {
   try {
     const userEmail = req.session.isLoggedEmail || "shikhilks02@gmail.com";
-    const user = await User.findOne({ email: userEmail }).populate("addresses");
+    const user = await User.findOne({ email: userEmail }).populate("addresses").select("-password -__v");
     res.status(STATUS_CODES.OK).json({ status: true, user });
   } catch (error) {
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ status: false, message: "Internal server error" });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ status: false, message: "Internal server error" });
   }
 };
 
@@ -523,27 +534,25 @@ const couponValidationCheckout = async (req, res) => {
     const coupon = await Coupon.findOne({ code: couponCode, isActive: true });
     if (!coupon)
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "Invalid or inactive coupon." });
     const now = new Date();
     if (now < coupon.validFrom || now > coupon.validTill)
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: "Coupon is not valid at this time." });
     if (coupon.usageLimit !== null && coupon.usageCount >= coupon.usageLimit)
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: "Coupon usage limit exceeded." });
     if (coupon.usersUsed.includes(userId))
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "You have already used this coupon.",
-        });
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        success: false,
+        message: "You have already used this coupon.",
+      });
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart || cart.totalAmount < coupon.minOrderAmount) {
-      return res.status(400).json({
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
         success: false,
         message: `Minimum order amount of ₹${coupon.minOrderAmount} is required for this coupon.`,
       });
@@ -561,12 +570,10 @@ const couponValidationCheckout = async (req, res) => {
     });
   } catch (error) {
     console.error("Error validating coupon:", error);
-    res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: "An error occurred while validating the coupon.",
-      });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An error occurred while validating the coupon.",
+    });
   }
 };
 
@@ -579,7 +586,7 @@ const removeCoupon = async (req, res) => {
     const checkOut = await CheckOut.findOne({ userId });
     if (!checkOut)
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "Cart not found." });
     const originalTotal = checkOut.totalAmount;
     await checkOut.save();
@@ -590,12 +597,10 @@ const removeCoupon = async (req, res) => {
     });
   } catch (error) {
     console.error("Error removing coupon:", error);
-    res
-      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: "An error occurred while removing the coupon.",
-      });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "An error occurred while removing the coupon.",
+    });
   }
 };
 
@@ -608,7 +613,9 @@ const getCheckoutSummery = async (req, res) => {
     const userSummeryDetails = await CheckOut.findOne({ userId });
     res.status(STATUS_CODES.OK).json(userSummeryDetails);
   } catch (error) {
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ message: "Internal server error." });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal server error." });
   }
 };
 
@@ -624,21 +631,29 @@ const submitOrder = async (req, res) => {
       couponCode,
     } = req.body;
     if (!deliveryAddress || !deliveryAddress._id) {
-      return res.status(400).json({ message: "Invalid delivery address" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: "Invalid delivery address" });
     }
     const deliveryAddressData = await Address.findById(deliveryAddress._id);
     if (!deliveryAddressData) {
-      return res.status(400).json({ message: "Delivery address not found" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: "Delivery address not found" });
     }
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ message: "User not found" });
     }
     const userId = user._id;
     const checkout = await CheckOut.findOne({ userId });
     if (!checkout) {
-      return res.status(400).json({ message: "Checkout data not found" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: "Checkout data not found" });
     }
     const cart = await Cart.findOne({ userId });
     if (
@@ -647,7 +662,9 @@ const submitOrder = async (req, res) => {
       !Array.isArray(cart.items) ||
       cart.items.length === 0
     ) {
-      return res.status(400).json({ message: "Cart is empty" });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: "Cart is empty" });
     }
     const wallet = await Wallet.findOne({ userId });
     if (couponCode !== "N/A") {
@@ -657,7 +674,9 @@ const submitOrder = async (req, res) => {
         coupon.usageCount += 1;
         await coupon.save();
       } else {
-        return res.status(STATUS_CODES.OK).json({ message: "Invalid or inactive coupon." });
+        return res
+          .status(STATUS_CODES.OK)
+          .json({ message: "Invalid or inactive coupon." });
       }
     }
     const discount = (couponDiscount || 0) + (checkout.categoryDiscount || 0);
@@ -711,7 +730,7 @@ const submitOrder = async (req, res) => {
       const product = await Product.findById(item.productId);
       if (product.stock < item.quantity) {
         return res
-          .status(400)
+          .status(STATUS_CODES.BAD_REQUEST)
           .json({ message: `Insufficient stock for ${product.name}` });
       }
     }
@@ -802,13 +821,17 @@ const submitOrder = async (req, res) => {
           await finalizeOrder(userId, products, checkout);
         } catch (finalizeError) {
           await Orders.deleteOne({ orderId });
-          return res.status(400).json({ message: finalizeError.message });
+          return res
+            .status(STATUS_CODES.BAD_REQUEST)
+            .json({ message: finalizeError.message });
         }
         return res
           .status(STATUS_CODES.OK)
           .json({ message: "Order placed successfully", orderId });
       } else {
-        return res.status(400).json({ message: "Insufficient Balance" });
+        return res
+          .status(STATUS_CODES.BAD_REQUEST)
+          .json({ message: "Insufficient Balance" });
       }
     }
     const order = new Orders({
@@ -835,7 +858,9 @@ const submitOrder = async (req, res) => {
       await finalizeOrder(userId, products, checkout);
     } catch (finalizeError) {
       await Orders.deleteOne({ orderId });
-      return res.status(400).json({ message: finalizeError.message });
+      return res
+        .status(STATUS_CODES.BAD_REQUEST)
+        .json({ message: finalizeError.message });
     }
     return res
       .status(STATUS_CODES.OK)
@@ -850,6 +875,8 @@ const submitOrder = async (req, res) => {
 
 // varification
 const verifyPayment = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
       req.body;
@@ -863,8 +890,10 @@ const verifyPayment = async (req, res) => {
         { orderId },
         { paymentStatus: "Failed", pendingStatus: "Payment Failed" }
       );
+      await session.abortTransaction();
+      session.endSession();
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: "Payment verification failed!" });
     }
     const pendingOrder = await PendingOrder.findOne({ orderId }).populate(
@@ -872,8 +901,10 @@ const verifyPayment = async (req, res) => {
       "email"
     );
     if (!pendingOrder) {
+      await session.abortTransaction();
+      session.endSession();
       return res
-        .status(404)
+        .status(STATUS_CODES.NOT_FOUND)
         .json({ success: false, message: "Pending order not found!" });
     }
     const order = new Orders({
@@ -882,14 +913,16 @@ const verifyPayment = async (req, res) => {
       paymentStatus: "Paid",
     });
     try {
-      await order.save();
+      await order.save({ session });
       await finalizeOrder(pendingOrder.userId, pendingOrder.products, {
         totalAmount: pendingOrder.subtotal,
       });
     } catch (finalizeError) {
+      await session.abortTransaction();
+      session.endSession();
       await Orders.deleteOne({ orderId });
       return res
-        .status(400)
+        .status(STATUS_CODES.BAD_REQUEST)
         .json({ success: false, message: finalizeError.message });
     }
     const transactionId = generateTransactionId();
@@ -901,14 +934,18 @@ const verifyPayment = async (req, res) => {
       transactionId,
       paymentMethod: pendingOrder.paymentMethod,
     });
-    await newTransaction.save();
+    await newTransaction.save({ session });
     await PendingOrder.deleteOne({ orderId });
+    await session.commitTransaction();
+    session.endSession();
     res.json({
       success: true,
       message: "Payment verified successfully!",
       orderId,
     });
   } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
     console.error(error);
     res
       .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
@@ -955,12 +992,15 @@ const loadReferral = async (req, res) => {
   try {
     const email = req.session.isLoggedEmail;
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).send("User not Found");
+    if (!user)
+      return res.status(STATUS_CODES.BAD_REQUEST).send("User not Found");
     const referral = await Referral.findOne({ userId: user._id }).populate(
       "referredUserIds",
       "username email createdAt"
     );
-    res.status(STATUS_CODES.OK).render("user/referral", { title: "referral", referral });
+    res
+      .status(STATUS_CODES.OK)
+      .render("user/referral", { title: "referral", referral });
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
@@ -969,7 +1009,9 @@ const loadReferral = async (req, res) => {
 //load payment faild page
 const loadFaild = async (req, res) => {
   try {
-    res.status(STATUS_CODES.OK).render("user/paymentFaild", { title: "Payment Faild" });
+    res
+      .status(STATUS_CODES.OK)
+      .render("user/paymentFaild", { title: "Payment Faild" });
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
@@ -981,13 +1023,11 @@ const loadPending = async (req, res) => {
     const orderId = req.query.orderId;
     const pendings = await PendingOrder.findOne({ orderId });
     const razorPayKey = process.env.RAZORPAY_KEY_ID;
-    res
-      .status(STATUS_CODES.OK)
-      .render("user/pendingDetails", {
-        pendings,
-        title: "Pending Orders",
-        razorPayKey,
-      });
+    res.status(STATUS_CODES.OK).render("user/pendingDetails", {
+      pendings,
+      title: "Pending Orders",
+      razorPayKey,
+    });
   } catch (error) {
     res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).render("user/internalError");
   }
@@ -996,9 +1036,11 @@ const loadPending = async (req, res) => {
 // get banner
 const getbanners = async (req, res) => {
   try {
-    const banner = await Banner.findOne();
+    const banner = await Banner.findOne().select("-__v -_id -created_at ");
     if (!banner) {
-      return res.status(404).json({ error: "No banners found." });
+      return res
+        .status(STATUS_CODES.NOT_FOUND)
+        .json({ error: "No banners found." });
     }
     res.status(STATUS_CODES.OK).json({
       success: true,
@@ -1006,7 +1048,9 @@ const getbanners = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching banners:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch banners." });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ error: "Failed to fetch banners." });
   }
 };
 
@@ -1020,15 +1064,17 @@ const cartCount = async (req, res) => {
       {
         $project: {
           count: { $size: "$items" },
-          _id:0
+          _id: 0,
         },
       },
     ]);
     const count = result.length > 0 ? result[0].count : 0;
-    res.status(STATUS_CODES.OK).json({count});
+    res.status(STATUS_CODES.OK).json({ count });
   } catch (error) {
     console.error("Error fetching banners:", error);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: "Failed to fetch banners." });
+    res
+      .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+      .json({ error: "Failed to fetch banners." });
   }
 };
 

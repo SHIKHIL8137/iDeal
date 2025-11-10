@@ -150,7 +150,7 @@
           <% productDetails.forEach(product => { %>
             <div class="card h-100 shadow arrival-card m-2" style="min-width: 200px; max-width: 250px;">
               <div class="image-container position-relative m-4">
-                <img src="<%= product.images[0] %>" class="card-img-top img-fluid" alt="<%= product.name %>">
+                <img src="<%= product.images %>" class="card-img-top img-fluid" alt="<%= product.name %>">
                 <i class="bi bi-heart heart-icon" onclick="toggleHeart(this, '<%= product._id %>')"></i>
               </div>
               <div class="card-body text-start product-card" data-product-id="<%= product._id %>">

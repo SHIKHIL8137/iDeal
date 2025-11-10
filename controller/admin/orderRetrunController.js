@@ -323,7 +323,6 @@ function generateTransactionId() {
 const getreturnOrderDetails = async (req, res) => {
   try {
       const returnid = req.params.returnId;
-      console.log(returnid);
       const returnOrder = await ReturnCancel.findById(returnid).populate('userId', 'firstName lastName email phone').populate('productId','name');
 
       if (!returnOrder) {

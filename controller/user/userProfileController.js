@@ -22,7 +22,7 @@ const loadProfile = async(req,res)=>{
   const getUserDetails = async(req,res)=>{
     try {
       const email = req.session.isLoggedEmail;
-      const user =await User.findOne({email});
+      const user =await User.findOne({email}).select('-password -__v');
       res.status(STATUS_CODES.OK).json({user,status : true})
     } catch (error) {
       res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({status : false , message :RESPONSE_MESSAGES.INTERNAL_SERVER_ERROR});
